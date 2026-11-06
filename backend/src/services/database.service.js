@@ -11,7 +11,7 @@ export function createDatabasePool(env = process.env) {
     port,
     user: env.MYSQL_USER,
     password: env.MYSQL_PASSWORD,
-    database: env.MYSQL_PASSWORD,
+    database: env.MYSQL_DATABASE,
     charset: "utf8mb4",
     connectTimeout: 5000,
     connectionLimit: 5,
