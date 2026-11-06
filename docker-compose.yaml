@@ -22,7 +22,7 @@ services:
     env_file:
       - .env
     environment:
-      MYSQL_HOST: dev-townpass
+      MYSQL_HOST: dev-db
       MYSQL_PORT: 3306
     volumes:
       - ./backend:/app/
