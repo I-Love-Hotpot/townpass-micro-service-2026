@@ -1,0 +1,43 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      # - coolify
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    expose:
+      - "3001"
+    environment:
+      MYSQL_HOST: database
+      MYSQL_PORT: 3306
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3001/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      # - coolify
+      - townpass-db
+
+networks:
+  # coolify:
+  #   external: true
+  townpass-db:
+    external: true

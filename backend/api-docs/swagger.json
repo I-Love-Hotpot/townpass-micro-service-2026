@@ -1,0 +1,41 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "TownPass Services API",
+    "version": "0.1.0"
+  },
+  "servers": [{ "url": "/" }],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Check API and MariaDB readiness",
+        "responses": {
+          "200": {
+            "description": "The database responded to the readiness query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status"],
+                  "properties": { "status": { "type": "string", "enum": ["ok"] } }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The database readiness query failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status"],
+                  "properties": { "status": { "type": "string", "enum": ["unavailable"] } }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

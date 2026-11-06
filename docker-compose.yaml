@@ -1,0 +1,72 @@
+name: townpass-dev
+
+services:
+  dev-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules/
+    ports:
+      - "3000:5173"
+  dev-backend:
+    image: backend
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile.dev
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MYSQL_HOST: dev-townpass
+      MYSQL_PORT: 3306
+    volumes:
+      - ./backend:/app/
+      - ./.env:/app/.env:ro
+      - /app/node_modules/
+    ports:
+      - 3001:3001
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3001/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      dev-db:
+        condition: service_healthy
+  dev-db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:?Set MYSQL_DATABASE in .env}
+      MYSQL_USER: ${MYSQL_USER:?Set MYSQL_USER in .env}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+    volumes:
+      - ./data/db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  adminer:
+    image: adminer:latest
+    restart: unless-stopped
+    ports:
+      - 3002:8080
+    environment:
+      - ADMINER_DEFAULT_SERVER=dev-db
+      - ADMINER_DEFAULT_USER=${MYSQL_USER:?Set MYSQL_USER in .env}
+      - ADMINER_DEFAULT_PASSWORD=${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+      - ADMINER_DEFAULT_DB_NAME=${MYSQL_DATABASE:?Set MYSQL_DATABASE in .env}
