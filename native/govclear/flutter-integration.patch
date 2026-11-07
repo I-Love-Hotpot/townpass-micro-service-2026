@@ -38,6 +38,139 @@ index 0000000..b77b56f
 +    }
 +  }, timeout: const Timeout(Duration(minutes: 5)));
 +}
+diff --git a/integration_test/govclear_speed_test.dart b/integration_test/govclear_speed_test.dart
+new file mode 100644
+index 0000000..a70229d
+--- /dev/null
++++ b/integration_test/govclear_speed_test.dart
+@@ -0,0 +1,127 @@
++import 'dart:convert';
++import 'dart:io';
++import 'dart:ui' as ui;
++
++import 'package:flutter/services.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:integration_test/integration_test.dart';
++import 'package:path_provider/path_provider.dart';
++import 'package:town_pass/service/govclear_simulator_engine.dart';
++import 'package:town_pass/service/govclear_knowledge.dart';
++
++dynamic modelJson(String raw) => jsonDecode(
++  raw.trim().replaceAll(
++    RegExp(r'^\x60\x60\x60(?:json)?\s*|\s*\x60\x60\x60$'),
++    '',
++  ),
++);
++
++void main() {
++  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
++  testWidgets('two-call photo pipeline cold and warm latency', (tester) async {
++    final docs = (await getApplicationDocumentsDirectory()).path;
++    final policies = jsonDecode(
++      await File('$docs/govclear-speed-prompts.json').readAsString(),
++    );
++    final file = File('$docs/govclear-speed-test.json');
++    final report = <String, dynamic>{'status': 'running', 'runs': <dynamic>[]};
++    await file.writeAsString(jsonEncode(report));
++    final recorder = ui.PictureRecorder();
++    final canvas = ui.Canvas(recorder);
++    canvas.drawColor(const ui.Color(0xffffffff), ui.BlendMode.src);
++    final builder = ui.ParagraphBuilder(ui.ParagraphStyle(fontSize: 36))
++      ..pushStyle(ui.TextStyle(color: const ui.Color(0xff000000)))
++      ..addText(
++        '租金補貼通知\n115年度租金補貼開放申請。\n請在115年12月10日前提出申請。\n申請時請附上身分證及租賃契約。\n符合資格者才可領取補貼。',
++      );
++    final paragraph = builder.build()
++      ..layout(const ui.ParagraphConstraints(width: 900));
++    canvas.drawParagraph(paragraph, const ui.Offset(40, 50));
++    final picture = recorder.endRecording();
++    final image = await picture.toImage(1000, 700);
++    final bytes = (await image.toByteData(format: ui.ImageByteFormat.png))!
++        .buffer
++        .asUint8List();
++    image.dispose();
++    picture.dispose();
++    final engine = SimulatorGemmaEngine();
++    try {
++      for (final state in ['cold', 'warm']) {
++        final watch = Stopwatch()..start();
++        final stages = <String, dynamic>{'state': state};
++        report['currentRun'] = stages;
++        final source = '【第 1 張】\n${await engine.transcribe(bytes)}';
++        stages['ocrSeconds'] = watch.elapsedMilliseconds / 1000;
++        final draft = modelJson(
++          await engine.generate(
++            '${policies['planPolicy']}${jsonEncode({'language': '繁體中文', 'source': source})}',
++          ),
++        );
++        stages['planSeconds'] =
++            watch.elapsedMilliseconds / 1000 - stages['ocrSeconds'];
++        stages['planMetrics'] = jsonDecode(
++          (await const MethodChannel('townpass/govclear_local')
++              .invokeMethod<String>('metrics'))!,
++        );
++        expect(draft['s'], isA<String>());
++        stages['sixFieldsReturned'] = (draft['w'] as Map).length;
++        stages['sourceCharacters'] = source.length;
++        expect(source, contains('租金'));
++        expect((draft['w'] as Map).length, 6);
++        stages['draft'] = draft;
++        expect((draft['q'] as List).length, 3);
++        final retrievalStarted = watch.elapsedMilliseconds;
++        final evidence = <String, Map<String, dynamic>>{};
++        for (final q in draft['q']) {
++          final retrieval = jsonDecode(
++            await GovClearKnowledge.retrieve(jsonEncode([q['k']])),
++          );
++          final rows = retrieval['evidence'] as List;
++          if (rows.isNotEmpty) {
++            evidence[rows.first['unit_id']] = Map<String, dynamic>.from(
++              rows.first,
++            );
++          }
++        }
++        stages['retrievalSeconds'] =
++            (watch.elapsedMilliseconds - retrievalStarted) / 1000;
++        final answerStarted = watch.elapsedMilliseconds;
++        final answer = modelJson(
++          await engine.generate(
++            '${policies['answersPolicy']}${jsonEncode({
++              'language': '繁體中文',
++              'source': source,
++              'q': (draft['q'] as List).map((q) => q['t']).toList(),
++              'e': evidence.values.map((e) => {'name': e['title'], 'article': e['unit_label'], 'text': e['text'], 'version': e['version_id']}).toList(),
++            })}',
++          ),
++        );
++        expect((answer['a'] as List).length, 3);
++        for (final row in answer['a']) {
++          expect(row[0], isA<String>());
++        }
++        stages['answersSeconds'] =
++            (watch.elapsedMilliseconds - answerStarted) / 1000;
++        stages['answerMetrics'] = jsonDecode(
++          (await const MethodChannel('townpass/govclear_local')
++              .invokeMethod<String>('metrics'))!,
++        );
++        stages['totalSeconds'] = watch.elapsedMilliseconds / 1000;
++        stages['under20Seconds'] = watch.elapsedMilliseconds <= 20000;
++        stages['sourceCharacters'] = source.length;
++        stages['evidenceCount'] = evidence.length;
++        expect(evidence, isNotEmpty);
++        (report['runs'] as List).add(stages);
++        await file.writeAsString(jsonEncode(report));
++      }
++      report['status'] = 'passed';
++    } catch (error) {
++      report['status'] = 'failed';
++      report['error'] = error.toString();
++      rethrow;
++    } finally {
++      engine.dispose();
++      await file.writeAsString(jsonEncode(report));
++    }
++  }, timeout: const Timeout(Duration(minutes: 6)));
++}
 diff --git a/ios/Runner/GovClearLocalPlugin.swift b/ios/Runner/GovClearLocalPlugin.swift
 index 819e96c..9d7101e 100644
 --- a/ios/Runner/GovClearLocalPlugin.swift
@@ -142,10 +275,10 @@ index 478d28d..97dec56 100644
        respond(error: e.message ?? '手機模型執行失敗。');
 diff --git a/lib/service/govclear_knowledge.dart b/lib/service/govclear_knowledge.dart
 new file mode 100644
-index 0000000..090b7b5
+index 0000000..f0aea13
 --- /dev/null
 +++ b/lib/service/govclear_knowledge.dart
-@@ -0,0 +1,80 @@
+@@ -0,0 +1,91 @@
 +import 'dart:convert';
 +
 +import 'package:crypto/crypto.dart';
@@ -183,6 +316,15 @@ index 0000000..090b7b5
 +        .map((t) => t.trim().toLowerCase())
 +        .where((t) => t.isNotEmpty)
 +        .toSet();
++    final pairs = <String>{};
++    for (final word in words) {
++      for (final run in RegExp(r'[\u3400-\u9fff]+').allMatches(word)) {
++        final value = run[0]!;
++        for (var i = 0; i < value.length - 1; i++) {
++          pairs.add(value.substring(i, i + 2));
++        }
++      }
++    }
 +    final scored = <({Map<String, dynamic> unit, int score})>[];
 +    for (final unit in units) {
 +      final text = unit['text'];
@@ -193,7 +335,9 @@ index 0000000..090b7b5
 +        continue;
 +      }
 +      final haystack = '${unit['title']} $text'.toLowerCase();
-+      final score = words.where(haystack.contains).length;
++      final score =
++          100 * words.where(haystack.contains).length +
++          pairs.where(haystack.contains).length;
 +      if (score > 0) scored.add((unit: unit, score: score));
 +    }
 +    scored.sort((a, b) {
@@ -393,10 +537,10 @@ index 0267dd5..533f015 100644
      - assets/svg/
 diff --git a/test/govclear_knowledge_test.dart b/test/govclear_knowledge_test.dart
 new file mode 100644
-index 0000000..aef2d9c
+index 0000000..87bc7e0
 --- /dev/null
 +++ b/test/govclear_knowledge_test.dart
-@@ -0,0 +1,44 @@
+@@ -0,0 +1,50 @@
 +import 'dart:typed_data';
 +import 'dart:convert';
 +import 'dart:io';
@@ -427,7 +571,13 @@ index 0000000..aef2d9c
 +    );
 +    expect(found.first['text'], contains('六、駕車行駛人行道。'));
 +    expect(found.first.containsKey('provenance'), isTrue);
-+    expect(GovClearKnowledge.search(units, ['完全無此關鍵字xyz']), isEmpty);
++    expect(GovClearKnowledge.search(units, ['xyznotpresent']), isEmpty);
++    expect(
++      GovClearKnowledge.search(units, [
++        '租金補貼申請資格',
++      ]).any((u) => u['law_id'] == 'pip_b1020_faq_115'),
++      isTrue,
++    );
 +    expect(GovClearKnowledge.search(units, []), isEmpty);
 +    expect(() => GovClearKnowledge.search(units, ['a']), returnsNormally);
 +    expect(

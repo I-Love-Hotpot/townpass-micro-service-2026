@@ -27,7 +27,8 @@ function host(override = () => undefined) {
     if (action === 'retrieve') return JSON.stringify(retrieval);
     const prompt = payload.prompt;
     assert.equal(prompt.startsWith('獨立複核'), false);
-    if (prompt.includes('"sixQuestions"')) return JSON.stringify(draft);
+    if (prompt.includes('"w":')) return JSON.stringify({s:draft.summary,w:draft.sixQuestions,q:[{t:'資格？',k:'單身青年'},{t:'年齡？',k:'租金補貼'},{t:'條件？',k:'租金補貼'}]});
+    if (prompt.includes('"a":')) return JSON.stringify({a:[['回答甲',[0]],['回答乙',[0]],['回答丙',[0]]]});
     if (prompt.includes('"questions"')) return JSON.stringify({questions:[
       {text:'資格如何確認？',quote:'單身青年',terms:['單身青年']},
       {text:'有哪些年齡限制？',quote:'租金補貼',terms:['租金補貼']},
@@ -39,7 +40,7 @@ function host(override = () => undefined) {
 test('summary, questions and answers are generated without any guard calls', async () => {
  const bridge=host(); const result=await analyzeSource(bridge,source,'文件','zh-TW');
  assert.equal(result.publication,'generated'); assert.equal(result.questions.length,3);
- assert.equal(bridge.calls.filter(c=>c.action==='generate').length,5);
+ assert.equal(bridge.calls.filter(c=>c.action==='generate').length,2);
  assert.equal(result.guards,undefined); assert.match(result.summary.action,/AI 生成/);
 });
 test('empty OCR source is sent directly to generation', async () => {
@@ -52,7 +53,34 @@ test('no evidence does not withhold an answer generated from the source', async 
  assert.equal(answer.status,'generated'); assert.match(answer.answer,/成年/);
 });
 test('unparseable question response preserves the generated summary', async () => {
- const bridge=host((action,payload)=>payload?.prompt?.includes('"questions"')?'invalid JSON':undefined);
+ const bridge=host((action,payload)=>payload?.prompt?.includes('"a":')?'invalid JSON':undefined);
  const result=await analyzeSource(bridge,source,'文件','zh-TW');
  assert.equal(result.publication,'partial');assert.equal(result.summary.facts[0],draft.summary);
+});
+
+test('batch reuses complete evidence and maps numeric citations to stored source IDs', async()=>{
+ const bridge=host();const result=await analyzeSource(bridge,source,'文件','zh-TW');
+ const batch=bridge.calls.filter(c=>c.action==='generate')[1].payload.prompt;
+ const data=JSON.parse(batch.split('資料：')[1]);assert.equal(data.e.length,1);assert.equal(data.e[0].text,evidence.text);
+ assert.equal(result.questions[2].citations[0],evidence.unit_id);
+});
+
+test('summary and six fields are delivered before retrieval or answer generation completes', async () => {
+ const snapshots=[];
+ const bridge=host((action,payload)=>{
+   if(action==='retrieve') { assert.equal(snapshots[0].publication,'pending'); assert.equal(snapshots[0].summary.facts[0],draft.summary); }
+   if(payload?.prompt?.includes('"a":')) { assert.equal(snapshots.at(-1).questions.length,3); assert.ok(snapshots.at(-1).questions.every(q=>q.status==='pending')); }
+ });
+ const result=await analyzeSource(bridge,source,'文件','zh-TW',value=>snapshots.push(value));
+ assert.equal(snapshots.at(-1).publication,'generated');
+ assert.equal(snapshots.at(-1).questions[0].answer,result.questions[0].answer);
+ assert.equal(snapshots[0].questions.length,0);
+});
+
+test('a missing batch answer keeps other answers and the early summary', async () => {
+ const bridge=host((action,payload)=>payload?.prompt?.includes('"a":')?{a:[['第一題',[0]],null,['第三題',[]]]}:undefined);
+ const result=await analyzeSource(bridge,source,'文件','zh-TW');
+ assert.equal(result.publication,'partial');
+ assert.deepEqual(result.questions.map(q=>q.status),['generated','error','generated']);
+ assert.equal(result.summary.facts[0],draft.summary);
 });

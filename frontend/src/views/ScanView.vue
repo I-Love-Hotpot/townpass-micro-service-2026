@@ -12,6 +12,8 @@ import { translate } from '@/services/i18n';
 import { recognizeDocument } from '@/services/offline';
 import { processWithProgress } from '@/services/processing';
 import { records } from '@/services/records';
+import type { DocumentAnalysis } from '@/services/govclearRag';
+import { SIX_QUESTIONS } from '@/services/govclearSixQuestions';
 import { useWorkspace } from '@/stores/workspace';
 
 const workspace = useWorkspace();
@@ -27,6 +29,7 @@ const collectingPhotos = ref(false);
 const cropPage = ref<ImagePage>();
 const error = ref('');
 const stage = ref('');
+const preview = shallowRef<DocumentAnalysis>();
 const elapsed = ref(0);
 let timer: ReturnType<typeof setInterval> | undefined;
 const busy = computed(() => Boolean(workspace.processing || workspace.dataOperation));
@@ -184,6 +187,7 @@ async function run() {
   const { signal } = current;
   controller = current;
   error.value = '';
+  preview.value = undefined;
   const started = performance.now();
   elapsed.value = 0;
   timer = setInterval(() => {
@@ -212,7 +216,22 @@ async function run() {
           workspace.context.locale,
           signal,
           pages.value.map((page) => page.file!),
-          mergePageText(pages.value)
+          mergePageText(pages.value),
+          (analysis) => {
+            if (controller === current && !signal.aborted) {
+              const firstResult = !preview.value;
+              preview.value = analysis;
+              if (firstResult)
+                void nextTick(() => {
+                  if (controller === current && !signal.aborted)
+                    document.getElementById('preview-heading')?.scrollIntoView({ block: 'start' });
+                });
+              stage.value =
+                workspace.context.locale === 'id'
+                  ? 'Menyiapkan jawaban'
+                  : '重點已完成，正在補上問題回答';
+            }
+          }
         ),
       async (document) => {
         saving = true;
@@ -313,6 +332,39 @@ async function run() {
         <button v-if="busy" type="button" class="text-action" @click="cancel">
           {{ t('stop') }}
         </button>
+      </section>
+      <section
+        v-if="preview"
+        aria-labelledby="preview-heading"
+        class="space-y-4"
+        aria-live="polite"
+      >
+        <h2 id="preview-heading" class="section-title">
+          {{ workspace.context.locale === 'id' ? 'Ringkasan' : '先看重點' }}
+        </h2>
+        <p v-for="fact in preview.summary.facts" :key="fact" class="whitespace-pre-line">
+          {{ fact }}
+        </p>
+        <dl class="grid gap-3 sm:grid-cols-2">
+          <div v-for="item in SIX_QUESTIONS" :key="item.key" class="rounded bg-surface p-3">
+            <dt class="font-semibold">{{ item.title }}</dt>
+            <dd class="whitespace-pre-line">
+              {{ preview.sixQuestions[item.key] ?? t('notMentioned') }}
+            </dd>
+          </div>
+        </dl>
+        <article v-for="item in preview.questions" :key="item.id" class="rounded bg-surface p-3">
+          <h3 class="font-semibold">{{ item.text }}</h3>
+          <p class="whitespace-pre-line">
+            {{
+              item.status === 'pending'
+                ? workspace.context.locale === 'id'
+                  ? 'Menyiapkan jawaban…'
+                  : '正在查資料並產生回答…'
+                : item.answer
+            }}
+          </p>
+        </article>
       </section>
       <section
         v-if="pages.length"

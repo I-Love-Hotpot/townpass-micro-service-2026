@@ -1,7 +1,7 @@
 import type { DocumentRecord, Locale } from '@/interfaces/document';
 import { summarizeSource, withInference } from './govclearDocument';
 import { recognizePages, type ImagePage } from './govclearImages';
-import { analyzeSource, answerWithEvidence } from './govclearRag';
+import { analyzeSource, answerWithEvidence, type DocumentAnalysis } from './govclearRag';
 import { objectJson } from './govclearJson';
 import { parseSixQuestions } from './govclearSixQuestions';
 import sixPolicy from '@/assets/govclear/six-questions-policy.txt?raw';
@@ -59,9 +59,12 @@ export function analyzeDocument(
   source: string,
   title: string,
   locale: Locale,
-  signal: AbortSignal
+  signal: AbortSignal,
+  onProgress?: (analysis: DocumentAnalysis) => void
 ) {
-  return withInference(signal, (bridge) => analyzeSource(bridge, source, title, locale));
+  return withInference(signal, (bridge) =>
+    analyzeSource(bridge, source, title, locale, onProgress)
+  );
 }
 
 export function analyzeSixQuestions(source: string, locale: Locale, signal: AbortSignal) {

@@ -1,3 +1,4 @@
+import type { DocumentAnalysis } from './govclearRag';
 import type { DocumentRecord, FileKind, Locale, OriginalFile } from '@/interfaces/document';
 import { preparePages } from './files';
 import { defaultDestinations, fixtures } from './fixtures';
@@ -77,13 +78,14 @@ export async function makeDocument(
   locale: Locale,
   signal: AbortSignal,
   pages: Blob[],
-  source: string
+  source: string,
+  onProgress?: (analysis: DocumentAnalysis) => void
 ): Promise<DocumentRecord> {
   const hash = originals.length === 1 ? await contentHash(originals[0].blob) : null;
   const match = findFixture(fixtures, hash);
   signal.throwIfAborted();
   const title = originals[0].name.replace(/\.[^.]+$/, '');
-  const analysis = await analyzeDocument(source, title, locale, signal);
+  const analysis = await analyzeDocument(source, title, locale, signal, onProgress);
   return {
     id: crypto.randomUUID(),
     fixtureId: match?.id,
