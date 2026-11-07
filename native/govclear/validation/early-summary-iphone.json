@@ -1,0 +1,145 @@
+{
+  "status": "passed",
+  "runs": [
+    {
+      "state": "cold",
+      "ocrSeconds": 0.249,
+      "planSeconds": 6.109,
+      "planMetrics": {
+        "input_tokens": 230,
+        "total_seconds": 6.10839549999946,
+        "output_tokens": 128,
+        "backend": "gpu_mtp",
+        "prefill_tokens_per_second": 214.41020704451728,
+        "decode_tokens_per_second": 31.336886989362135,
+        "session_seconds": 0.9496832500008168,
+        "first_token_seconds": 1.10462139925
+      },
+      "sixFieldsReturned": 6,
+      "sourceCharacters": 77,
+      "draft": {
+        "s": "符合資格者需在115年12月10日前，提交身分證及租賃契約，以申請115年度租金補貼。",
+        "w": {
+          "who": "符合資格者",
+          "what": "申請租金補貼",
+          "when": "115年12月10日前",
+          "where": null,
+          "why": null,
+          "how": "附上身分證及租賃契約"
+        }
+      },
+      "retrievalMode": "document-facts",
+      "retrievalSeconds": 0.278,
+      "answers": [
+        {
+          "q": "若申請人未租賃住宅，應於核定函後多久補件？",
+          "t": "應於核發租金補貼核定函之次日起三個月內補件。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "若租賃契約出租人非所有權人，主管機關可要求什麼文件？",
+          "t": "得通知限期檢附所有權人同意證明文件。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "若申請人使用掛號郵件寄送申請，申請日如何認定？",
+          "t": "其申請日之認定以郵戳為憑。",
+          "c": [
+            0
+          ]
+        }
+      ],
+      "firstBatchSeconds": 6.358,
+      "answersSeconds": 12.422,
+      "answerMetrics": {
+        "backend": "gpu_mtp",
+        "input_tokens": 707,
+        "session_seconds": 0.0015323750012612436,
+        "output_tokens": 208,
+        "decode_tokens_per_second": 30.2320614109468,
+        "total_seconds": 12.421767374999035,
+        "prefill_tokens_per_second": 127.66034957375088,
+        "first_token_seconds": 5.5712105075
+      },
+      "totalSeconds": 19.058,
+      "under20Seconds": true,
+      "evidenceCount": 1
+    },
+    {
+      "state": "warm",
+      "ocrSeconds": 0.17,
+      "planSeconds": 5.342,
+      "planMetrics": {
+        "input_tokens": 230,
+        "total_seconds": 5.341778416666784,
+        "output_tokens": 128,
+        "backend": "gpu_mtp",
+        "prefill_tokens_per_second": 158.71441325265351,
+        "decode_tokens_per_second": 32.905007327664926,
+        "session_seconds": 0.0013877083365514409,
+        "first_token_seconds": 1.47953426125
+      },
+      "sixFieldsReturned": 6,
+      "sourceCharacters": 77,
+      "draft": {
+        "s": "符合資格者需在115年12月10日前，提交身分證及租賃契約，以申請115年度租金補貼。",
+        "w": {
+          "who": "符合資格者",
+          "what": "申請租金補貼",
+          "when": "115年12月10日前",
+          "where": null,
+          "why": null,
+          "how": "附上身分證及租賃契約"
+        }
+      },
+      "retrievalMode": "document-facts",
+      "retrievalSeconds": 0.024,
+      "answers": [
+        {
+          "q": "若申請人未租賃住宅，應於核定函後多久補件？",
+          "t": "應於核發租金補貼核定函之次日起三個月內補件。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "若租賃契約出租人非所有權人，主管機關可要求什麼文件？",
+          "t": "得通知限期檢附所有權人同意證明文件。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "若申請人使用掛號郵件寄送申請，申請日如何認定？",
+          "t": "其申請日之認定以郵戳為憑。",
+          "c": [
+            0
+          ]
+        }
+      ],
+      "firstBatchSeconds": 5.512,
+      "answersSeconds": 13.146,
+      "answerMetrics": {
+        "input_tokens": 707,
+        "total_seconds": 13.14518129166754,
+        "output_tokens": 208,
+        "backend": "gpu_mtp",
+        "prefill_tokens_per_second": 119.58270204470537,
+        "decode_tokens_per_second": 28.768207922811406,
+        "session_seconds": 0.0013772500024060719,
+        "first_token_seconds": 5.946986926999999
+      },
+      "totalSeconds": 18.682,
+      "under20Seconds": true,
+      "evidenceCount": 1
+    }
+  ],
+  "date": "2026-11-08",
+  "device": "XC’s iPhone / iOS 27.2",
+  "fixture": "Synthetic 1000x700 PNG, 77 OCR characters",
+  "scope": "Native OCR + first summary/six-fields + local retrieval from extracted subject/materials + generated concrete questions and answers. Excludes WebView, IndexedDB and rendering; not a universal 20-second guarantee."
+}

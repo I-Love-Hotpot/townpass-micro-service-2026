@@ -229,7 +229,7 @@ async function run() {
               stage.value =
                 workspace.context.locale === 'id'
                   ? 'Menyiapkan jawaban'
-                  : '重點已完成，正在補上問題回答';
+                  : '摘要已完成，正在整理具體問題與回答';
             }
           }
         ),

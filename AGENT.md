@@ -135,6 +135,8 @@ PYTHONPATH=local-inference /usr/bin/python3 -m unittest discover -s local-infere
 
 延伸閱讀：`docs/integration-main-offline.md`、`docs/govclear-webview.md`、`docs/govclear-iphone-offline.md`、`docs/govclear-summary.md`、`docs/document-corners.md`、`local-inference/VALIDATION.md`。
 
-## 2026-11-08 RAG／Guard 更新
+## 2026-11-08 本機 RAG 與分段結果更新
 
-新文件建立改走 `services/govclearRag.ts` 的摘要／六何／推測問題／RAG／逐階段檢查；`govclearGuard.ts` 產生來源綁定的複核報告。Flutter 新增 `generate` 與 `retrieve` 動作，正式模型仍在手機本機執行，沒有 Python runtime。資料及可重套 Flutter patch 位於 `native/govclear/`；目前已同步修改相鄰 TownPass-merge。詳細現況與上下文／效能限制見 `docs/govclear-rag-guard.md`，不要把本檔較早的「先保存摘要再產生六何」流程當作新紀錄流程。
+新文件改走 services/govclearRag.ts：第一通只生成摘要／六何，立即預覽；由 what/how 檢索一段完整本機證據，第二通一起生成具體情境問題與回答。govclearJson.ts 僅處理 JSON／雜湊；依使用者最終指示，所有 AI Guard 已移除，不可將生成結果稱為已複核。文件頁已移除「下一步」及服務／申辦案件入口，重新解釋也可先顯示摘要。
+
+Flutter 的 generate／retrieve 沿用手機既有模型與資料，不需要 Python runtime。資料及可重套 patch 在 native/govclear/，實機測速與限制見 docs/govclear-rag-guard.md 最新章節。單張短通知的原生測試不能當作所有圖片端到端 20 秒保證；不要沿用本檔較早的保存／六何流程或護欄描述作為最新行為。

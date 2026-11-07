@@ -28,12 +28,7 @@ function host(override = () => undefined) {
     const prompt = payload.prompt;
     assert.equal(prompt.startsWith('獨立複核'), false);
     if (prompt.includes('"w":')) return JSON.stringify({s:draft.summary,w:draft.sixQuestions,q:[{t:'資格？',k:'單身青年'},{t:'年齡？',k:'租金補貼'},{t:'條件？',k:'租金補貼'}]});
-    if (prompt.includes('"a":')) return JSON.stringify({a:[['回答甲',[0]],['回答乙',[0]],['回答丙',[0]]]});
-    if (prompt.includes('"questions"')) return JSON.stringify({questions:[
-      {text:'資格如何確認？',quote:'單身青年',terms:['單身青年']},
-      {text:'有哪些年齡限制？',quote:'租金補貼',terms:['租金補貼']},
-      {text:'如何核對條件？',quote:'核對資格',terms:['租金補貼']}
-    ]});
+    if (prompt.includes('"a":')) return JSON.stringify({a:[{q:'未滿40歲但已婚，能申請這份租金補貼嗎？',t:'回答甲',c:[0]},{q:'申請租金補貼時租約尚未補齊，可以後補嗎？',t:'回答乙',c:[0]},{q:'錯過這份租金補貼的申請期限還能申請嗎？',t:'回答丙',c:[0]}]});
     return JSON.stringify({text:'此版本說明成年未達40歲單身者；個案及歷史版本仍待核對。',citations:[evidence.unit_id]});
   }};
 }
@@ -69,7 +64,7 @@ test('summary and six fields are delivered before retrieval or answer generation
  const snapshots=[];
  const bridge=host((action,payload)=>{
    if(action==='retrieve') { assert.equal(snapshots[0].publication,'pending'); assert.equal(snapshots[0].summary.facts[0],draft.summary); }
-   if(payload?.prompt?.includes('"a":')) { assert.equal(snapshots.at(-1).questions.length,3); assert.ok(snapshots.at(-1).questions.every(q=>q.status==='pending')); }
+   if(payload?.prompt?.includes('"a":')) { assert.equal(snapshots.at(-1).questions.length,0); }
  });
  const result=await analyzeSource(bridge,source,'文件','zh-TW',value=>snapshots.push(value));
  assert.equal(snapshots.at(-1).publication,'generated');
@@ -78,9 +73,19 @@ test('summary and six fields are delivered before retrieval or answer generation
 });
 
 test('a missing batch answer keeps other answers and the early summary', async () => {
- const bridge=host((action,payload)=>payload?.prompt?.includes('"a":')?{a:[['第一題',[0]],null,['第三題',[]]]}:undefined);
+ const bridge=host((action,payload)=>payload?.prompt?.includes('"a":')?{a:[{q:'第一題',t:'回答甲',c:[0]},null,{q:'第三題',t:'回答丙',c:[]}]}:undefined);
  const result=await analyzeSource(bridge,source,'文件','zh-TW');
  assert.equal(result.publication,'partial');
- assert.deepEqual(result.questions.map(q=>q.status),['generated','error','generated']);
+ assert.deepEqual(result.questions.map(q=>q.status),['generated','generated']);
  assert.equal(result.summary.facts[0],draft.summary);
+});
+
+test('early summary generation excludes questions and retrieval reuses the extracted subject and material facts', async()=>{
+ const bridge=host();const result=await analyzeSource(bridge,source,'文件','zh-TW');
+ const calls=bridge.calls.filter(c=>c.action==='generate');
+ assert.equal(calls[0].payload.prompt.includes('"q":'),false);
+ assert.equal(bridge.calls.filter(c=>c.action==='retrieve').length,1);
+ assert.deepEqual(JSON.parse(bridge.calls.find(c=>c.action==='retrieve').payload.terms),[draft.sixQuestions.what,draft.sixQuestions.how]);
+ assert.match(calls[1].payload.prompt,/原文材料或期限的具體困難/);
+ assert.match(result.questions[0].text,/未滿40歲但已婚/);
 });

@@ -7,8 +7,9 @@ import type { DocumentRecord } from '@/interfaces/document';
 import { answerQuestion } from '@/services/answers';
 import { fixtures } from '@/services/fixtures';
 import { translate, type Label } from '@/services/i18n';
-import { delay, explainAgain } from '@/services/processing';
+import { explainAgain } from '@/services/processing';
 import { analyzeDocument, analyzeSixQuestions, askDocument } from '@/services/offline';
+import type { DocumentAnalysis } from '@/services/govclearRag';
 import { hashText } from '@/services/govclearJson';
 import { SIX_QUESTIONS } from '@/services/govclearSixQuestions';
 import { records } from '@/services/records';
@@ -18,6 +19,8 @@ const route = useRoute();
 const workspace = useWorkspace();
 const t = computed(() => translate.bind(null, workspace.context.locale));
 const entry = shallowRef<DocumentRecord>();
+const explanationPreview = shallowRef<DocumentAnalysis>();
+const visibleSummary = computed(() => explanationPreview.value?.summary ?? entry.value?.summary);
 const urls = shallowRef<string[]>([]);
 const loadError = ref(false);
 const loading = ref(true);
@@ -83,6 +86,7 @@ function cancelAction() {
   pending.value = false;
   feedback.value = undefined;
   actionError.value = '';
+  explanationPreview.value = undefined;
   phase.value = undefined;
 }
 
@@ -148,11 +152,18 @@ async function applyAction(action: 'explain' | 'chat') {
   let refreshSix = false;
   const started = startTimer();
   try {
-    await delay(450, current.signal);
     const sample = fixtures.find((item) => item.id === record.fixtureId)?.summaries[locale];
     const analysis =
       action === 'explain' && record.source
-        ? await analyzeDocument(draftSource.value, record.summary.title, locale, current.signal)
+        ? await analyzeDocument(
+            draftSource.value,
+            record.summary.title,
+            locale,
+            current.signal,
+            (analysis) => {
+              if (task === current && !current.signal.aborted) explanationPreview.value = analysis;
+            }
+          )
         : undefined;
     const summary =
       action === 'explain'
@@ -223,6 +234,7 @@ async function applyAction(action: 'explain' | 'chat') {
     if (task === current) {
       clearInterval(timer);
       pending.value = false;
+      explanationPreview.value = undefined;
       task = undefined;
       phase.value = undefined;
     }
@@ -379,7 +391,7 @@ async function copySix() {
       <article v-else class="space-y-7">
         <h1 class="page-title">{{ entry.summary.title }}</h1>
         <section
-          v-if="!sourceDirty"
+          v-if="visibleSummary && (!sourceDirty || explanationPreview)"
           class="rounded bg-surface p-4"
           aria-labelledby="summary-heading"
         >
@@ -392,7 +404,7 @@ async function copySix() {
           </p>
           <ul class="mt-3 list-disc space-y-2 pl-5">
             <li
-              v-for="fact in entry.summary.facts"
+              v-for="fact in visibleSummary.facts"
               :key="fact"
               class="whitespace-pre-line break-words"
             >
@@ -400,7 +412,7 @@ async function copySix() {
             </li>
           </ul>
           <p class="mt-4 break-words border-t border-[#CAD1D5] pt-3 font-semibold text-[#22474E]">
-            {{ entry.summary.action }}
+            {{ visibleSummary.action }}
           </p>
           <div class="mt-3 flex flex-wrap gap-x-2">
             <RouterLink
@@ -585,22 +597,6 @@ async function copySix() {
           {{ t('stop') }}
         </button>
         <DocumentGallery :id="entry.id" :urls="urls" :locale="workspace.context.locale" />
-        <section aria-labelledby="next-heading">
-          <h2 id="next-heading" class="section-title">{{ t('next') }}</h2>
-          <RouterLink
-            v-for="item in entry.destinations"
-            :key="item.id"
-            :to="{ name: 'destination', params: { id: entry.id, destination: item.id } }"
-            class="flex min-h-16 items-center gap-3 border-b border-line py-3 text-brand-dark"
-          >
-            <AppIcon :name="item.kind === 'official' ? 'external' : 'app'" class="shrink-0" />
-            <div class="min-w-0 flex-1 break-words">
-              <div class="font-semibold">{{ item.label[workspace.context.locale] }}</div>
-              <div class="mt-1 text-sm text-muted">{{ t(item.kind) }}</div>
-            </div>
-            <AppIcon name="next" class="h-5 w-5 shrink-0" />
-          </RouterLink>
-        </section>
       </article>
     </Transition>
   </div>
