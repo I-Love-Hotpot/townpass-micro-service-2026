@@ -543,7 +543,7 @@ Status: 503 Service Unavailable
 
 後端使用 `@fastify/cors` 處理跨域請求。
 
-**允許的來源：** 由環境變數 `CORS_ALLOWED_ORIGINS` 定義（開發環境為 `http://localhost:5173`）
+**允許的來源：** 由環境變數 `CORS_ALLOWED_ORIGINS` 定義（預設為 `http://localhost:3000,http://localhost:5173`）
 
 **允許的方法：** GET, POST, PUT, DELETE, PATCH, OPTIONS
 
@@ -690,7 +690,7 @@ docker build -f backend/Dockerfile \
 
 | 變數名                    | 說明                        | 示例                          |
 |-----------------------|---------------------------|-------------------------------|
-| CORS_ALLOWED_ORIGINS | 允許的跨域來源             | http://localhost:5173         |
+| CORS_ALLOWED_ORIGINS | 允許的跨域來源             | http://localhost:3000,http://localhost:5173 |
 | MYSQL_DATABASE       | 數據庫名稱                | townpass                      |
 | MYSQL_USER           | 數據庫用戶                | townpassuser                  |
 | MYSQL_PASSWORD       | 數據庫密碼                | (自定義)                      |
@@ -761,4 +761,3 @@ docker build -f backend/Dockerfile \
 - [Tailwind CSS 文檔](https://tailwindcss.com/)
 - [MySQL2 文檔](https://github.com/sidorares/node-mysql2)
 - [Pinia 文檔](https://pinia.vuejs.org/)
-

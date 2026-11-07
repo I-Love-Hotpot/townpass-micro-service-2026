@@ -1,7 +1,10 @@
-export async function fetchPreviewLinks(fetcher: typeof fetch = fetch): Promise<string[]> {
+export async function fetchPreviewLinks(
+  apiBaseUrl: string,
+  fetcher: typeof fetch = fetch
+): Promise<string[]> {
   let response: Response;
   try {
-    response = await fetcher('/api/pr-preview-links');
+    response = await fetcher(`${apiBaseUrl.replace(/\/+$/, '')}/api/pr-preview-links`);
   } catch (error) {
     throw new Error('無法連線至 PR 預覽 API，請稍後再試。', { cause: error });
   }

@@ -14,8 +14,10 @@
    請先完成授權。Compose 只將此 token 提供給 backend，不可加上 `VITE_` 前綴。
 3. 在 Coolify 設定 frontend 服務的網域與 HTTPS；資料庫連線及其餘正式環境設定
    仍需依現有部署方式配置。
-4. 啟動後開啟 `https://<設定的網域>/pr-review-menu`。Nginx 將同來源的
-   `GET /api/pr-preview-links` 代理到同一 Compose 的 backend，不需要額外 CORS 設定。
+4. 啟動後開啟 `https://<設定的網域>/pr-review-menu`。前端使用建置時的
+   `VITE_API_BASE_URL` 請求 `/api/pr-preview-links`；若該值為空，Nginx 將同來源請求
+   代理到同一 Compose 的 backend。若使用跨來源 API，須在後端設定
+   `CORS_ALLOWED_ORIGINS`，允許前端網域。
    所有網域的首頁維持原有行為；PR 列表 API 本身不查詢資料庫，
    但既有後端的健康檢查仍需要資料庫。若在反向代理設定路徑規則，
    也需允許 `/api/pr-preview-links` 及前端靜態資源通過。
@@ -45,8 +47,10 @@ cd frontend
 pnpm dev
 ```
 
-開啟 Vite 顯示的網址並前往 `/pr-review-menu`，開發伺服器會將 API 請求代理到
-`localhost:3001`。既有首頁維持不變。
+設定 `VITE_API_BASE_URL=http://localhost:3001`，再開啟 Vite 顯示的網址並前往
+`/pr-review-menu`；瀏覽器會直接連線到後端。後端預設允許
+`http://localhost:3000` 和 `http://localhost:5173` 跨來源存取。
+Docker 開發環境的選單網址為 `http://localhost:3000/pr-review-menu`。
 
 ## 故障排除
 

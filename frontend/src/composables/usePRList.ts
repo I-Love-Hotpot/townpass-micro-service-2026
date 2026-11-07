@@ -11,7 +11,7 @@ export const usePRList = () => {
     loading.value = true;
     error.value = null;
     try {
-      links.value = await fetchPreviewLinks();
+      links.value = await fetchPreviewLinks(import.meta.env.VITE_API_BASE_URL || '');
     } catch (err) {
       error.value = err instanceof Error ? err.message : '無法載入預覽列表。';
       console.error('Error fetching preview links:', err);
