@@ -253,6 +253,12 @@ async function run() {
         : cause instanceof Error
           ? cause.message
           : t.value('processingError');
+    if (!signal.aborted) {
+      await nextTick();
+      const message = document.getElementById('scan-error');
+      message?.scrollIntoView({ block: 'center' });
+      message?.focus({ preventScroll: true });
+    }
   } finally {
     if (controller === current) cancel();
   }
@@ -329,7 +335,7 @@ async function run() {
         <p v-if="stage" role="status" class="text-sm text-brand-dark">
           {{ stage }} · {{ t('elapsedSeconds', { n: elapsed }) }}
         </p>
-        <p v-if="error" id="scan-error" class="feedback" role="alert">{{ error }}</p>
+        <p v-if="error" id="scan-error" class="feedback" role="alert" tabindex="-1">{{ error }}</p>
         <button v-if="busy" type="button" class="text-action" @click="cancel">
           {{ t('stop') }}
         </button>

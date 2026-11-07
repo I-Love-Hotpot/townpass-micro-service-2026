@@ -44,3 +44,7 @@ Flutter `integration_test/govclear_logic_test.dart` 以手機現有 Gemma 測試
 ## 多筆參考資料加速
 
 Dart retrieve可接收source，為每筆候選產生context_text/context_is_excerpt，模型使用相關完整段落；原text與引用全文保留。保留首段、FAQ基本說明、款內子目及可辨識的同條款次連結，並非跨條文法律適用性解析。網頁與Flutter需同步更新才會取得此加速。integration_test/govclear_speed_test.dart同時確認三筆候選完整保留、兩輪原生照片流程不超過20秒，並檢查縮短後提示詞的年齡／角色／日期案例。
+
+## 正式WebView完整流程驗收
+
+govclear_webview_e2e_test.dart直接測正式GovClearWebView與線上微服務。先將{"script":"/assets/index-當次版本.js"}存到App Documents/govclear-e2e-config.json；測試確認實際載入該版本，合成照片經真實選圖input及開始按鈕，計時到保存／導覽／畫面完成。結果在Documents/govclear-webview-e2e.json及兩張govclear-e2e-*.png。僅清理本次合成紀錄，測後需恢復lib/main.dart。最新版17.315秒、三區塊與6欄／全部問答已顯示，詳見微服務validation/webview-e2e-*。

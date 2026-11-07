@@ -1,0 +1,98 @@
+{
+  "date": "2026-11-08",
+  "status": "passed",
+  "scope": "Real production WebView and native bridge; synthetic photo, no mocked OCR or model. Timing starts immediately before clicking the production start button and ends after stored results are laid out and page transitions finish.",
+  "script": "https://townpass.fearnot.tw/assets/index-DlrzQPpM.js",
+  "firstSummaryMs": 7034,
+  "totalMs": 17315,
+  "recordId": "5fb0f82b-2e5c-4a25-a3dc-3a62b8245b6e",
+  "summary": [
+    "115年度租金補貼開放申請，需在115年12月10日前提交申請文件。"
+  ],
+  "source": "【第 1 張】\n租金補貼通知\n115年度租金補貼開放申請。\n請在115年12月10日前提出申請。\n申請時請附上身分證及租賃契約。\n符合資格者才可領取補貼。",
+  "sixQuestions": {
+    "who": "符合資格者",
+    "what": "租金補貼",
+    "when": "115年12月10日前",
+    "where": null,
+    "why": null,
+    "how": "附上身分證及租賃契約"
+  },
+  "sixRenderedCount": 6,
+  "renderedSections": [
+    "summary-heading",
+    "six-heading",
+    "rag-heading"
+  ],
+  "questions": [
+    {
+      "question": "115年度租金補貼的申請截止日期是什麼時候？",
+      "answer": "請在115年12月10日前提出申請。",
+      "citations": [
+        "d0070205:17:f04105553202db61d810"
+      ],
+      "references": [
+        {
+          "id": "d0070205:17:f04105553202db61d810",
+          "article": "第 17 條",
+          "fullCharacters": 444,
+          "contextCharacters": 253
+        }
+      ]
+    },
+    {
+      "question": "申請租金補貼時，除了身分證和租賃契約外，還需要準備哪些文件？",
+      "answer": "根據不同的申請情況，可能需要準備申請書，以及租賃契約影本或電子契約。",
+      "citations": [
+        "d0070205:17:f04105553202db61d810",
+        "pip_b1020_faq_115:q8:707ced0c99f2aad2ca81"
+      ],
+      "references": [
+        {
+          "id": "d0070205:17:f04105553202db61d810",
+          "article": "第 17 條",
+          "fullCharacters": 444,
+          "contextCharacters": 253
+        },
+        {
+          "id": "pip_b1020_faq_115:q8:707ced0c99f2aad2ca81",
+          "article": "問答第8題",
+          "fullCharacters": 1227,
+          "contextCharacters": 282
+        }
+      ]
+    },
+    {
+      "question": "如果租賃契約在申請日後到期，是否會影響到領取補貼的資格？",
+      "answer": "如果審核時發現租約在申請日後到期，直轄市、縣（市）政府仍可繼續辦理審核，但核撥租金補貼時會檢核租約已到期，無法撥款，核定函上會敘明請申請人依限補新租約。",
+      "citations": [
+        "pip_b1020_faq_115:q35:bba4aa037cbb25507d05"
+      ],
+      "references": [
+        {
+          "id": "pip_b1020_faq_115:q35:bba4aa037cbb25507d05",
+          "article": "問答第35題",
+          "fullCharacters": 575,
+          "contextCharacters": 321
+        }
+      ]
+    }
+  ],
+  "renderedQuestions": [
+    {
+      "question": "115年度租金補貼的申請截止日期是什麼時候？",
+      "answer": "請在115年12月10日前提出申請。",
+      "references": 1
+    },
+    {
+      "question": "申請租金補貼時，除了身分證和租賃契約外，還需要準備哪些文件？",
+      "answer": "根據不同的申請情況，可能需要準備申請書，以及租賃契約影本或電子契約。",
+      "references": 2
+    },
+    {
+      "question": "如果租賃契約在申請日後到期，是否會影響到領取補貼的資格？",
+      "answer": "如果審核時發現租約在申請日後到期，直轄市、縣（市）政府仍可繼續辦理審核，但核撥租金補貼時會檢核租約已到期，無法撥款，核定函上會敘明請申請人依限補新租約。",
+      "references": 1
+    }
+  ]
+}

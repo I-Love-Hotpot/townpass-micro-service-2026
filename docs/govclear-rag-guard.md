@@ -228,3 +228,11 @@ DocumentAnalysis的optional questionError記錄生成／解析失敗原因；只
 測試包含原生OCR、模型初始化、摘要／六何、本機檢索與問答；不含WebView、IndexedDB、畫面渲染或網頁圖片預處理，不能作為任意照片或長文件端到端20秒保證，也不能以兩筆推估P95。新舊測量非受控發熱對照。原始數據與當次提示詞在native/govclear/validation/fast-multi-iphone.json及fast-multi-prompts.json。
 
 68項前端測試、Flutter5項知識庫測試、靜態分析、前端lint／型別／正式build及瀏覽器Native替身通過。真機測速現在驗證兩輪均不超過20秒且三筆候選保留，另通過14歲駕駛需核對、14歲乘客搭成人駕駛、11月14日為日期的三個真機回歸案例。未重現使用者原照片，亦未保證生成答案或引用的法律適用性。
+
+## 完整WebView實機驗收與橋接取消修正（2026-11-08）
+
+使用者回報辨識後只剩照片與原文，沒有結果。找到橋接清理會在已成功完成OCR後仍送cancel的問題：原生取消為非同步，可能干擾緊接的摘要。dispose改為僅在仍有pending請求時取消，成功完成只清理listener；明確停止與逾時仍取消。新增測試先以延遲取消重現下一階段被停止，再確認修正；69項前端測試、lint／型別／build通過。這是已確認的程式競態風險，未取得使用者出錯原圖重現，不能斷言該次失敗只由此造成。掃描catch現在捲動並聚焦既有錯誤訊息，讓失敗原因可見，照片與OCR保留。
+
+Flutter新增govclear_webview_e2e_test.dart，直接使用正式GovClearWebView、已部署微服務及真實Native bridge／Apple Vision／Gemma，沒有mock模型或OCR。將合成PNG送入正式選圖input，從自動點擊「辨識並產生摘要」前計時；直到IndexedDB保存完成、結果頁完成導覽、摘要／六何／問答均在DOM排版、轉場結束並經過兩個動畫影格才停止。實測最新版index-DlrzQPpM.js：摘要7.034秒，所有結果17.315秒；六何6欄、3題自然語言問答，實際引用3個不同unit_id，畫面各題顯示1／2／1筆引用。此前未修正取消的同張圖完整流程17.477秒，未重複跑相同版本取最好成績；本次因使用者回報而修正後重驗。
+
+數據涵蓋WebView呼叫、實際OCR、推論、檢索、IndexedDB、頁面導覽與排版，不包含選圖前操作及首次離線版本下載。使用單張77字合成通知，不是使用者原圖、長文件、發熱情境或P95保證。驗證後只刪除本次合成紀錄，IndexedDB既有紀錄未清除；正常App已還原。結果與實機截圖見native/govclear/validation/webview-e2e-iphone.json、webview-e2e-summary.png、webview-e2e-questions.png。

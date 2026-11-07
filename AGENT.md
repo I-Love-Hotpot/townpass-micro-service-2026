@@ -154,3 +154,5 @@ Flutter 的 generate／retrieve 沿用手機既有模型與資料，不需要 Py
 法條引用修正：自動問答保留檢索前三筆完整候選，模型使用每筆相關完整段落，各題c選自己的索引，沒有引用就不附任何條文；不可將全部候選當作該題引用。手動追問與舊紀錄的畫面亦只顯示citations實際對應的證據。同一條確實適用仍可共用，不要為了不同而輪流配條文。
 
 效能更新：Flutter GovClearKnowledge.retrieve新增optional source，回傳context_text/context_is_excerpt；原text、metadata、hash不變。按文件詞彙選完整段落，保留首段、FAQ基本說明、款內子目與可辨識的同條款次連結；不作跨條文適用性驗證。網頁只在推論用節錄，引用仍存／顯示全文。舊host缺context欄位時回用全文，不阻擋處理。提示詞／JSON縮排精簡；沒有新字數門檻或Guard。
+
+橋接生命週期：成功完成請求後dispose僅停止接收並移除listener，不送native cancel，以免非同步取消干擾緊接的摘要／六何。仍有pending請求或使用者按停止／逾時時才取消。掃描失敗會捲動並聚焦scan-error，保留照片與OCR供重試。
