@@ -4,21 +4,8 @@ import { readFileSync } from 'node:fs';
 import ts from 'typescript';
 const source = readFileSync(new URL('../src/services/govclearImages.ts', import.meta.url), 'utf8');
 const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 } }).outputText;
-const { validateSelection, recognizePages, mergePageText, pageReady } = await import('data:text/javascript;base64,' + Buffer.from(compiled).toString('base64'));
+const { recognizePages, mergePageText, pageReady } = await import('data:text/javascript;base64,' + Buffer.from(compiled).toString('base64'));
 const page = name => ({ id: name, name, preview: '', size: 100, ownedPreview: false, text: '', status: 'pending', error: '' });
-const file = (size = 100, type = 'image/png') => ({ name: 'page.png', type, size });
-
-test('validates the entire selection before changing existing pages', () => {
-  const existing = [page('original')];
-  assert.doesNotThrow(() => validateSelection(existing, [file(), file()]));
-  for (const files of [Array.from({ length: 5 }, () => file()), [file(0)], [file(21 * 1024 * 1024)], [file(100, 'application/pdf')]]) {
-    assert.throws(() => validateSelection(existing, files));
-    assert.equal(existing.length, 1);
-    assert.equal(existing[0].name, 'original');
-  }
-  assert.throws(() => validateSelection([], Array.from({ length: 3 }, () => file(18 * 1024 * 1024))), /50 MB/);
-});
-
 test('continues after one image fails and retries only unfinished pages', async () => {
   const pages = [page('first'), page('second'), page('third')];
   const called = [];
@@ -59,4 +46,10 @@ test('merged evidence follows current order and includes each corrected page onc
   const pages = [{ text: '第一頁修正金額300元' }, { text: '第二頁期限115年11月30日' }];
   assert.equal(mergePageText(pages), '【第 1 張】\n第一頁修正金額300元\n\n【第 2 張】\n第二頁期限115年11月30日');
   assert.equal(mergePageText([...pages].reverse()), '【第 1 張】\n第二頁期限115年11月30日\n\n【第 2 張】\n第一頁修正金額300元');
+});
+
+test('OCR empty and uncertain text can continue to downstream processing', async () => {
+ const pages=[page('empty'),page('uncertain')];
+ assert.equal(await recognizePages(pages, async p => p.id === 'empty' ? '' : '[無法辨識]', () => true, () => {}),0);
+ assert.ok(pages.every(pageReady));
 });

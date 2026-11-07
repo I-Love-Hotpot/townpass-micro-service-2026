@@ -97,3 +97,11 @@ OCR 本身是 Flutter 原生 Apple Vision，沒有這一道模型 gate；本次�
 前端 52 項測試及 lint/build 通過，Flutter 原生橋接 7 項測試通過（含 6,001 字 OCR 不再被固定字數限制擋住）。網頁已發布至 https://966a498c.townpass.pages.dev 並核對正式網域 sw.js。
 
 此版 Flutter Profile build／簽署成功，已覆蓋安裝並啟動 XC’s iPhone 上的 `tw.fearnot.townpass.dev`；原正式簽署設定已還原，未清除 App 資料。未做使用者原文件全流程重測。
+
+## 移除所有自訂文件輸入門檻（最新行為）
+
+依使用者指示，移除圖片張數／大小／MIME／空檔、PDF 名稱／大小／頁數預檢、強制裁切確認、裁切 1,600 萬像素門檻、文件空白與追問非空限制。OCR 空白或 [無法辨識] 可直接往後傳遞。Flutter 移除 prompt 字數／位元組、圖片大小／magic header、policy 長度、關鍵字字數／數量及原生 tokenizer 預算拒絕。
+
+由實際解碼器及 runtime 執行；仍保留橋接來源驗證、typed envelope、取消、知識庫完整性及安全 URL 邊界。模型實際 4,096-token 容量及輸出截斷檢查不變，生成後 G2/G3/G5 與 JSON／引用檢查保留。大檔不再先擋住，但可能增加記憶體用量、耗時，或由底層回報解碼／容量錯誤；此修改不保證任意圖檔均可 OCR。無文字時仍可能被輸出 Guard 判定資料不足。
+
+52 項前端、11 項 Flutter 測試通過；lint、型別、正式 build 與修改模組分析通過。未用使用者原文件重測全流程。

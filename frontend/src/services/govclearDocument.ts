@@ -5,11 +5,6 @@ import { parseSummary } from './govclearSummary';
 
 type Policies = { policy: string; mobilePolicy: string; reviewPolicy: string };
 
-export function validateSource(text: string) {
-  if (!text.trim() || text.trim() === '[無法辨識]') throw new Error('沒有可辨識文字，請重新選檔。');
-  return text;
-}
-
 export async function withInference<T>(
   signal: AbortSignal,
   operation: (bridge: GovClearBridge) => Promise<T>,
@@ -38,7 +33,6 @@ export async function summarizeSource(
   locale: Locale,
   policies: Policies
 ): Promise<Summary> {
-  validateSource(text);
   const language = locale === 'id' ? '\n請用印尼文回答。\n' : '\n請用繁體中文回答。\n';
   const raw = await bridge.request('summarize', {
     text,
@@ -69,10 +63,9 @@ export async function transcribePages(
     signal.throwIfAborted();
     const image = await encode(page);
     signal.throwIfAborted();
-    const text = validateSource(await bridge.request('transcribe', { image }));
+    const text = await bridge.request('transcribe', { image });
     signal.throwIfAborted();
     texts.push(`【第 ${index + 1} 頁】\n${text}`);
-    validateSource(texts.join('\n\n'));
   }
-  return validateSource(texts.join('\n\n'));
+  return texts.join('\n\n');
 }

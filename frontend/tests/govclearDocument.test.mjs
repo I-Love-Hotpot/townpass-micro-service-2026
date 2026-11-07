@@ -10,7 +10,7 @@ function compile(name, dependencies = {}) {
   for (const [name, url] of Object.entries(dependencies)) code = code.replace(`'./${name}'`, JSON.stringify(url));
   return 'data:text/javascript;base64,' + Buffer.from(code).toString('base64');
 }
-const { withInference, transcribePages, summarizeSource, validateSource } = await import(compile('govclearDocument', {
+const { withInference, transcribePages, summarizeSource } = await import(compile('govclearDocument', {
   govclearGuard: compile('govclearGuard'), govclearBridge: compile('govclearBridge'), govclearSummary: compile('govclearSummary')
 }));
 const policies = { policy: 'full', mobilePolicy: 'mobile', reviewPolicy: 'review' };
@@ -44,10 +44,8 @@ test('processes photos or PDF pages in order, retains full source, then calls re
 
 test('rejects empty OCR, total source overflow and empty model replies without synthesizing sample answers', async () => {
   const signal = new AbortController().signal;
-  assert.throws(() => validateSource('  '));
-  assert.equal(validateSource('字'.repeat(6001)).length, 6001);
   const empty = host(() => '');
-  await assert.rejects(transcribePages(empty.bridge, [new Blob()], signal, async () => ''), /沒有可辨識/);
+  assert.equal(await transcribePages(empty.bridge, [new Blob()], signal, async () => ''), '【第 1 頁】\n');
   await assert.rejects(summarizeSource(empty.bridge, '原文', '文件', 'zh-TW', policies), /未回傳摘要/);
   const headings = host(() => '先看重點');
   await assert.rejects(summarizeSource(headings.bridge, '原文', '文件', 'zh-TW', policies), /未回傳有效摘要/);

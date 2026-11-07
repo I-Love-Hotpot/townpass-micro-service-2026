@@ -6,8 +6,6 @@ GlobalWorkerOptions.workerSrc = workerUrl;
 export async function renderPdf(file: Blob, signal: AbortSignal): Promise<Blob[]> {
   const data = new Uint8Array(await file.arrayBuffer());
   signal.throwIfAborted();
-  if (!new TextDecoder().decode(data.slice(0, 1024)).includes('%PDF-'))
-    throw new Error('Invalid PDF');
   const support = new URL(`${import.meta.env.BASE_URL}assets/`, location.origin);
   const task = getDocument({
     data,
@@ -26,7 +24,6 @@ export async function renderPdf(file: Blob, signal: AbortSignal): Promise<Blob[]
   signal.addEventListener('abort', cancel, { once: true });
   try {
     const pdf = await task.promise;
-    if (pdf.numPages < 1 || pdf.numPages > 50) throw new RangeError('PDF page limit');
     const pages: Blob[] = [];
     for (let index = 1; index <= pdf.numPages; index++) {
       signal.throwIfAborted();

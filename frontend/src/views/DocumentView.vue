@@ -136,7 +136,7 @@ onBeforeUnmount(() => {
 async function applyAction(action: 'explain' | 'chat') {
   const record = entry.value;
   const prompt = question.value.trim();
-  if (!record || pending.value || (action === 'chat' && (!prompt || sourceDirty.value))) return;
+  if (!record || pending.value || (action === 'chat' && sourceDirty.value)) return;
   const current = new AbortController();
   const locale = workspace.context.locale;
   task = current;
@@ -359,7 +359,6 @@ async function copySix() {
             id="document-question"
             v-model="question"
             rows="2"
-            maxlength="500"
             class="block w-full resize-y rounded-lg border border-line px-3 py-2"
             :placeholder="t('chatPlaceholder')"
             :disabled="pending"
@@ -367,7 +366,7 @@ async function copySix() {
           <button
             type="submit"
             class="action-button action-primary w-full"
-            :disabled="pending || sourceDirty || !question.trim()"
+            :disabled="pending || sourceDirty"
           >
             {{ t('send') }}
           </button>
@@ -468,7 +467,7 @@ async function copySix() {
             <button
               type="button"
               class="action-button action-primary w-full"
-              :disabled="pending || !draftSource.trim()"
+              :disabled="pending"
               @click="applyAction('explain')"
             >
               {{ t('correctedSummary') }}

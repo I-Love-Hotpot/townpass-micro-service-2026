@@ -91,7 +91,6 @@ export function canvas(width: number, height: number) {
   result.height = height;
   return result;
 }
-export const MAX_CROP_PIXELS = 16_000_000;
 export function imageDimensions(bytes: Uint8Array) {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   if (bytes.length >= 24 && view.getUint32(0) === 0x89504e47 && view.getUint32(4) === 0x0d0a1a0a)
@@ -118,22 +117,13 @@ export function imageDimensions(bytes: Uint8Array) {
   throw new Error('無法讀取 PNG／JPEG 尺寸，請重新選圖或使用原圖。');
 }
 export async function loadOriginal(blob: Blob, signal: AbortSignal) {
-  const dimensions = imageDimensions(new Uint8Array(await blob.arrayBuffer()));
   signal.throwIfAborted();
-  if (
-    !dimensions.width ||
-    !dimensions.height ||
-    dimensions.width * dimensions.height > MAX_CROP_PIXELS
-  )
-    throw new Error('圖片超過 1,600 萬像素，請縮小圖片或使用原圖。');
   const url = URL.createObjectURL(blob);
   try {
     const image = new Image();
     image.src = url;
     await image.decode();
     signal.throwIfAborted();
-    if (!image.naturalWidth || image.naturalWidth * image.naturalHeight > MAX_CROP_PIXELS)
-      throw new Error('圖片超過 1,600 萬像素，請縮小圖片或使用原圖。');
     // Modern WebViews decode EXIF orientation before drawImage; never apply it twice.
     const result = canvas(image.naturalWidth, image.naturalHeight);
     const ctx = context(result);

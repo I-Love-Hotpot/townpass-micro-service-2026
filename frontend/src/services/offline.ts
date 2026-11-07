@@ -1,5 +1,5 @@
 import type { DocumentRecord, Locale } from '@/interfaces/document';
-import { summarizeSource, validateSource, withInference } from './govclearDocument';
+import { summarizeSource, withInference } from './govclearDocument';
 import { recognizePages, type ImagePage } from './govclearImages';
 import { analyzeGuarded, answerWithEvidence } from './govclearRag';
 import { objectJson, review, outputCriteria, requireAllowed } from './govclearGuard';
@@ -61,12 +61,10 @@ export function analyzeDocument(
   locale: Locale,
   signal: AbortSignal
 ) {
-  validateSource(source);
   return withInference(signal, (bridge) => analyzeGuarded(bridge, source, title, locale));
 }
 
 export function analyzeSixQuestions(source: string, locale: Locale, signal: AbortSignal) {
-  validateSource(source);
   return withInference(signal, async (bridge) => {
     const answers = parseSixQuestions(
       await bridge.request('sixQuestions', {
@@ -91,7 +89,7 @@ export function askDocument(
   locale: Locale,
   signal: AbortSignal
 ) {
-  const text = validateSource(record.source ?? '');
+  const text = record.source ?? '';
   return withInference(signal, async (bridge) => {
     const plan = objectJson(
       await bridge.request('generate', {
