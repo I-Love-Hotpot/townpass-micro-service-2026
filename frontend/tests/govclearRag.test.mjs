@@ -225,3 +225,74 @@ test('JSON envelopes accept prose and case-insensitive fences but never repair b
     assert.throws(() => objectJson(raw));
   }
 });
+
+test('suggested questions accept field aliases and top-level arrays', async () => {
+  const rows = [{ question: '若租約尚未備齊，可以補件嗎？', answer: '請先確認是否接受補件。', citations: [0] }];
+  for (const response of [{ questions: rows }, { answers: rows }, rows]) {
+    const bridge = host((action, payload) => payload?.prompt?.includes('"a":') ? response : undefined);
+    const result = await analyzeSource(bridge, source, '文件', 'zh-TW');
+    assert.equal(result.questions[0]?.text, rows[0].question);
+    assert.equal(result.questions[0]?.answer, rows[0].answer);
+    assert.deepEqual(result.questions[0]?.citations, [evidence.unit_id]);
+  }
+});
+
+test('a generated question without its answer remains visible with an explicit incomplete state', async () => {
+  const bridge = host((action, payload) => payload?.prompt?.includes('"a":')
+    ? { a: [{ q: '若缺租約可以補件嗎？' }, { q: ' ', t: '空問題不顯示' }] } : undefined);
+  const result = await analyzeSource(bridge, source, '文件', 'zh-TW');
+  assert.equal(result.questions.length, 1);
+  assert.equal(result.questions[0].text, '若缺租約可以補件嗎？');
+  assert.equal(result.questions[0].status, 'error');
+  assert.match(result.questions[0].answer, /尚未/);
+  assert.match(result.questionError, /未完成/);
+  assert.equal(result.publication, 'partial');
+});
+
+test('suggestion failures have an explicit reason instead of silently becoming an empty section', async () => {
+  for (const response of ['invalid JSON', { a: null }]) {
+    const bridge = host((action, payload) => payload?.prompt?.includes('"a":') ? response : undefined);
+    const result = await analyzeSource(bridge, source, '文件', 'zh-TW');
+    assert.equal(result.questions.length, 0);
+    assert.ok(result.questionError);
+    assert.equal(result.summary.facts[0], draft.summary);
+  }
+});
+
+test('truncated question batches preserve only complete rows, including escaped quotes and brackets', async () => {
+  const row = { q: '若資料中含有「{}[]」字樣怎麼辦？', t: '請保留原文與"引號"，不要自行改寫。', c: [0] };
+  for (const prefix of ['{"a":[', '[', '{"questions":[', '```json\n{"a":[']) {
+    const raw = prefix + JSON.stringify(row) + ',{"q":"第二題","t":"未完成';
+    const bridge = host((action, payload) => payload?.prompt?.includes('"a":') ? raw : undefined);
+    const result = await analyzeSource(bridge, source, '文件', 'zh-TW');
+    assert.equal(result.questions.length, 1);
+    assert.equal(result.questions[0].text, row.q);
+    assert.equal(result.questions[0].answer, row.t);
+    assert.deepEqual(result.questions[0].citations, [evidence.unit_id]);
+    assert.ok(result.questionError);
+    assert.equal(result.publication, 'partial');
+  }
+});
+
+test('answer generation runtime errors remain visible while preserving the early summary', async () => {
+  const bridge = host((action, payload) => {
+    if (payload?.prompt?.includes('"a":')) throw new Error('模型生成被中止');
+  });
+  const result = await analyzeSource(bridge, source, '文件', 'zh-TW');
+  assert.equal(result.summary.facts[0], draft.summary);
+  assert.equal(result.questionError, '模型生成被中止');
+  assert.equal(result.publication, 'partial');
+});
+
+test('zero, one or two useful questions are complete results and the list never exceeds three', async () => {
+  for (const count of [0, 1, 2, 3, 4]) {
+    const a = Array.from({ length: count }, (_, i) => ({ q: `若缺少文件${i}該如何處理？`, t: '請確認補件方式。' }));
+    const bridge = host((action, payload) => payload?.prompt?.includes('"a":') ? { a } : undefined);
+    const result = await analyzeSource(bridge, source, '文件', 'zh-TW');
+    assert.equal(result.questions.length, Math.min(count, 3));
+    assert.equal(result.publication, 'generated');
+    assert.equal(result.questionError, undefined);
+    assert.equal(bridge.calls.filter(c => c.action === 'generate').length, 2);
+    assert.match(bridge.calls.filter(c => c.action === 'generate')[1].payload.prompt, /有1題或2題就足夠時不要湊滿/);
+  }
+});

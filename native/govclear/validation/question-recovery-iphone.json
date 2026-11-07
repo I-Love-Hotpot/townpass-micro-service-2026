@@ -1,0 +1,147 @@
+{
+  "date": "2026-11-08",
+  "scope": "Two synthetic 77-character photo OCR, summary, retrieval and up-to-three suggested-answer runs using actual on-device Gemma; excludes WebView, IndexedDB and rendering. Not an end-to-end guarantee for all photos or independent legal accuracy verification.",
+  "status": "passed",
+  "runs": [
+    {
+      "state": "cold",
+      "ocrSeconds": 0.402,
+      "planSeconds": 9.425,
+      "planMetrics": {
+        "decode_tokens_per_second": 36.9634523864529,
+        "backend": "gpu_mtp",
+        "session_seconds": 1.5567652499958058,
+        "total_seconds": 9.422480416666076,
+        "prefill_tokens_per_second": 132.7858720693971,
+        "input_tokens": 534,
+        "output_tokens": 142,
+        "first_token_seconds": 4.048565916
+      },
+      "sixFieldsReturned": 6,
+      "sourceCharacters": 77,
+      "draft": {
+        "s": "符合資格者需在115年12月10日前，提交身分證及租賃契約，以申請115年度租金補貼。",
+        "w": {
+          "who": "符合資格者",
+          "what": "提出租金補貼申請",
+          "when": "115年12月10日前",
+          "where": null,
+          "why": "領取租金補貼",
+          "how": "附上身分證及租賃契約"
+        },
+        "d": []
+      },
+      "retrievalMode": "document-facts",
+      "retrievalSeconds": 0.29,
+      "answerRaw": "```json\n{\n  \"a\": [\n    {\n      \"q\": \"若申請人未租賃住宅，需在核定函後多久補件？\",\n      \"t\": \"若申請人尚未租賃住宅，應於核定函次日起三個月內補件。\",\n      \"c\": [\n        0\n      ]\n    },\n    {\n      \"q\": \"若租賃契約中出租人非所有權人，需提供什麼文件？\",\n      \"t\": \"若出租人非所有權人，主管機關得通知限期檢附所有權人同意證明文件。\",\n      \"c\": [\n        0\n      ]\n    },\n    {\n      \"q\": \"若申請人使用掛號郵件寄送申請，申請日如何認定？\",\n      \"t\": \"若申請書件以掛號郵件寄送，其申請日以郵戳為憑。\",\n      \"c\": [\n        0\n      ]\n    }\n  ]\n}\n```",
+      "answers": [
+        {
+          "q": "若申請人未租賃住宅，需在核定函後多久補件？",
+          "t": "若申請人尚未租賃住宅，應於核定函次日起三個月內補件。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "若租賃契約中出租人非所有權人，需提供什麼文件？",
+          "t": "若出租人非所有權人，主管機關得通知限期檢附所有權人同意證明文件。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "若申請人使用掛號郵件寄送申請，申請日如何認定？",
+          "t": "若申請書件以掛號郵件寄送，其申請日以郵戳為憑。",
+          "c": [
+            0
+          ]
+        }
+      ],
+      "firstBatchSeconds": 9.827,
+      "answersSeconds": 9.216,
+      "answerMetrics": {
+        "decode_tokens_per_second": 40.835821812195164,
+        "backend": "gpu_mtp",
+        "session_seconds": 0.0015460416689165868,
+        "total_seconds": 9.21391879166913,
+        "prefill_tokens_per_second": 223.73734874195847,
+        "input_tokens": 811,
+        "output_tokens": 228,
+        "first_token_seconds": 3.6492742615
+      },
+      "totalSeconds": 19.333,
+      "under20Seconds": true,
+      "evidenceCount": 1
+    },
+    {
+      "state": "warm",
+      "ocrSeconds": 0.368,
+      "planSeconds": 6.2749999999999995,
+      "planMetrics": {
+        "decode_tokens_per_second": 50.29310640008917,
+        "backend": "gpu_mtp",
+        "session_seconds": 0.0013595833370345645,
+        "total_seconds": 6.275304208335001,
+        "prefill_tokens_per_second": 154.86498452310812,
+        "input_tokens": 534,
+        "output_tokens": 142,
+        "first_token_seconds": 3.4680483155
+      },
+      "sixFieldsReturned": 6,
+      "sourceCharacters": 77,
+      "draft": {
+        "s": "符合資格者需在115年12月10日前，提交身分證及租賃契約，以申請115年度租金補貼。",
+        "w": {
+          "who": "符合資格者",
+          "what": "提出租金補貼申請",
+          "when": "115年12月10日前",
+          "where": null,
+          "why": "領取租金補貼",
+          "how": "附上身分證及租賃契約"
+        },
+        "d": []
+      },
+      "retrievalMode": "document-facts",
+      "retrievalSeconds": 0.025,
+      "answerRaw": "```json\n{\n  \"a\": [\n    {\n      \"q\": \"若申請人未租賃住宅，需在核定函後多久補件？\",\n      \"t\": \"若申請人尚未租賃住宅，應於核定函次日起三個月內補件。\",\n      \"c\": [\n        0\n      ]\n    },\n    {\n      \"q\": \"若租賃契約中出租人非所有權人，需提供什麼文件？\",\n      \"t\": \"若出租人非所有權人，主管機關得通知限期檢附所有權人同意證明文件。\",\n      \"c\": [\n        0\n      ]\n    },\n    {\n      \"q\": \"若申請人使用掛號郵件寄送申請，申請日如何認定？\",\n      \"t\": \"若申請書件以掛號郵件寄送，其申請日以郵戳為憑。\",\n      \"c\": [\n        0\n      ]\n    }\n  ]\n}\n```",
+      "answers": [
+        {
+          "q": "若申請人未租賃住宅，需在核定函後多久補件？",
+          "t": "若申請人尚未租賃住宅，應於核定函次日起三個月內補件。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "若租賃契約中出租人非所有權人，需提供什麼文件？",
+          "t": "若出租人非所有權人，主管機關得通知限期檢附所有權人同意證明文件。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "若申請人使用掛號郵件寄送申請，申請日如何認定？",
+          "t": "若申請書件以掛號郵件寄送，其申請日以郵戳為憑。",
+          "c": [
+            0
+          ]
+        }
+      ],
+      "firstBatchSeconds": 6.643,
+      "answersSeconds": 9.367,
+      "answerMetrics": {
+        "decode_tokens_per_second": 40.70692757367206,
+        "backend": "gpu_mtp",
+        "session_seconds": 0.0012904583345516585,
+        "total_seconds": 9.365171750003356,
+        "prefill_tokens_per_second": 215.62356461274095,
+        "input_tokens": 811,
+        "output_tokens": 228,
+        "first_token_seconds": 3.7857503009999998
+      },
+      "totalSeconds": 16.036,
+      "under20Seconds": true,
+      "evidenceCount": 1
+    }
+  ]
+}

@@ -35,7 +35,7 @@ flutter test --no-pub --dart-define=GOVCLEAR_ON_DEVICE=true test/govclear_knowle
 
 ## 分段顯示與測速更新
 
-最新微服務已從 5 次生成合併為 2 次，先顯示摘要／六何，再補三題回答。Dart 檢索加入中文雙字詞匹配；沒有重新加入輸入限制或 AI Guard。測速 policies 及原生結果在 validation/speed-prompts.json、validation/speed-iphone.json。原生短通知基準約 12.8～13.7 秒，並非所有圖片的端到端保證；細節見 docs/govclear-rag-guard.md 最新章節。
+最新微服務已從 5 次生成合併為 2 次，先顯示摘要／六何，再依內容需要補最多三題問答，不湊滿。Dart 檢索加入中文雙字詞匹配；沒有重新加入輸入限制或 AI Guard。測速 policies 及原生結果在 validation/speed-prompts.json、validation/speed-iphone.json。原生短通知基準約 12.8～13.7 秒，並非所有圖片的端到端保證；細節見 docs/govclear-rag-guard.md 最新章節。
 
 ## 情境合理性真機測試
 

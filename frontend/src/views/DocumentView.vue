@@ -156,7 +156,7 @@ async function applyAction(action: 'explain' | 'chat') {
   try {
     const sample = fixtures.find((item) => item.id === record.fixtureId)?.summaries[locale];
     const analysis =
-      action === 'explain' && record.source
+      action === 'explain' && record.source !== undefined
         ? await analyzeDocument(
             draftSource.value,
             record.summary.title,
@@ -173,10 +173,16 @@ async function applyAction(action: 'explain' | 'chat') {
         analysis.logicNotes = record.analysis?.logicNotes;
       }
       analysis.sixQuestions ??= record.sixQuestions;
+      if (
+        analysis.questionError &&
+        !analysis.questions.length &&
+        record.analysis?.questions?.length
+      )
+        analysis.questions = record.analysis.questions;
     }
     const summary =
       action === 'explain'
-        ? record.source
+        ? record.source !== undefined
           ? analysis!.summary
           : explainAgain(sample)
         : record.summary;
@@ -573,7 +579,7 @@ async function copySix() {
           <p v-if="sixCopied" role="status" class="text-sm text-brand-dark">{{ t('copied') }}</p>
         </section>
         <section
-          v-if="entry.analysis && !sourceDirty"
+          v-if="entry.source !== undefined && !sourceDirty"
           class="space-y-3"
           aria-labelledby="rag-heading"
         >
@@ -591,15 +597,42 @@ async function copySix() {
                 : 'AI 直接生成，未經額外複核，請核對原文與引用來源。'
             }}
           </p>
-          <p v-if="entry.analysis.publication === 'partial'" role="status" class="feedback">
+          <p v-if="entry.analysis?.publication === 'partial'" role="status" class="feedback">
             {{
               workspace.context.locale === 'id'
                 ? 'Sebagian konten belum tersedia; dokumen asli dan hasil yang tersedia disimpan.'
                 : '部分內容未生成；原文與可用結果已保留，可繼續提問或重新解釋。'
             }}
           </p>
+          <p
+            v-if="entry.analysis?.questionError || !entry.analysis?.questions?.length"
+            role="status"
+            class="feedback"
+          >
+            {{
+              entry.analysis?.questionError ||
+              (workspace.context.locale === 'id'
+                ? 'Pertanyaan belum tersedia. Anda dapat membuatnya tanpa memindai ulang.'
+                : entry.analysis
+                  ? '目前沒有適合的建議問題，你仍可自行提問。'
+                  : '問題尚未生成，可重新解釋並產生問答，不必重新辨識圖片。')
+            }}
+          </p>
+          <button
+            v-if="entry.analysis?.questionError || !entry.analysis?.questions?.length"
+            type="button"
+            class="text-action"
+            :disabled="pending"
+            @click="applyAction('explain')"
+          >
+            {{
+              workspace.context.locale === 'id'
+                ? 'Jelaskan dan buat pertanyaan ulang'
+                : '重新解釋並產生問答'
+            }}
+          </button>
           <article
-            v-for="item in entry.analysis.questions"
+            v-for="item in entry.analysis?.questions ?? []"
             :key="item.id"
             class="rounded bg-surface p-4 space-y-2"
           >

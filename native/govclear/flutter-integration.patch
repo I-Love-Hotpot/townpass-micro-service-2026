@@ -42,7 +42,7 @@ diff --git a/integration_test/govclear_speed_test.dart b/integration_test/govcle
 new file mode 100644
 --- /dev/null
 +++ b/integration_test/govclear_speed_test.dart
-@@ -0,0 +1,132 @@
+@@ -0,0 +1,138 @@
 +import 'dart:convert';
 +import 'dart:io';
 +import 'dart:ui' as ui;
@@ -133,16 +133,22 @@ new file mode 100644
 +        stages['retrievalSeconds'] =
 +            (watch.elapsedMilliseconds - retrievalStarted) / 1000;
 +        final answerStarted = watch.elapsedMilliseconds;
-+        final answer = modelJson(
-+          await engine.generate(
-+            '${policies['answersPolicy']}${jsonEncode({
-+              'language': '繁體中文',
-+              'source': source,
-+              'e': evidence.values.indexed.map((row) => {'i': row.$1, 'name': row.$2['title'], 'article': row.$2['unit_label'], 'text': row.$2['text']}).toList(),
-+            })}',
-+          ),
++        final answerRaw = await engine.generate(
++          '${policies['answersPolicy']}${jsonEncode({
++            'language': '繁體中文',
++            'source': source,
++            'logicNotes': draft['d'] ?? [],
++            'e': evidence.values.indexed.map((row) => {'i': row.$1, 'name': row.$2['title'], 'article': row.$2['unit_label'], 'text': row.$2['text']}).toList(),
++          })}',
 +        );
-+        expect((answer['a'] as List).length, 3);
++        stages['answerRaw'] = answerRaw;
++        await file.writeAsString(jsonEncode(report));
++        final answer = modelJson(answerRaw);
++        expect((answer['a'] as List).length, lessThanOrEqualTo(3));
++        expect(
++          answer['a'],
++          isNotEmpty,
++        ); // This synthetic notice has actionable questions.
 +        for (final row in answer['a']) {
 +          expect(row['q'], isA<String>());
 +          expect(row['t'], isA<String>());
@@ -175,7 +181,6 @@ new file mode 100644
 +    }
 +  }, timeout: const Timeout(Duration(minutes: 6)));
 +}
-
 diff --git a/ios/Runner/GovClearLocalPlugin.swift b/ios/Runner/GovClearLocalPlugin.swift
 index 819e96c..9d7101e 100644
 --- a/ios/Runner/GovClearLocalPlugin.swift
