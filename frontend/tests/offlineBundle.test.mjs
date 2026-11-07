@@ -27,7 +27,9 @@ test('complete release installs atomically; offline routes ignore language queri
             for (const request of requests) {
               assert.match(request.integrity, /^sha256-/);
               if (fail && request.url.endsWith('.wasm')) throw Error('network disconnected');
-              entries.set(new URL(request.url).pathname, new Response(request.url));
+              const response = new Response(request.url, { headers: { 'Content-Type': 'text/html' } });
+              if (request.url.endsWith('/index.html')) Object.defineProperty(response, 'redirected', { value: true });
+              entries.set(new URL(request.url).pathname, response);
             }
           },
           async match(path) { return entries.get(path); }
@@ -40,7 +42,7 @@ test('complete release installs atomically; offline routes ignore language queri
       const events = {};
       const context = {
         self: { location: { origin: 'https://example.test' }, clients: { async claim() {} }, addEventListener(name, fn) { events[name] = fn; } },
-        caches, URL,
+        caches, URL, Response,
         Request: class extends Request { constructor(url, options) { super(new URL(url, 'https://example.test'), options); } },
         fetch() { throw Error('offline'); }
       };
@@ -58,6 +60,8 @@ test('complete release installs atomically; offline routes ignore language queri
     await active('message', undefined, { data: 'GET_VERSION', ports: [{ postMessage(value) { reportedVersion = value; } }] });
     assert.equal(reportedVersion, first.version);
     const cached = await active('fetch', { method: 'GET', mode: 'navigate', url: 'https://example.test/?embedded=1&lang=en' });
+    assert.equal(cached.redirected, false);
+    assert.equal(cached.headers.get('Content-Type'), 'text/html');
     assert.match(await cached.text(), /index.html/);
     for (const name of first.entries.filter(name => name !== 'index.html')) {
       assert.ok(await active('fetch', { method: 'GET', url: 'https://example.test/' + name }));

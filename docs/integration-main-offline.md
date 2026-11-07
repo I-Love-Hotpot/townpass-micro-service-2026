@@ -112,3 +112,5 @@ iOS 使用持久 WebView 資料及 App-Bound Domains。`Info.plist` 目前允許
 首次開啟、網路恢復、頁面回到前景及前景每 5 分鐘，會檢查線上的 `sw.js`；未變更時不重新下載資源。發現新版後下載並驗證整版，成功後等待現有頁面關閉才切換，避免中斷文件處理或混用新舊資源。新版啟用時清理舊版快取。下載失敗顯示更新未完成並保留目前版，下次檢查自動重試；斷網期間不會同步尚未取得的版本。
 
 `frontend/tests/offlineUpdate.browser.mjs` 以正式 build 驗證版本顯示、未變更不重抓資源、更新失敗保留舊版、定時自動重試，以及關閉後離線重開套用新版。這是 Chromium 串接驗證，並非 iPhone 實機驗收。
+
+2026-11-08 iPhone 實機部署發現 Cloudflare 將 `/index.html` 重新導向 `/`；直接回傳快取中的 redirected Response 會被 WebKit 拒絕。Service Worker 現在將此類快取回應重建為一般 Response。App 遇到這個特定舊版錯誤時，只移除該網域的 Service Worker 註冊與 Fetch Cache，再重新載入；不移除 IndexedDB 或文件、模型。

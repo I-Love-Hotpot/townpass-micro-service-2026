@@ -50,6 +50,10 @@ self.addEventListener('fetch', event => {
   if (!FILES.includes(path)) return;
   event.respondWith((async () => {
     const cached = await (await caches.open(CACHE)).match(path);
+    // Pages redirects /index.html to /; WebKit rejects redirected navigation responses.
+    if (cached?.redirected) return new Response(cached.body, {
+      status: cached.status, statusText: cached.statusText, headers: cached.headers
+    });
     return cached || fetch(event.request);
   })());
 });

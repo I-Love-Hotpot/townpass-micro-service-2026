@@ -13,6 +13,7 @@ let assetRequests = 0;
 const server = createServer((request, response) => {
   const path = new URL(request.url, 'http://localhost').pathname;
   if (path.startsWith('/assets/')) assetRequests++;
+  if (path === '/index.html') { response.writeHead(308, { Location: '/' }).end(); return; }
   if (failDownload && path.endsWith('.wasm')) { response.writeHead(503).end(); return; }
   try {
     const bytes = readFileSync(join(directory, path === '/' ? 'index.html' : path.slice(1)));
