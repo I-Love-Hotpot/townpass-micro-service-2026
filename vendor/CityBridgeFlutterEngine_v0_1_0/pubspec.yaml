@@ -1,0 +1,15 @@
+name: citybridge_engine_handoff
+description: Local Gemma iOS handoff contracts; native inference NOT implemented.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+flutter:
+  assets:
+    - assets/data/
+    - assets/data/opendata/
+    - assets/data/housing/
+    - schemas/
+    - reference/prompts.json
+    - fixtures/demo1/
+    - fixtures/demo2/

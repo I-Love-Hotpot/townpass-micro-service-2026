@@ -8,7 +8,8 @@ import { answerQuestion } from '@/services/answers';
 import { fixtures } from '@/services/fixtures';
 import { translate, type Label } from '@/services/i18n';
 import { delay, explainAgain } from '@/services/processing';
-import { analyzeSixQuestions, askDocument, reExplain } from '@/services/offline';
+import { analyzeDocument, analyzeSixQuestions, askDocument } from '@/services/offline';
+import { hashText } from '@/services/govclearGuard';
 import { SIX_QUESTIONS } from '@/services/govclearSixQuestions';
 import { records } from '@/services/records';
 import { useWorkspace } from '@/stores/workspace';
@@ -101,6 +102,10 @@ async function load() {
       record = await records.get(id);
     }
     if (request !== requestId) return;
+    if (record?.analysis && record.analysis.sourceHash !== (await hashText(record.source ?? ''))) {
+      throw new Error('來源版本已改變，請重新整理文件。');
+    }
+    if (request !== requestId) return;
     entry.value = record;
     draftSource.value = record?.source ?? '';
     sixError.value = '';
@@ -145,34 +150,52 @@ async function applyAction(action: 'explain' | 'chat') {
   try {
     await delay(450, current.signal);
     const sample = fixtures.find((item) => item.id === record.fixtureId)?.summaries[locale];
+    const analysis =
+      action === 'explain' && record.source
+        ? await analyzeDocument(draftSource.value, record.summary.title, locale, current.signal)
+        : undefined;
     const summary =
       action === 'explain'
         ? record.source
-          ? await reExplain({ ...record, source: draftSource.value }, locale, current.signal)
+          ? analysis!.summary
           : explainAgain(sample)
         : record.summary;
+    const rag =
+      action === 'chat' && record.source
+        ? await askDocument(record, prompt, locale, current.signal)
+        : undefined;
     const answer =
       action === 'chat'
-        ? record.source
-          ? await askDocument(record, prompt, locale, current.signal)
+        ? rag
+          ? rag.answer +
+            (rag.citations.length
+              ? '\n\n' +
+                rag.evidence
+                  .filter((e) => rag.citations.includes(e.unit_id))
+                  .map((e) => `${e.title} ${e.unit_label} (${e.version_id})\n${e.source_url}`)
+                  .join('\n')
+              : '')
           : answerQuestion(prompt, sample, locale)
         : '';
     current.signal.throwIfAborted();
     const updated = await records.update(record.id, (stored) => {
       current.signal.throwIfAborted();
+      if (stored.source !== record.source) throw new Error(t.value('sourceChanged'));
       if (action === 'explain')
         return {
           ...stored,
           summary: explainAgain(summary),
           locale,
           source: record.source === undefined ? undefined : draftSource.value,
-          sixQuestions: undefined,
+          sixQuestions: analysis?.sixQuestions,
+          analysis,
           sixQuestionsSeconds: undefined,
           processingSeconds: (performance.now() - started) / 1000,
-          chat: sourceDirty.value ? [] : stored.chat
+          chat: []
         };
       const exchange = {
         question: prompt,
+        rag,
         answer,
         locale
       };
@@ -185,7 +208,7 @@ async function applyAction(action: 'explain' | 'chat') {
       draftSource.value = updated.source ?? '';
       sixError.value = '';
       sixCopied.value = false;
-      refreshSix = Boolean(updated.source);
+      refreshSix = Boolean(updated.source && !updated.sixQuestions);
     } else {
       question.value = '';
       await nextTick();
@@ -218,11 +241,17 @@ async function generateSix() {
   sixCopied.value = false;
   const started = startTimer();
   try {
-    const answers = await analyzeSixQuestions(
-      record.source,
-      workspace.context.locale,
-      current.signal
-    );
+    const analysis = record.analysis
+      ? await analyzeDocument(
+          record.source,
+          record.summary.title,
+          workspace.context.locale,
+          current.signal
+        )
+      : undefined;
+    const answers =
+      analysis?.sixQuestions ??
+      (await analyzeSixQuestions(record.source, workspace.context.locale, current.signal));
     current.signal.throwIfAborted();
     const updated = await records.update(record.id, (stored) => {
       current.signal.throwIfAborted();
@@ -230,6 +259,8 @@ async function generateSix() {
       return {
         ...stored,
         sixQuestions: answers,
+        analysis,
+        summary: analysis?.summary ?? stored.summary,
         sixQuestionsSeconds: (performance.now() - started) / 1000
       };
     });
@@ -493,6 +524,63 @@ async function copySix() {
             </button>
           </div>
           <p v-if="sixCopied" role="status" class="text-sm text-brand-dark">{{ t('copied') }}</p>
+        </section>
+        <section
+          v-if="entry.analysis && !sourceDirty"
+          class="space-y-3"
+          aria-labelledby="rag-heading"
+        >
+          <h2 id="rag-heading" class="section-title">
+            {{
+              workspace.context.locale === 'id'
+                ? 'Pertanyaan yang mungkin Anda ajukan'
+                : '你可能想問'
+            }}
+          </h2>
+          <p class="text-sm text-muted">
+            {{
+              workspace.context.locale === 'id'
+                ? 'Ditinjau oleh model yang sama; versi sumber dan penerapan pada kasus Anda belum dipastikan.'
+                : '由同一模型複核，仍須核對原文。資料版本與個案適用性尚未確認。'
+            }}
+          </p>
+          <p v-if="entry.analysis.publication === 'partial'" role="status" class="feedback">
+            {{
+              workspace.context.locale === 'id'
+                ? 'Sebagian pertanyaan atau jawaban belum lolos pemeriksaan.'
+                : '部分問題或回答未完成檢查；已保留可用結果。'
+            }}
+          </p>
+          <article
+            v-for="item in entry.analysis.questions"
+            :key="item.id"
+            class="rounded bg-surface p-4 space-y-2"
+          >
+            <h3 class="font-semibold">{{ item.text }}</h3>
+            <p class="whitespace-pre-line">{{ item.answer }}</p>
+            <details>
+              <summary>
+                {{
+                  workspace.context.locale === 'id'
+                    ? 'Dokumen dan sumber'
+                    : '查看原文依據與檢索來源'
+                }}
+              </summary>
+              <blockquote class="my-2 whitespace-pre-line">{{ item.sourceQuote }}</blockquote>
+              <div v-for="evidence in item.evidence" :key="evidence.unit_id" class="my-3">
+                <a
+                  :href="evidence.source_url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-action"
+                >
+                  {{ evidence.title }} · {{ evidence.unit_label }}
+                </a>
+                <p class="text-xs text-muted">{{ evidence.version_id }} · {{ item.retrievedAt }}</p>
+                <p class="whitespace-pre-line">{{ evidence.text }}</p>
+              </div>
+            </details>
+          </article>
         </section>
         <button v-if="pending" type="button" class="text-action" @click="cancelAction">
           {{ t('stop') }}

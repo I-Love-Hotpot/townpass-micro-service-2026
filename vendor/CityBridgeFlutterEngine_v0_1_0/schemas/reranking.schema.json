@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "selected"
+  ],
+  "properties": {
+    "selected": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "quote",
+          "reason"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "quote": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 160
+          }
+        }
+      }
+    }
+  }
+}

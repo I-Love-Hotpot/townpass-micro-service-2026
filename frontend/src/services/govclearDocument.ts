@@ -1,26 +1,26 @@
 import type { Locale, Summary } from '../interfaces/document.ts';
 import { GovClearBridge } from './govclearBridge';
+import { review, requireAllowed, outputCriteria } from './govclearGuard';
 import { parseSummary } from './govclearSummary';
 
 type Policies = { policy: string; mobilePolicy: string; reviewPolicy: string };
 
 export function validateSource(text: string) {
   if (!text.trim() || text.trim() === '[無法辨識]') throw new Error('沒有可辨識文字，請重新選檔。');
-  if (Array.from(text).length > 6000)
-    throw new Error('合併文字超過 6,000 字，請減少頁數或分批處理；原文不會被截斷。');
   return text;
 }
 
 export async function withInference<T>(
   signal: AbortSignal,
   operation: (bridge: GovClearBridge) => Promise<T>,
-  bridge = new GovClearBridge()
+  bridge = new GovClearBridge(),
+  checkModel = false
 ) {
   signal.throwIfAborted();
   const cancel = () => bridge.cancel();
   signal.addEventListener('abort', cancel, { once: true });
   try {
-    await bridge.connect(signal);
+    await bridge.connect(signal, checkModel);
     signal.throwIfAborted();
     const result = await operation(bridge);
     signal.throwIfAborted();
@@ -47,6 +47,7 @@ export async function summarizeSource(
     reviewPolicy: policies.reviewPolicy + language
   });
   if (!raw.trim()) throw new Error('模型未回傳摘要，請重試。');
+  requireAllowed(await review(bridge, text, 'G2-summary', raw, outputCriteria));
   const sections = parseSummary(raw);
   if (!sections.length) throw new Error('模型未回傳有效摘要，請重試。');
   return {

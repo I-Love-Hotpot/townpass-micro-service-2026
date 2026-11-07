@@ -1,3 +1,4 @@
+import type { GuardedDocument, RagQuestion } from '../services/govclearRag';
 import type { SixQuestionAnswers } from '../services/govclearSixQuestions';
 
 export type Locale = 'zh-TW' | 'id';
@@ -31,6 +32,7 @@ export interface ServiceDestination {
 }
 
 export interface ChatExchange {
+  rag?: RagQuestion;
   question: string;
   answer: string;
   locale: Locale;
@@ -46,6 +48,7 @@ export interface DocumentRecord {
   pages: Blob[];
   summary: Summary;
   source?: string;
+  analysis?: GuardedDocument;
   sixQuestions?: SixQuestionAnswers;
   processingSeconds?: number;
   sixQuestionsSeconds?: number;

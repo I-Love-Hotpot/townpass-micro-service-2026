@@ -1,0 +1,60 @@
+{
+  "opendata": {
+    "policy": "government_opendata_only",
+    "verified_units": 1075,
+    "sources": [
+      {
+        "dataset_id": "18289",
+        "dataset_url": "https://data.gov.tw/dataset/18289",
+        "dataset_title": "中文法規_法律資料檔下載",
+        "provider": "法務部資訊處",
+        "resource_url": "https://sendlaw.moj.gov.tw/PublicData/GetFile.ashx?DType=XML&AuData=CF",
+        "license_id": "OGDL-Taiwan-1.0",
+        "license_name": "政府資料開放授權條款-第1版",
+        "license_url": "https://data.gov.tw/license",
+        "catalog_sha256": "d441b25033939a6994663c7b564a5fcbe583ef2b9dded8dc8442d85f3342eae2",
+        "catalog_verified_at": "2026-11-07T17:02:30.250274+00:00",
+        "resource_sha256": "bf710bb9836b7a5e717799660bb5155d95eebec87f78fc0adcaec25fc33dfa53"
+      },
+      {
+        "dataset_id": "18290",
+        "dataset_url": "https://data.gov.tw/dataset/18290",
+        "dataset_title": "中文法規_命令資料檔下載",
+        "provider": "法務部資訊處",
+        "resource_url": "https://sendlaw.moj.gov.tw/PublicData/GetFile.ashx?DType=XML&AuData=CM",
+        "license_id": "OGDL-Taiwan-1.0",
+        "license_name": "政府資料開放授權條款-第1版",
+        "license_url": "https://data.gov.tw/license",
+        "catalog_sha256": "03cac4e5cca642555a11ee41a9efc82ca0ec0cfeeb27d45b06bb971c4555acc4",
+        "catalog_verified_at": "2026-11-07T17:02:35.682121+00:00",
+        "resource_sha256": "37941aa051213457abf5fcf4c0a5b7a45fffe47e09dbfa341c99e49e9401fd0c"
+      }
+    ],
+    "evidence_generated_by_llm": false,
+    "verification": "catalog_license_resource_and_original_article_content"
+  },
+  "housing": {
+    "policy": "government_public_information",
+    "verified_units": 60,
+    "sources": [
+      {
+        "source_id": "pip_b1020_faq_115",
+        "requested_url": "https://pip.moi.gov.tw/Publicize/Info/B1020",
+        "resource_url": "https://pip.moi.gov.tw/Publicize/Info/B1020?n=%E5%95%8F%E8%88%87%E7%AD%94&y=115",
+        "provider": "內政部國土管理署／內政部不動產資訊平台",
+        "source_title": "115年度300億元中央擴大租金補貼官方問與答",
+        "resource_sha256": "a881ce20e7c6a8f86b47d8f7ab7c3378e52a098d5bd0b70bf8cbaecd918bbdc2",
+        "fetched_at": "2026-11-07T17:10:02.970071+00:00",
+        "source_classification": "government_public_information",
+        "user_designated_source": true,
+        "license_id": null,
+        "license_status": "not_verified",
+        "open_data_verified": false,
+        "rights_notice": "Copyright / All Rights Reserved visible on source website; no Open Data license verified"
+      }
+    ],
+    "evidence_generated_by_llm": false,
+    "open_data_verified": false,
+    "verification": "user_designated_official_source_and_original_question_answer_content"
+  }
+}

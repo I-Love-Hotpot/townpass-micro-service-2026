@@ -1,0 +1,151 @@
+"""Deterministic evidence, citation and date checks. Never issues legal advice."""
+from datetime import date
+import re
+import unicodedata
+
+from src.traffic_law import LAW_NAME,LAW_CODE
+
+NUM=r'[0-9零〇一二三四五六七八九十百千兩]+'
+CITATION=re.compile(rf'第\s*(?P<article>{NUM})(?:\s*[-之]\s*(?P<sub_before>{NUM}))?\s*條(?:\s*之\s*(?P<sub_after>{NUM}))?(?:\s*第\s*(?P<paragraph>{NUM})\s*項)?(?:\s*第\s*(?P<clause>{NUM})\s*款)?(?:\s*第\s*(?P<subitem>{NUM})\s*目)?')
+KNOWN_LAWS=[LAW_NAME,'民法','道路交通安全規則','違反道路交通管理事件統一裁罰基準及處理細則']
+LAW_PATTERN=re.compile('|'.join(map(re.escape,sorted(KNOWN_LAWS,key=len,reverse=True))))
+
+
+def number(text):
+    if text is None:return None
+    if text.isascii() and text.isdigit():return str(int(text)) if int(text)>0 else None
+    if any(c.isascii() and c.isdigit() for c in text):return None
+    digits={c:n for n,chars in enumerate(['零〇','一','二兩','三','四','五','六','七','八','九']) for c in chars}
+    units={'十':10,'百':100,'千':1000}
+    if not any(c in units for c in text):
+        value=int(''.join(str(digits[c]) for c in text));return str(value) if value else None
+    total=part=0
+    for char in text:
+        if char in digits:part=digits[char]
+        else:total+=(part or 1)*units[char];part=0
+    return str(total+part) if total+part else None
+
+
+def normalized_view(text):
+    chars=[];offsets=[]
+    for i,char in enumerate(text):
+        value=unicodedata.normalize('NFKC',char)
+        chars.extend(value);offsets.extend([(i,i+1)]*len(value))
+    return ''.join(chars),offsets
+
+
+def evidence(text,quote):
+    if not isinstance(quote,str) or not quote:return [],'evidence_missing'
+    starts=[m.start() for m in re.finditer('(?='+re.escape(quote)+')',text)]
+    if not starts:return [],'evidence_not_in_original'
+    if len(starts)!=1:return [],'evidence_occurs_multiple_times'
+    start=starts[0];end=start+len(quote)
+    lines=list(range(text.count('\n',0,start)+1,text.count('\n',0,end-1)+2))
+    return [dict(quote=quote,start=start,end=end,line_ids=lines,evidence_validated=True)],None
+
+
+def parse_citation(citation):
+    view,_=normalized_view(citation)
+    match=CITATION.fullmatch(view.strip())
+    if match is None:return None
+    if match['sub_before'] and match['sub_after']:return None
+    if any(match[key] is not None and number(match[key]) is None for key in ['article','sub_before','sub_after','paragraph','clause','subitem']):
+        return None
+    article=number(match['article']);sub=number(match['sub_before'] or match['sub_after'])
+    if article is None:return None
+    return dict(article_key=article+('-'+sub if sub else ''),paragraph=number(match['paragraph']),
+                clause=number(match['clause']),subitem=number(match['subitem']))
+
+
+def scan_references(text):
+    view,offsets=normalized_view(text);result=[]
+    for match in CITATION.finditer(view):
+        parsed=parse_citation(match.group())
+        if parsed is None:continue
+        start,end=offsets[match.start()][0],offsets[match.end()-1][1]
+        prefix=view[max(0,match.start()-100):match.start()]
+        # Only the same/preceding line is allowed to bind an explicit known law name.
+        prefix='\n'.join(prefix.split('\n')[-2:])
+        names=list(LAW_PATTERN.finditer(prefix));law=names[-1].group() if names else None
+        if names and not re.fullmatch(r'[\s：:「」《》（）()]*',prefix[names[-1].end():]):
+            # Do not bind a parent law inside an unknown longer title or a preceding citation.
+            law=None
+        citation=text[start:end]
+        result.append(dict(law_name=law,law_code=LAW_CODE if law==LAW_NAME else None,**parsed,citation=citation,
+                           evidence=[dict(quote=citation,start=start,end=end,line_ids=list(range(text.count('\n',0,start)+1,text.count('\n',0,end-1)+2)),evidence_validated=True)]))
+    return result
+
+
+def reference_key(row):
+    return tuple(row.get(k) for k in ['law_name','law_code','article_key','paragraph','clause','subitem'])
+
+
+def checked_field(text,raw,name):
+    value=raw.get('value');quotes,error=evidence(text,raw.get('quote'))
+    if value is None or value=='unknown' or not value.strip():
+        return dict(value=value,status='ambiguous' if quotes else 'missing',evidence=quotes),['missing_'+name]
+    if error:return dict(value=None,status='conflict',evidence=[]),[name+'_'+error]
+    quote=quotes[0]['quote']
+    if name=='document_type':
+        allowed={'traffic_violation_notice':['交通違規通知','違反道路交通管理事件通知'],
+                 'administrative_ruling':['裁決書'],'other':[]}
+        if value!='other' and not any(term in quote for term in allowed.get(value,[])):
+            return dict(value=None,status='conflict',evidence=quotes),['document_type_evidence_unsupported']
+    elif value not in quote:
+        return dict(value=None,status='conflict',evidence=quotes),[name+'_value_not_in_evidence']
+    if name=='issuing_agency' and '發文機關' not in quote:
+        return dict(value=value,status='ambiguous',evidence=quotes),['agency_role_not_explicit']
+    if name=='violation' and not any(label in quote for label in ['違規事項','違規事實']):
+        return dict(value=value,status='ambiguous',evidence=quotes),['violation_role_not_explicit']
+    if re.search(r'無法辨識|未提供|不清|[?？]',quote):
+        return dict(value=None,status='ambiguous',evidence=quotes),[name+'_ambiguous']
+    return dict(value=value,status='observed',evidence=quotes),[]
+
+
+def checked_model_references(text,items):
+    results=[];issues=[]
+    for item in items:
+        quotes,error=evidence(text,item['quote']);parsed=parse_citation(item['citation'])
+        if error or parsed is None or item['citation'] not in item['quote']:
+            issues.append('citation_evidence_or_syntax_invalid');continue
+        law=item['law_name']
+        if law is None or law not in item['quote']:
+            issues.append('citation_law_name_missing_from_evidence');continue
+        results.append(dict(law_name=law,law_code=LAW_CODE if law==LAW_NAME else None,**parsed,
+                            citation=item['citation'],evidence=quotes))
+    return results,issues
+
+
+def normalized_date(raw):
+    value=unicodedata.normalize('NFKC',raw).strip()
+    match=re.fullmatch(r'(民國|西元)?\s*(\d{2,4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日',value)
+    if match:
+        calendar,y,m,d=match.groups()
+        if calendar is None:return None,'calendar_not_explicit'
+        y=int(y)+(1911 if calendar=='民國' else 0)
+    else:
+        match=re.fullmatch(r'(\d{4})[-/](\d{1,2})[-/](\d{1,2})',value)
+        if not match:return None,'date_format_or_year_ambiguous'
+        y,m,d=map(int,match.groups())
+    try:return date(int(y),int(m),int(d)).isoformat(),None
+    except ValueError:return None,'invalid_calendar_date'
+
+
+def checked_dates(text,items):
+    results=[];issues=[]
+    labels={'issued':['發文日期','填單日期'],'violation':['違規日期','違規時間'],'document_due':['應到案日期','文件記載期限']}
+    for item in items:
+        quotes,error=evidence(text,item['quote'])
+        if error or not item['raw'].strip() or item['raw'] not in item['quote']:
+            issues.append('date_evidence_invalid');continue
+        value,problem=normalized_date(item['raw']);role=item['role']
+        prefix=item['quote'].split(item['raw'])[0].split('\n')[-1]
+        label_hits=[(prefix.rfind(label),key) for key,values in labels.items() for label in values if label in prefix]
+        supported_role=max(label_hits)[1] if label_hits else 'unknown'
+        role_problem=role=='unknown' or role!=supported_role or item['quote'].count(item['raw'])!=1
+        if problem:issues.append(problem)
+        if role_problem:issues.append('date_role_unconfirmed')
+        results.append(dict(raw=item['raw'],role='unknown' if role_problem else role,model_role=role,normalized=value,
+                            status='ambiguous' if problem or role_problem else 'observed',evidence=quotes))
+    if not results:issues.append('missing_dates')
+    return results,issues

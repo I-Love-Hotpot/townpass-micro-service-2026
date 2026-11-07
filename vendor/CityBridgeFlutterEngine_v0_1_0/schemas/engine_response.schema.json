@@ -1,0 +1,1037 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "engine_version",
+    "request_id",
+    "status",
+    "verification_status",
+    "requires_verification",
+    "result",
+    "error",
+    "execution_mode"
+  ],
+  "properties": {
+    "request_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "completed",
+        "failed",
+        "timeout",
+        "busy",
+        "cancelled"
+      ]
+    },
+    "verification_status": {
+      "const": "candidate"
+    },
+    "requires_verification": {
+      "const": true
+    },
+    "result": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "input",
+            "document_fields",
+            "document_references",
+            "gemma_candidates",
+            "related_faqs",
+            "government_services",
+            "workflow",
+            "verification_status",
+            "requires_verification",
+            "needs_clarification",
+            "run_info"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "citybridge_compact_result_v1"
+            },
+            "input": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "CityBridge upstream OCR JSON input v1",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "schemaVersion",
+                "resultId",
+                "generatedAt",
+                "inputMode",
+                "sourceText"
+              ],
+              "properties": {
+                "schemaVersion": {
+                  "const": 1
+                },
+                "resultId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "generatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "inputMode": {
+                  "enum": [
+                    "image",
+                    "pdf",
+                    "text"
+                  ]
+                },
+                "sourceText": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "maxLength": 12000
+                },
+                "summary": {
+                  "type": "string",
+                  "maxLength": 12000
+                },
+                "sixQuestions": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "who": {
+                      "type": "string",
+                      "maxLength": 4000
+                    },
+                    "what": {
+                      "type": "string",
+                      "maxLength": 4000
+                    },
+                    "when": {
+                      "type": "string",
+                      "maxLength": 4000
+                    },
+                    "where": {
+                      "type": "string",
+                      "maxLength": 4000
+                    },
+                    "why": {
+                      "type": "string",
+                      "maxLength": 4000
+                    },
+                    "how": {
+                      "type": "string",
+                      "maxLength": 4000
+                    }
+                  }
+                }
+              }
+            },
+            "document_fields": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "document_type",
+                "issuing_agency",
+                "violation"
+              ],
+              "properties": {
+                "document_type": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "status"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status": {
+                      "enum": [
+                        "observed",
+                        "missing",
+                        "ambiguous",
+                        "conflict"
+                      ]
+                    }
+                  }
+                },
+                "issuing_agency": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "status"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status": {
+                      "enum": [
+                        "observed",
+                        "missing",
+                        "ambiguous",
+                        "conflict"
+                      ]
+                    }
+                  }
+                },
+                "violation": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "status"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status": {
+                      "enum": [
+                        "observed",
+                        "missing",
+                        "ambiguous",
+                        "conflict"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "document_references": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "law_name",
+                  "citation_raw",
+                  "citation",
+                  "article_no",
+                  "paragraph",
+                  "subparagraph",
+                  "article_full_text",
+                  "cited_item",
+                  "ocr_evidence",
+                  "source_url",
+                  "version_id",
+                  "amended_at",
+                  "effective_at",
+                  "scope_status",
+                  "verification_status"
+                ],
+                "properties": {
+                  "law_name": {
+                    "type": "string"
+                  },
+                  "citation_raw": {
+                    "type": "string"
+                  },
+                  "citation": {
+                    "type": "string"
+                  },
+                  "article_no": {
+                    "type": "string"
+                  },
+                  "paragraph": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "subparagraph": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "article_full_text": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cited_item": {
+                    "oneOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "text",
+                          "required_context",
+                          "mapping_verified"
+                        ],
+                        "properties": {
+                          "text": {
+                            "type": "string"
+                          },
+                          "required_context": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "mapping_verified": {
+                            "const": false
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "ocr_evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "source_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "uri"
+                  },
+                  "version_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "amended_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date"
+                  },
+                  "effective_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date"
+                  },
+                  "scope_status": {
+                    "const": "complete_article; item_mapping_and_case_applicability_unverified"
+                  },
+                  "verification_status": {
+                    "const": "candidate"
+                  }
+                }
+              }
+            },
+            "gemma_candidates": {
+              "type": "array",
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "rank",
+                  "title",
+                  "evidence_quote",
+                  "relation_note_draft",
+                  "source_url",
+                  "version_id",
+                  "verification_status"
+                ],
+                "properties": {
+                  "rank": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 3
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "evidence_quote": {
+                    "type": "string",
+                    "minLength": 2
+                  },
+                  "relation_note_draft": {
+                    "type": "string"
+                  },
+                  "source_url": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "version_id": {
+                    "type": "string"
+                  },
+                  "verification_status": {
+                    "const": "candidate"
+                  }
+                }
+              }
+            },
+            "related_faqs": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "status",
+                "message",
+                "items"
+              ],
+              "properties": {
+                "status": {
+                  "const": "not_available_in_current_dataset"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "items": {
+                  "type": "array",
+                  "maxItems": 0
+                }
+              }
+            },
+            "government_services": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "status",
+                "message",
+                "items"
+              ],
+              "properties": {
+                "status": {
+                  "const": "not_matched"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "items": {
+                  "type": "array",
+                  "maxItems": 0
+                }
+              }
+            },
+            "workflow": {
+              "type": "null"
+            },
+            "verification_status": {
+              "const": "candidate"
+            },
+            "requires_verification": {
+              "const": true
+            },
+            "needs_clarification": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "run_info": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "generated_at",
+                "backend",
+                "embedding_calls",
+                "input_evidence_field",
+                "upstream_generated_fields_verified",
+                "elapsed_seconds"
+              ],
+              "properties": {
+                "generated_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "backend": {
+                  "const": "gemma"
+                },
+                "embedding_calls": {
+                  "const": 0
+                },
+                "input_evidence_field": {
+                  "const": "sourceText"
+                },
+                "upstream_generated_fields_verified": {
+                  "const": false
+                },
+                "elapsed_seconds": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              }
+            }
+          },
+          "$schema": "https://json-schema.org/draft/2020-12/schema"
+        }
+      ]
+    },
+    "error": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "code",
+            "message",
+            "retryable"
+          ],
+          "properties": {
+            "code": {
+              "enum": [
+                "INVALID_JSON",
+                "INVALID_INPUT",
+                "PAYLOAD_TOO_LARGE",
+                "BUSY",
+                "MODEL_UNAVAILABLE",
+                "TIMEOUT",
+                "INPUT_TOO_LONG",
+                "MODEL_OUTPUT_INVALID",
+                "EVIDENCE_CHECK_FAILED",
+                "SOURCE_MISMATCH",
+                "PIPELINE_FAILED",
+                "INVALID_RESULT",
+                "MODEL_NOT_LOADED",
+                "NATIVE_NOT_INTEGRATED",
+                "CANCELLED"
+              ]
+            },
+            "message": {
+              "type": "string"
+            },
+            "retryable": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
+    "engine_version": {
+      "const": "citybridge_engine_v1"
+    },
+    "execution_mode": {
+      "enum": [
+        "native",
+        "fixture_replay"
+      ]
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:citybridge:engine:v1:response",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schema_version",
+              "input",
+              "document_fields",
+              "document_references",
+              "gemma_candidates",
+              "related_faqs",
+              "government_services",
+              "workflow",
+              "verification_status",
+              "requires_verification",
+              "needs_clarification",
+              "run_info"
+            ],
+            "properties": {
+              "schema_version": {
+                "const": "citybridge_compact_result_v1"
+              },
+              "input": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "title": "CityBridge upstream OCR JSON input v1",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "schemaVersion",
+                  "resultId",
+                  "generatedAt",
+                  "inputMode",
+                  "sourceText"
+                ],
+                "properties": {
+                  "schemaVersion": {
+                    "const": 1
+                  },
+                  "resultId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "generatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "inputMode": {
+                    "enum": [
+                      "image",
+                      "pdf",
+                      "text"
+                    ]
+                  },
+                  "sourceText": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S",
+                    "maxLength": 12000
+                  },
+                  "summary": {
+                    "type": "string",
+                    "maxLength": 12000
+                  },
+                  "sixQuestions": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "who": {
+                        "type": "string",
+                        "maxLength": 4000
+                      },
+                      "what": {
+                        "type": "string",
+                        "maxLength": 4000
+                      },
+                      "when": {
+                        "type": "string",
+                        "maxLength": 4000
+                      },
+                      "where": {
+                        "type": "string",
+                        "maxLength": 4000
+                      },
+                      "why": {
+                        "type": "string",
+                        "maxLength": 4000
+                      },
+                      "how": {
+                        "type": "string",
+                        "maxLength": 4000
+                      }
+                    }
+                  }
+                }
+              },
+              "document_fields": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "document_type",
+                  "issuing_agency",
+                  "violation"
+                ],
+                "properties": {
+                  "document_type": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "value",
+                      "status"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "status": {
+                        "enum": [
+                          "observed",
+                          "missing",
+                          "ambiguous",
+                          "conflict"
+                        ]
+                      }
+                    }
+                  },
+                  "issuing_agency": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "value",
+                      "status"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "status": {
+                        "enum": [
+                          "observed",
+                          "missing",
+                          "ambiguous",
+                          "conflict"
+                        ]
+                      }
+                    }
+                  },
+                  "violation": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "value",
+                      "status"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "status": {
+                        "enum": [
+                          "observed",
+                          "missing",
+                          "ambiguous",
+                          "conflict"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "document_references": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "law_name",
+                    "citation_raw",
+                    "citation",
+                    "article_no",
+                    "paragraph",
+                    "subparagraph",
+                    "article_full_text",
+                    "cited_item",
+                    "ocr_evidence",
+                    "source_url",
+                    "version_id",
+                    "amended_at",
+                    "effective_at",
+                    "scope_status",
+                    "verification_status"
+                  ],
+                  "properties": {
+                    "law_name": {
+                      "type": "string"
+                    },
+                    "citation_raw": {
+                      "type": "string"
+                    },
+                    "citation": {
+                      "type": "string"
+                    },
+                    "article_no": {
+                      "type": "string"
+                    },
+                    "paragraph": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "subparagraph": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "article_full_text": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "cited_item": {
+                      "oneOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "text",
+                            "required_context",
+                            "mapping_verified"
+                          ],
+                          "properties": {
+                            "text": {
+                              "type": "string"
+                            },
+                            "required_context": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "mapping_verified": {
+                              "const": false
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "ocr_evidence": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "source_url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "uri"
+                    },
+                    "version_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "amended_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date"
+                    },
+                    "effective_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date"
+                    },
+                    "scope_status": {
+                      "const": "complete_article; item_mapping_and_case_applicability_unverified"
+                    },
+                    "verification_status": {
+                      "const": "candidate"
+                    }
+                  }
+                }
+              },
+              "gemma_candidates": {
+                "type": "array",
+                "maxItems": 3,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "rank",
+                    "title",
+                    "evidence_quote",
+                    "relation_note_draft",
+                    "source_url",
+                    "version_id",
+                    "verification_status"
+                  ],
+                  "properties": {
+                    "rank": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 3
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "evidence_quote": {
+                      "type": "string",
+                      "minLength": 2
+                    },
+                    "relation_note_draft": {
+                      "type": "string"
+                    },
+                    "source_url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "version_id": {
+                      "type": "string"
+                    },
+                    "verification_status": {
+                      "const": "candidate"
+                    }
+                  }
+                }
+              },
+              "related_faqs": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "status",
+                  "message",
+                  "items"
+                ],
+                "properties": {
+                  "status": {
+                    "const": "not_available_in_current_dataset"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "items": {
+                    "type": "array",
+                    "maxItems": 0
+                  }
+                }
+              },
+              "government_services": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "status",
+                  "message",
+                  "items"
+                ],
+                "properties": {
+                  "status": {
+                    "const": "not_matched"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "items": {
+                    "type": "array",
+                    "maxItems": 0
+                  }
+                }
+              },
+              "workflow": {
+                "type": "null"
+              },
+              "verification_status": {
+                "const": "candidate"
+              },
+              "requires_verification": {
+                "const": true
+              },
+              "needs_clarification": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "run_info": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "generated_at",
+                  "backend",
+                  "embedding_calls",
+                  "input_evidence_field",
+                  "upstream_generated_fields_verified",
+                  "elapsed_seconds"
+                ],
+                "properties": {
+                  "generated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "backend": {
+                    "const": "gemma"
+                  },
+                  "embedding_calls": {
+                    "const": 0
+                  },
+                  "input_evidence_field": {
+                    "const": "sourceText"
+                  },
+                  "upstream_generated_fields_verified": {
+                    "const": false
+                  },
+                  "elapsed_seconds": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                }
+              }
+            },
+            "$schema": "https://json-schema.org/draft/2020-12/schema"
+          },
+          "error": {
+            "type": "null"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "result": {
+            "type": "null"
+          },
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "message",
+              "retryable"
+            ],
+            "properties": {
+              "code": {
+                "enum": [
+                  "INVALID_JSON",
+                  "INVALID_INPUT",
+                  "PAYLOAD_TOO_LARGE",
+                  "BUSY",
+                  "MODEL_UNAVAILABLE",
+                  "TIMEOUT",
+                  "INPUT_TOO_LONG",
+                  "MODEL_OUTPUT_INVALID",
+                  "EVIDENCE_CHECK_FAILED",
+                  "SOURCE_MISMATCH",
+                  "PIPELINE_FAILED",
+                  "INVALID_RESULT",
+                  "MODEL_NOT_LOADED",
+                  "NATIVE_NOT_INTEGRATED",
+                  "CANCELLED"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "retryable": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CityBridge upstream OCR JSON input v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "resultId",
+    "generatedAt",
+    "inputMode",
+    "sourceText"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "resultId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "inputMode": {
+      "enum": [
+        "image",
+        "pdf",
+        "text"
+      ]
+    },
+    "sourceText": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S",
+      "maxLength": 12000
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 12000
+    },
+    "sixQuestions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "who": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "what": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "when": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "where": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "why": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "how": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      }
+    }
+  },
+  "$id": "urn:citybridge:engine:v1:input"
+}

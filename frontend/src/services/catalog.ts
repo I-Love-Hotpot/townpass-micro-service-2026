@@ -3,7 +3,7 @@ import { preparePages } from './files';
 import { defaultDestinations, fixtures } from './fixtures';
 import { contentHash, findFixture } from './processing';
 import { records } from './records';
-import { summarizeDocument } from './offline';
+import { analyzeDocument } from './offline';
 
 let catalogPromise: ReturnType<typeof loadCatalog> | undefined;
 
@@ -83,7 +83,7 @@ export async function makeDocument(
   const match = findFixture(fixtures, hash);
   signal.throwIfAborted();
   const title = originals[0].name.replace(/\.[^.]+$/, '');
-  const summary = await summarizeDocument(source, title, locale, signal);
+  const analysis = await analyzeDocument(source, title, locale, signal);
   return {
     id: crypto.randomUUID(),
     fixtureId: match?.id,
@@ -93,7 +93,9 @@ export async function makeDocument(
     originals,
     pages,
     source,
-    summary,
+    summary: analysis.summary,
+    sixQuestions: analysis.sixQuestions,
+    analysis,
     locale,
     destinations: match?.destinations ?? defaultDestinations,
     chat: []

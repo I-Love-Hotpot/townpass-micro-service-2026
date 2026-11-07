@@ -1,7 +1,6 @@
 export const MAX_IMAGES = 5;
 export const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
 export const MAX_TOTAL_BYTES = 50 * 1024 * 1024;
-export const MAX_TEXT_CHARACTERS = 6000;
 
 export type ImagePage = {
   id: string;
@@ -66,8 +65,6 @@ export async function recognizePages(
       // The caller owns cancellation state; never mutate a newer retry.
       if (!active()) break;
       if (!text || text === '[無法辨識]') throw new Error('沒有可辨識文字，請更換圖片或手動填入。');
-      if (Array.from(text).length > MAX_TEXT_CHARACTERS)
-        throw new Error('單張辨識文字超過 6,000 字，請分區拍攝。');
       page.text = text;
       page.status = 'done';
     } catch (error) {

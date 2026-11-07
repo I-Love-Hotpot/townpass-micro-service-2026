@@ -1,0 +1,2 @@
+Dart locator/repository contract tests passed (SQLite callback fixture).
+

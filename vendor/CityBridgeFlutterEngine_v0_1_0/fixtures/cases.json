@@ -1,0 +1,21 @@
+[
+  {
+    "case_id": "demo1",
+    "source": "recorded_windows_gemma_result_redacted_not_rerun",
+    "purpose": "UI and contract replay only; not native inference accuracy gold",
+    "known_limitations": [
+      "conflicting/ambiguous OCR fields",
+      "candidate relevance unverified"
+    ]
+  },
+  {
+    "case_id": "demo2",
+    "source": "recorded_windows_gemma_result_redacted_not_rerun",
+    "purpose": "UI and contract replay only; not native inference accuracy gold",
+    "known_limitations": [
+      "conflicting/ambiguous OCR fields",
+      "candidate relevance unverified",
+      "article40 with zero selectors and split law title was NOT resolved"
+    ]
+  }
+]

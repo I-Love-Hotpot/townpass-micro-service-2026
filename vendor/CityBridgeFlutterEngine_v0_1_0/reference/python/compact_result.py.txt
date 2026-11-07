@@ -1,0 +1,44 @@
+"""Compact frontend projection; no inference, rewriting of sources, or approval."""
+import copy
+from jsonschema import Draft202012Validator
+from src.document_input import schema
+
+
+def compact_result(view):
+    references=[]
+    for ref in view['legal_references']:
+        row=ref['source_record']
+        exact=ref.get('source_binding',{}).get('exact_result',{}).get('article') or {}
+        item=None
+        focus=ref.get('focus')
+        if focus:
+            point=next(p for p in ref['plain_language']['points'] if p['point_id']==focus['point_id'])
+            item=dict(text=point['evidence'][0]['quote'],
+                      required_context=[e['quote'] for e in point['context_evidence']],
+                      mapping_verified=False)
+        references.append(dict(law_name=ref['law_name'],citation_raw=ref['citation_raw'],
+            citation=ref['citation_normalized'],article_no=ref['article_key'],paragraph=ref['paragraph'],
+            subparagraph=ref['clause'],article_full_text=row['article_text_zh'] if row else None,
+            cited_item=item,ocr_evidence=[e['quote'] for e in ref['evidence']],
+            source_url=exact.get('source_url',row['source_url'] if row else None),
+            version_id=exact.get('version_id',row['version_id'] if row else None),
+            amended_at=row.get('amended_at') if row else None,effective_at=row.get('effective_at') if row else None,
+            scope_status='complete_article; item_mapping_and_case_applicability_unverified',
+            verification_status='candidate'))
+    retrieval=view['rag_retrieval']
+    value=dict(schema_version='citybridge_compact_result_v1',input=copy.deepcopy(view['input']['original_payload']),
+        document_fields={key:dict(value=field.get('value'),status=field['status'])
+                         for key,field in view['document'].items() if key!='dates'},
+        document_references=references,
+        gemma_candidates=[dict(rank=h['rank'],title=h['title'],evidence_quote=h['evidence_quote'],
+            relation_note_draft=h['gemma_reason_draft'],source_url=h['source_url'],
+            version_id=h['source_record']['version_id'],verification_status='candidate') for h in retrieval['results']],
+        related_faqs=dict(status='not_available_in_current_dataset',message='目前資料包沒有交通FAQ',items=[]),
+        government_services=dict(status='not_matched',message='政府服務尚未匹配',items=[]),
+        workflow=None,verification_status='candidate',requires_verification=True,
+        needs_clarification=copy.deepcopy(view['pipeline_audit']['needs_clarification']),
+        run_info=dict(generated_at=view['generated_at'],backend='gemma',embedding_calls=0,
+                      input_evidence_field='sourceText',upstream_generated_fields_verified=False,
+                      elapsed_seconds=view['pipeline_audit']['elapsed_seconds']))
+    Draft202012Validator(schema('compact_document_result.schema.json')).validate(value)
+    return value
