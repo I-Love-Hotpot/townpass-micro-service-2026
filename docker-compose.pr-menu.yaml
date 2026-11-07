@@ -1,0 +1,21 @@
+services:
+  pr-menu:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.pr-menu
+    restart: unless-stopped
+    expose:
+      - "80"
+    depends_on:
+      - pr-backend
+
+  pr-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: ["node", "src/pr-menu-server.js"]
+    restart: unless-stopped
+    environment:
+      GITHUB_TOKEN: ${GITHUB_TOKEN:?Set GITHUB_TOKEN for the PR menu backend}
+    expose:
+      - "3001"
