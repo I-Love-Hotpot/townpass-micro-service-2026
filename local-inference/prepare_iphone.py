@@ -5,6 +5,7 @@ import json
 import plistlib
 import shutil
 import subprocess
+import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -58,10 +59,61 @@ def prepare():
     return target
 
 
+def ensure_device_model(device, bundle_id, target, force=False):
+    """Reuse a verified model; legacy installations are read back once for hashing."""
+    base = ['xcrun', 'devicectl', 'device']
+    domain = ['--device', device, '--domain-type', 'appDataContainer',
+              '--domain-identifier', bundle_id]
+    marker_name = MODEL + '.verified.json'
+    with tempfile.TemporaryDirectory(prefix='govclear-model-') as temp:
+        temp = Path(temp)
+        listing = temp / 'files.json'
+        run(base + ['info', 'files'] + domain + ['--subdirectory', 'Documents',
+            '--no-recurse', '--json-output', listing])
+        files = json.loads(listing.read_text())['result']['files']
+        entries = {entry['name']: entry for entry in files}
+        entry = entries.get(MODEL, {})
+        metadata = entry.get('metadata', {})
+        same_size = metadata.get('size') == SIZE
+        stamp = metadata.get('lastModDate')
+        marker = temp / marker_name
+        verified = False
+        if not force and same_size:
+            if marker_name in entries:
+                run(base + ['copy', 'from'] + domain + ['--source', 'Documents/' + marker_name,
+                    '--destination', marker])
+                try:
+                    saved = json.loads(marker.read_text())
+                    verified = saved == dict(sha256=SHA256, size=SIZE, revision=REVISION, modified=stamp) and stamp is not None
+                except (ValueError, OSError):
+                    pass
+            if not verified:
+                print('驗證手機既有模型（僅首次或模型異動時讀回檢查）…', flush=True)
+                existing = temp / MODEL
+                run(base + ['copy', 'from'] + domain + ['--source', 'Documents/' + MODEL,
+                    '--destination', existing])
+                verified = existing.stat().st_size == SIZE and digest(existing) == SHA256
+        if not verified:
+            run(base + ['copy', 'to'] + domain + ['--source', target,
+                '--destination', 'Documents/' + MODEL])
+            run(base + ['info', 'files'] + domain + ['--subdirectory', 'Documents',
+                '--no-recurse', '--json-output', listing])
+            entries = {entry['name']: entry for entry in json.loads(listing.read_text())['result']['files']}
+            metadata = entries.get(MODEL, {}).get('metadata', {})
+            if metadata.get('size') != SIZE:
+                raise RuntimeError('手機模型檔案大小不符，請重新安裝模型。')
+            stamp = metadata.get('lastModDate')
+        marker.write_text(json.dumps(dict(sha256=SHA256, size=SIZE, revision=REVISION, modified=stamp)))
+        run(base + ['copy', 'to'] + domain + ['--source', marker,
+            '--destination', 'Documents/' + marker_name])
+        print('✓ 模型未變更，跳過複製。' if verified else '✓ 手機模型已更新。', flush=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--device', help='實體 iPhone UDID；僅一支已連接時自動選取')
     parser.add_argument('--prepare-only', action='store_true', help='下載模型及打包介面，不安裝')
+    parser.add_argument('--force-model-copy', action='store_true', help='強制重新複製模型到手機')
     args = parser.parse_args()
     target = prepare()
     if args.prepare_only:
@@ -78,9 +130,7 @@ def main():
     with (bundle / 'Info.plist').open('rb') as file:
         bundle_id = plistlib.load(file)['CFBundleIdentifier']
     run(['xcrun', 'devicectl', 'device', 'install', 'app', '--device', device, bundle])
-    run(['xcrun', 'devicectl', 'device', 'copy', 'to', '--device', device,
-         '--domain-type', 'appDataContainer', '--domain-identifier', bundle_id,
-         '--source', target, '--destination', 'Documents/' + MODEL])
+    ensure_device_model(device, bundle_id, target, force=args.force_model_copy)
     run(['xcrun', 'devicectl', 'device', 'process', 'launch', '--device', device, bundle_id])
     print('✓ iPhone 已安裝離線版。進入服務 → GovClear 看懂文件；不需啟動 Mac 模型。')
 
