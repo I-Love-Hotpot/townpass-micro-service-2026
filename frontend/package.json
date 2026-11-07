@@ -10,7 +10,8 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "dev:govclear": "vite --host 127.0.0.1 --port 5173 --strictPort"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.6",

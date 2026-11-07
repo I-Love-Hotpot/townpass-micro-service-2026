@@ -1,0 +1,128 @@
+# iPhone 端上 E4B（開發驗證）
+
+發布分支：`release/govclear-iphone-offline`。本機開發分支 `feat/govclear-iphone-offline`、自動摘要版與人工確認版保留。
+Flutter 與微服務請搭配相同發布分支；私人罰單與測試截圖不包含在發布歷史中。
+
+本版的介面架構是 Vue 打包資源 → Flutter WebView → Swift MethodChannel。
+圖片文字辨識使用手機 Apple Vision；白話摘要使用 LiteRT-LM → 手機內 E4B，兩者皆離線執行。
+手機只在自身 `127.0.0.1:5173` 提供 App 內的靜態資源；該位址不是 Mac，沒有推論 HTTP API。
+模型透過 USB 安裝到 App 的 Documents，不經城市通伺服器，也不需要 Mac Ollama。
+
+依賴：Google LiteRT-LM `0.19.1`，官方 Swift 原始封裝保留在 TownPass 的
+`ios/Packages/LiteRTLM`（含授權），官方 iOS 二進位由 SwiftPM 依 SHA-256 驗證；
+不需要下載整個上游 Git 歷史。模型 `litert-community/gemma-4-E4B-it-litert-lm`，
+revision `71064b01bd5e2bfd9a5f9dd52df86ae4800138c1`，CPU INT4 檔案 `gemma-4-E4B-it.litertlm`。
+大小 3,659,530,240 bytes，SHA-256 `0b2a8980ce155fd97673d8e820b4d29d9c7d99b8fa6806f425d969b145bd52e0`。
+下載與雜湊核對只發生在 Mac 準備階段，權重不加入 Git。
+來源：[官方 Swift 整合指南](https://github.com/google-ai-edge/LiteRT-LM/tree/v0.19.1/samples/ios_and_mac)、
+[模型檔案](https://huggingface.co/litert-community/gemma-4-E4B-it-litert-lm/tree/71064b01bd5e2bfd9a5f9dd52df86ae4800138c1)。
+
+## 安裝
+
+iPhone 開發者模式開啟、USB 連線並解鎖；Xcode Runner 的簽署 Team 必須能安裝到該手機。
+在微服務根目錄執行：
+
+```sh
+python3 local-inference/prepare_iphone.py
+```
+
+只有一支實體 iPhone 時自動選取；多支則帶 `--device <UDID>`。
+腳本下載並核對模型、建置 Vue、複製至 Flutter assets、以 Profile 模式建置、安裝 App、
+透過 USB 傳輸模型，最後開啟 App。首次 SDK 下載與模型傳輸可能需要數分鐘。
+修改 Vue 後必須重跑打包；真機不使用 Vite 熱更新。
+`--prepare-only` 只準備模型及介面。手動 build 必須帶 `--dart-define=GOVCLEAR_ON_DEVICE=true`。
+
+## 驗證範圍
+
+真機測試：`integration_test/govclear_offline_test.dart`，使用合成通知測試 E4B 圖片轉錄與摘要。
+模型首次載入時間納入首次辨識耗時，不能拿 Mac 的 3 秒推論數據當手機效能。
+初測使用 CPU，4,096-token context、最多 1,024 個輸出 tokens、每張圖片 140 個影像 tokens、關閉額外思考；
+目前手機已改用下節的 GPU + MTP 純文字摘要，不初始化 E4B 影像編碼器；
+達到長度上限就拒絕把截斷輸出當成功。模型檔存在檢查不代表載入和推論成功。
+離開 GovClear 後釋放模型；取消後不接受舊結果，也不會自動轉送 Mac 或雲端。
+
+真機原生模型初測（iPhone 15 Pro Max）：合成 notice.png 辨識 17.236 秒（含引擎載入），
+簡短測試提示詞摘要 14.009 秒。日期、費用與免收費條件驗證通過；
+此測試摘要提示詞不是正式 UI 的完整白話規則，不能當成正式介面的速度或品質保證。
+預設影像預算曾出現張量配置錯誤，140-token 設定已通過此合成樣本。
+目前圖片改走 Apple Vision OCR，不再使用 E4B 分區重試；E4B 保留做文字摘要。
+
+目前簽章使用 Increased Memory Limit（已驗證生效），不使用個人帳號不支援的
+Extended Virtual Addressing。進入功能時先載入模型與影像編碼器，再建立 WebView；
+載入失敗會顯示錯誤與重試。長文件若超出手機 token 配額須分批，不會截斷原文硬產生結果。
+
+完整離線介面測試已在 iPhone 15 Pro Max / iOS 27.2 通過：短文白話摘要、長文第二輪核對、
+範例與實際 File input 多選兩張圖片後自動摘要、排序、200→300 元人工修正後重新摘要、
+按返回釋放模型。使用 `integration_test/govclear_offline_ui_test.dart` 的手機端報告驗證，
+不依賴 Flutter VM Service 連線；報告檔為 App Documents/govclear-offline-ui-test.json。
+兩份報告的本機副本在 `.runtime/iphone/`，不納入版本控制。
+已建置並安裝正常 `lib/main.dart` 的 Profile 版本，沒有把測試入口留給使用者。
+
+## Apple Vision OCR
+
+手機 `transcribe` 使用 `VNRecognizeTextRequest`，準確模式，執行前確認支援繁體中文，
+辨識語言為繁體中文及英文。關閉語言修正，避免字典自動修改編號與金額。
+影像解碼時校正 EXIF 方向，最長邊限制 3200；本次 1108×1477 罰單保留原有解析度。
+辨識在背景序列佇列進行，支援取消；不需載入 E4B，不上傳圖片或文字。
+依文字框位置從上到下、同列從左到右整理，欄位之間保留 tab。
+這是幾何排序，不是表格語意還原；複雜多欄、直書或模糊文件仍須人工核對。
+空結果顯示錯誤；沿用原有 6000 字上限，不截斷、不自動退回較慢的 E4B 圖片辨識。
+
+iPhone 15 Pro Max 原罰單單次 OCR 實測：**1.175 秒、1141 字**，
+檢查讀到金額 `600` 與違規文字 `人行道`。此數字不含模型載入、摘要，
+兩個關鍵字通過不代表整份文件每字正確。
+測試入口 `integration_test/govclear_vision_test.dart`，刻意不載入 E4B。
+報告為 App Documents/govclear-vision-test.json。
+
+先前 E4B 整張圖片縮為 480×624；嘗試重疊分區及最多兩層細分後，
+超過三分鐘仍未完成，已停止該輪測試，未宣稱罰單測試通過。
+目前預設 OCR 不再呼叫該分區流程。
+
+完整介面回歸入口：TownPass `integration_test/govclear_document_repro_test.dart`。
+測試圖片放在手機 App Documents/govclear-repro.jpg，不打包、不加入 Git；
+結果寫入 Documents/govclear-document-repro.json，只記錄狀態、耗時、字數與關鍵字檢查，
+不記錄罰單個資。測試完成後須重新安裝正常 main.dart。
+
+本次完整介面罰單回歸通過：選圖到摘要顯示 **114.942 秒**，包含 OCR、
+原有 E4B 摘要與核對流程，不包含進入頁面前的模型預載。
+完整流程仍慢，不能將 1.175 秒 OCR 宣稱為整體反應時間。
+來源文字區含 1149 個字元（介面會加上來源標籤），金額與違規關鍵字檢查通過；
+這是流程與關鍵字驗證，不是全部 OCR 文字或摘要內容的逐字正確性驗證。
+
+## 手機單輪摘要加速
+
+手機改用 `frontend/src/assets/govclear/summary-mobile-policy.txt`（573 字），
+原長版規則為 2106 字。手機只做一輪摘要，保留輸出前自查指示，
+取消自動第二輪重寫；Mac 模擬器原有兩輪流程保留。
+模型仍為 E4B，OCR 仍為 Apple Vision，context 與輸出上限未變更，原文不截斷。
+此改動減少推論時間，也取消了獨立第二輪校對，不能宣稱摘要完整性完全相同。
+
+同一 iPhone、同一罰單完整流程：114.942 秒 → **40.712 秒**（約縮短 65%）。
+兩次皆從選圖到摘要顯示計時，不含進入頁面前的模型預載。
+OCR 金額與違規關鍵字通過，新增檢查摘要保留 `600` 也通過；
+這些檢查不能取代逐項核對期限與全部條件。屬單次對照，不代表所有文件效能。
+報告副本：`local-inference/.runtime/iphone/fast-summary-test-result.json`，不納入 Git。
+Flutter 原生路由、單輪與取消測試 4 項通過；前端測試 9 項通過，型別與分析檢查通過。
+
+## GPU + MTP 加速（仍使用 E4B）
+
+原生 `EngineConfig` 改為 `.gpu`，啟用 `SpeculativeDecodingConfig(mode: .on)`，
+不初始化已由 Apple Vision 取代的 E4B 影像編碼器。模型檔、原文、573 字手機摘要規則、
+4096 context 與 1024 輸出上限均不變，仍拒絕截斷輸出。
+MTP 使用同一模型檔內的預測器加速輸出；不是額外再做一輪摘要。
+參考：[LiteRT-LM 官方 MTP 說明](https://developers.google.com/edge/litert-lm/models/gemma-4)。
+
+同一 iPhone 15 Pro Max / 同一罰單：
+- CPU 單輪：40.712 秒。
+- GPU 單輪：24.954 秒；模型預載另 17.816 秒。
+- GPU + MTP 第一輪：13.779 秒；模型預載另 3.581 秒。
+
+GPU + MTP 第一輪輸入 1597 tokens、輸出 214 tokens，SDK 回報解碼 36.83 tokens/秒。
+預載會受已編譯快取影響，首次安裝或清除快取可能更久；不能將此次 3.581 秒當冷啟動保證。
+測試報告只保存耗時、字數、金額與違規關鍵字檢查、SDK 效能數字，不保存罰單原文。
+20 秒內是此樣本的實測目標，不是長文、多張圖片或所有手機的服務保證。
+
+同設定重新啟動測試第二輪：**13.762 秒**，模型預載另 2.563 秒。
+兩輪都完成 OCR 與摘要顯示，OCR 金額、違規關鍵字及摘要 `600` 檢查通過。
+第二輪輸入仍 1597 tokens、輸出 214 tokens；未使用摘要結果快取。
+Flutter 分析無問題，4 項原生路由／單輪／取消測試通過，正常 main.dart Profile 已建置。

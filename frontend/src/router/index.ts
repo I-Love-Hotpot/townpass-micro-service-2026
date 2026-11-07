@@ -53,6 +53,12 @@ const router = createRouter({
   },
   routes: [
     {
+      path: '/govclear',
+      name: 'govclear',
+      meta: { title: 'GovClear｜看懂文件' },
+      component: () => import('../views/GovClearView.vue')
+    },
+    {
       path: '/',
       name: 'home',
       meta: {
