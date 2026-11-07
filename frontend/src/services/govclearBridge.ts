@@ -4,6 +4,11 @@ type Bridge = {
   addEventListener(name: 'message', callback: (event: MessageEvent) => void): void;
   removeEventListener(name: 'message', callback: (event: MessageEvent) => void): void;
 };
+type NativeWindow = {
+  govclearNative?: Bridge;
+  FlutterInAppWebViewWebMessageListener?: new (name: string) => Bridge;
+  webkit?: { messageHandlers?: { onWebMessageListenerPostMessageReceived?: unknown } };
+};
 type Pending = {
   resolve(value: string): void;
   reject(error: Error): void;
@@ -37,15 +42,29 @@ export class GovClearBridge {
   };
 
   async connect(signal?: AbortSignal) {
-    for (let n = 0; n < 30; n++) {
+    const native = window as unknown as NativeWindow;
+    for (let n = 0; n < 120; n++) {
       signal?.throwIfAborted();
-      this.object = (window as unknown as { govclearNative?: Bridge }).govclearNative;
+      // Older iOS hosts can inject the listener class but omit its named instance.
+      if (
+        !native.govclearNative &&
+        native.FlutterInAppWebViewWebMessageListener &&
+        native.webkit?.messageHandlers?.onWebMessageListenerPostMessageReceived
+      ) {
+        native.govclearNative = new native.FlutterInAppWebViewWebMessageListener('govclearNative');
+      }
+      this.object = native.govclearNative;
       if (this.object) break;
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
     signal?.throwIfAborted();
-    if (!this.object)
-      throw new Error('請從 TownPass 的「白話人」入口開啟。瀏覽器只能預覽介面，無法進行本機推論。');
+    if (!this.object) {
+      throw new Error(
+        native.FlutterInAppWebViewWebMessageListener
+          ? 'App 本機推論橋接尚未就緒，請關閉白話人後重新開啟。'
+          : '請從 TownPass 的「白話人」入口開啟。瀏覽器只能預覽介面，無法進行本機推論。'
+      );
+    }
     this.object.addEventListener('message', this.receive);
     return this.request('check');
   }

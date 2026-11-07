@@ -50,3 +50,75 @@ test('cancel rejects pending inference and removes listener on disposal', async 
   assert.equal(h.listeners.size, 0);
   assert.equal(h.requests.at(-1).action, 'cancel');
 });
+
+test('iOS restores a missing named listener and reuses it across operations', async () => {
+  const h = host(() => 'ready');
+  const object = window.govclearNative;
+  let created = 0;
+  delete window.govclearNative;
+  window.FlutterInAppWebViewWebMessageListener = class {
+    constructor(name) {
+      assert.equal(name, 'govclearNative');
+      created++;
+      return object;
+    }
+  };
+  window.webkit = { messageHandlers: { onWebMessageListenerPostMessageReceived: {} } };
+  for (let n = 0; n < 2; n++) {
+    const bridge = new GovClearBridge();
+    assert.equal(await bridge.connect(), 'ready');
+    assert.equal(await bridge.request('transcribe', { image: 'image' }), 'ready');
+    bridge.dispose();
+    assert.equal(h.listeners.size, 0);
+  }
+  assert.equal(created, 1);
+});
+
+test('waits past three seconds for delayed native injection', async (t) => {
+  host(() => 'ready');
+  const { govclearNative } = window;
+  globalThis.window = {};
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  const bridge = new GovClearBridge();
+  const connected = bridge.connect();
+  for (let n = 0; n < 40; n++) {
+    t.mock.timers.tick(100);
+    await Promise.resolve();
+  }
+  window.govclearNative = govclearNative;
+  t.mock.timers.tick(100);
+  assert.equal(await connected, 'ready');
+  bridge.dispose();
+});
+
+test('ordinary browsers never construct a native listener and cancellation stops waiting', async (t) => {
+  globalThis.window = {
+    FlutterInAppWebViewWebMessageListener: class {
+      constructor() { assert.fail('No native message handler'); }
+    },
+  };
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  const bridge = new GovClearBridge();
+  const controller = new AbortController();
+  const connected = bridge.connect(controller.signal);
+  controller.abort();
+  t.mock.timers.tick(100);
+  await assert.rejects(connected, { name: 'AbortError' });
+  assert.equal(window.govclearNative, undefined);
+  bridge.dispose();
+});
+
+test('missing bridges distinguish an app injection failure from an external browser', async (t) => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  for (const inApp of [false, true]) {
+    globalThis.window = inApp ? { FlutterInAppWebViewWebMessageListener: class {} } : {};
+    const bridge = new GovClearBridge();
+    const rejected = assert.rejects(bridge.connect(), inApp ? /橋接尚未就緒/ : /TownPass/);
+    for (let n = 0; n < 120; n++) {
+      t.mock.timers.tick(100);
+      await Promise.resolve();
+    }
+    await rejected;
+    bridge.dispose();
+  }
+});
