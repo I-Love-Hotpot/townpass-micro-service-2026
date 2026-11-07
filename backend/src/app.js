@@ -3,6 +3,7 @@ import cors from "@fastify/cors";
 import Fastify from "fastify";
 import docsRoutes from "./routes/docs.routes.js";
 import healthRoutes from "./routes/health.routes.js";
+import prPreviewRoutes from "./routes/pr-preview.routes.js";
 import { createDatabasePool } from "./services/database.service.js";
 
 if (existsSync(".env")) process.loadEnvFile();
@@ -23,6 +24,7 @@ try {
   await app.register(cors, { origin: allowedOrigins, preflight: false });
   await app.register(healthRoutes, { allowedOrigins });
   await app.register(docsRoutes);
+  await app.register(prPreviewRoutes);
   await app.listen({ port: 3001, host: "0.0.0.0" });
 
   for (const signal of ["SIGINT", "SIGTERM"]) {

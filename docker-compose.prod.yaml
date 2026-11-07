@@ -9,7 +9,7 @@ services:
     expose:
       - "80"
     networks:
-      # - coolify
+      - default
     healthcheck:
       test: ["CMD", "wget", "--spider", "-nv", "http://127.0.0.1:80/"]
       interval: 10s
@@ -26,6 +26,7 @@ services:
     environment:
       MYSQL_HOST: database
       MYSQL_PORT: 3306
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
     healthcheck:
       test: ["CMD", "wget", "--spider", "-nv", "http://127.0.0.1:3001/"]
       interval: 10s
@@ -34,6 +35,7 @@ services:
       start_period: 10s
     networks:
       # - coolify
+      - default
       - townpass-db
 
 networks:

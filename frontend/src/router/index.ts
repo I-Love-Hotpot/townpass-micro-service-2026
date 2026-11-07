@@ -57,9 +57,9 @@ const router = createRouter({
       path: '/',
       name: 'home',
       meta: {
-        title: import.meta.env.VITE_PR_MENU_HOME === 'true' ? 'TownPass 預覽選單' : '申辦服務'
+        title: '申辦服務'
       },
-      component: import.meta.env.VITE_PR_MENU_HOME === 'true' ? PRReviewMenuView : HomeView
+      component: HomeView
     },
     {
       path: '/form/:id',
