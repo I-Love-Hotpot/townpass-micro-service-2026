@@ -1,3 +1,5 @@
+import type { SixQuestionAnswers } from '../services/govclearSixQuestions';
+
 export type Locale = 'zh-TW' | 'id';
 export type FileKind = 'photos' | 'pdf';
 export type FilingStatus = 'due-soon' | 'completed';
@@ -42,6 +44,7 @@ export interface DocumentRecord {
   pages: Blob[];
   summary: Summary;
   source?: string;
+  sixQuestions?: SixQuestionAnswers;
   locale: Locale;
   status?: FilingStatus;
   scenarioDate?: string;

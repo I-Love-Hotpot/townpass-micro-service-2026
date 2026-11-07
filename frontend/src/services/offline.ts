@@ -1,10 +1,8 @@
 import type { DocumentRecord, Locale } from '@/interfaces/document';
-import {
-  summarizeSource,
-  transcribePages,
-  validateSource,
-  withInference
-} from './govclearDocument';
+import { summarizeSource, validateSource, withInference } from './govclearDocument';
+import { recognizePages, type ImagePage } from './govclearImages';
+import { parseSixQuestions } from './govclearSixQuestions';
+import sixPolicy from '@/assets/govclear/six-questions-policy.txt?raw';
 import policy from '@/assets/govclear/summary-policy.txt?raw';
 import mobilePolicy from '@/assets/govclear/summary-mobile-policy.txt?raw';
 import reviewPolicy from '@/assets/govclear/summary-review-policy.txt?raw';
@@ -20,12 +18,47 @@ function encode(blob: Blob) {
   });
 }
 
-export function readDocument(pages: Blob[], title: string, locale: Locale, signal: AbortSignal) {
-  return withInference(signal, async (bridge) => {
-    const source = await transcribePages(bridge, pages, signal, encode);
-    const summary = await summarizeSource(bridge, source, title, locale, policies);
-    return { source, summary };
-  });
+export function recognizeDocument(
+  pages: ImagePage[],
+  signal: AbortSignal,
+  progress: (index: number) => void
+) {
+  return withInference(signal, (bridge) =>
+    recognizePages(
+      pages,
+      async (page) => {
+        if (!page.file) throw new Error('找不到原始圖片，請重新選檔。');
+        const image = await encode(page.file);
+        signal.throwIfAborted();
+        return bridge.request('transcribe', { image });
+      },
+      () => !signal.aborted,
+      progress
+    )
+  );
+}
+
+export function summarizeDocument(
+  source: string,
+  title: string,
+  locale: Locale,
+  signal: AbortSignal
+) {
+  return withInference(signal, (bridge) =>
+    summarizeSource(bridge, source, title, locale, policies)
+  );
+}
+
+export function analyzeSixQuestions(source: string, locale: Locale, signal: AbortSignal) {
+  validateSource(source);
+  return withInference(signal, async (bridge) =>
+    parseSixQuestions(
+      await bridge.request('sixQuestions', {
+        text: source,
+        policy: sixPolicy + (locale === 'id' ? '\n值請用印尼文，保留六個英文欄位名稱。\n' : '')
+      })
+    )
+  );
 }
 
 export function reExplain(record: DocumentRecord, locale: Locale, signal: AbortSignal) {

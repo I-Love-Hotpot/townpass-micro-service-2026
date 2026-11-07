@@ -1,13 +1,21 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref } from 'vue';
+import { computed, onBeforeUnmount, ref, shallowRef } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import AppIcon from '@/components/atoms/AppIcon.vue';
 import FileAction from '@/components/molecules/FileAction.vue';
-import type { FileKind } from '@/interfaces/document';
+import type { FileKind, OriginalFile } from '@/interfaces/document';
 import { makeDocument } from '@/services/catalog';
-import { validateFiles } from '@/services/files';
-import { translate, type Label } from '@/services/i18n';
-import { delay, processWithProgress } from '@/services/processing';
+import { preparePages, validateFiles } from '@/services/files';
+import {
+  MAX_IMAGES,
+  mergePageText,
+  pageReady,
+  validateSelection,
+  type ImagePage
+} from '@/services/govclearImages';
+import { translate } from '@/services/i18n';
+import { recognizeDocument } from '@/services/offline';
+import { processWithProgress } from '@/services/processing';
 import { records } from '@/services/records';
 import { useWorkspace } from '@/stores/workspace';
 
@@ -15,8 +23,16 @@ const workspace = useWorkspace();
 const router = useRouter();
 const t = computed(() => translate.bind(null, workspace.context.locale));
 const photos = ref<HTMLInputElement>();
+const camera = ref<HTMLInputElement>();
 const pdf = ref<HTMLInputElement>();
-const error = ref<string>();
+const pages = ref<ImagePage[]>([]);
+const kind = ref<FileKind>('photos');
+const pdfOriginal = shallowRef<OriginalFile>();
+const collectingPhotos = ref(false);
+const error = ref('');
+const stage = ref('');
+const busy = computed(() => Boolean(workspace.processing || workspace.dataOperation));
+const allReady = computed(() => pages.value.length > 0 && pages.value.every(pageReady));
 let controller: AbortController | undefined;
 let iconTapCount = 0;
 let lastIconTap = 0;
@@ -31,9 +47,9 @@ function tapHomeIcon() {
   }
 }
 
-function pick(kind: FileKind) {
-  const input = kind === 'photos' ? photos.value : pdf.value;
-  if (!input || controller || workspace.dataOperation) return;
+function pick(target: 'photos' | 'pdf' | 'camera') {
+  const input = target === 'camera' ? camera.value : target === 'photos' ? photos.value : pdf.value;
+  if (!input || busy.value) return;
   input.value = '';
   input.click();
 }
@@ -42,48 +58,155 @@ function cancel() {
   controller?.abort();
   controller = undefined;
   workspace.processing = undefined;
+  stage.value = '';
+  for (const page of pages.value) if (page.status === 'processing') page.status = 'pending';
+}
+
+function releasePages() {
+  for (const page of pages.value) URL.revokeObjectURL(page.preview);
 }
 
 onBeforeRouteLeave(cancel);
-onBeforeUnmount(cancel);
+onBeforeUnmount(() => {
+  cancel();
+  releasePages();
+});
 
-async function handleFiles(event: Event, kind: FileKind) {
-  const files = Array.from((event.target as HTMLInputElement).files ?? []);
-  if (!files.length || controller || workspace.dataOperation) return;
-  error.value = undefined;
+function removePage(index: number) {
+  if (busy.value) return;
+  const [page] = pages.value.splice(index, 1);
+  URL.revokeObjectURL(page.preview);
+  error.value = '';
+  if (!pages.value.length) {
+    collectingPhotos.value = false;
+    pdfOriginal.value = undefined;
+    kind.value = 'photos';
+  }
+}
+
+function movePage(index: number, direction: -1 | 1) {
+  const target = index + direction;
+  if (busy.value || target < 0 || target >= pages.value.length) return;
+  const [page] = pages.value.splice(index, 1);
+  pages.value.splice(target, 0, page);
+  error.value = '';
+}
+
+function corrected(page: ImagePage) {
+  page.status = page.text.trim() && page.text.trim() !== '[無法辨識]' ? 'done' : 'pending';
+  page.error = '';
+  error.value = '';
+}
+
+function imagePage(file: Blob, name: string): ImagePage {
+  return {
+    id: crypto.randomUUID(),
+    name,
+    preview: URL.createObjectURL(file),
+    size: file.size,
+    file,
+    ownedPreview: true,
+    text: '',
+    status: 'pending',
+    error: ''
+  };
+}
+
+async function handlePhotos(event: Event, fromCamera = false) {
+  const input = event.target as HTMLInputElement;
+  const files = Array.from(input.files ?? []);
+  input.value = '';
+  if (!files.length || busy.value || (pages.value.length && kind.value === 'pdf')) return;
+  error.value = '';
+  try {
+    validateSelection(pages.value, files);
+    pages.value.push(...files.map((file) => imagePage(file, file.name)));
+    kind.value = 'photos';
+    if (fromCamera) collectingPhotos.value = true;
+    if (!collectingPhotos.value) await run();
+  } catch (cause) {
+    error.value = cause instanceof Error ? cause.message : t.value('photoError');
+  }
+}
+
+async function handlePdf(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const files = Array.from(input.files ?? []);
+  input.value = '';
+  if (!files.length || busy.value || pages.value.length) return;
+  error.value = '';
+  const current = new AbortController();
+  controller = current;
+  try {
+    validateFiles(files, 'pdf');
+    workspace.processing = { kind: 'pdf', percent: 0 };
+    const original = { name: files[0].name, blob: files[0] };
+    const rendered = await preparePages([original], 'pdf', current.signal);
+    current.signal.throwIfAborted();
+    pdfOriginal.value = original;
+    kind.value = 'pdf';
+    pages.value = rendered.map((file, index) => imagePage(file, t.value('page', { n: index + 1 })));
+  } catch (cause) {
+    if (!current.signal.aborted)
+      error.value = cause instanceof Error ? cause.message : t.value('pdfError');
+  } finally {
+    if (controller === current) {
+      controller = undefined;
+      workspace.processing = undefined;
+    }
+  }
+  if (!current.signal.aborted && pages.value.length) await run();
+}
+
+async function run() {
+  if (!pages.value.length || busy.value) return;
   const current = new AbortController();
   const { signal } = current;
-  const fileError = kind === 'pdf' ? 'pdfError' : 'photoError';
-  const failure: { label: Label } = { label: fileError };
+  controller = current;
+  error.value = '';
+  let saving = false;
+  workspace.processing = { kind: kind.value, percent: 0 };
   try {
-    validateFiles(files, kind);
-    failure.label = 'processingError';
-    controller = current;
+    if (!allReady.value) {
+      const failures = await recognizeDocument(pages.value, signal, (index) => {
+        stage.value = t.value('recognizingPage', { n: index + 1 });
+      });
+      signal.throwIfAborted();
+      if (failures || !allReady.value) throw new Error(t.value('partialOcrError'));
+    }
+    stage.value = t.value('explaining');
+    const originals =
+      kind.value === 'pdf' && pdfOriginal.value
+        ? [pdfOriginal.value]
+        : pages.value.map((page) => ({ name: page.name, blob: page.file! }));
     const record = await processWithProgress(
       () =>
         makeDocument(
-          files.map((file) => ({ name: file.name, blob: file })),
-          kind,
+          originals,
+          kind.value,
           workspace.context.locale,
-          signal
+          signal,
+          pages.value.map((page) => page.file!),
+          mergePageText(pages.value)
         ),
       async (document) => {
-        failure.label = 'saveError';
+        saving = true;
         await records.put(document, signal);
       },
       (percent) => {
-        workspace.processing = { kind, percent };
+        workspace.processing = { kind: kind.value, percent };
       },
       signal
     );
-    await delay(300, signal);
+    signal.throwIfAborted();
     await router.push({ name: 'document', params: { id: record.id } });
   } catch (cause) {
     if (!signal.aborted)
-      error.value =
-        failure.label !== 'processingError' || !(cause instanceof Error)
-          ? t.value(failure.label)
-          : cause.message;
+      error.value = saving
+        ? t.value('saveError')
+        : cause instanceof Error
+          ? cause.message
+          : t.value('processingError');
   } finally {
     if (controller === current) cancel();
   }
@@ -91,13 +214,22 @@ async function handleFiles(event: Event, kind: FileKind) {
 </script>
 
 <template>
-  <div class="grid min-h-full grid-rows-[minmax(240px,2fr)_minmax(160px,1fr)]">
-    <section class="flex flex-col items-center justify-center gap-4 px-6 py-8 text-center">
+  <div
+    :class="
+      pages.length
+        ? 'space-y-5 px-4 py-6'
+        : 'grid min-h-full grid-rows-[minmax(220px,1fr)_auto]'
+    "
+  >
+    <section
+      v-if="!pages.length"
+      class="flex flex-col items-center justify-center gap-4 px-6 py-8 text-center"
+    >
       <button
         type="button"
         class="grid h-[72px] w-[72px] place-items-center rounded-2xl bg-brand-light text-brand-dark"
         :aria-label="t('app')"
-        :disabled="Boolean(workspace.processing || workspace.dataOperation)"
+        :disabled="busy"
         @click="tapHomeIcon"
       >
         <AppIcon name="document" class="h-9 w-9" />
@@ -106,38 +238,151 @@ async function handleFiles(event: Event, kind: FileKind) {
       <p class="text-sm text-muted">{{ t('intro') }}</p>
     </section>
     <section
-      class="flex flex-col justify-end gap-3 px-4 pt-4 pb-[max(2rem,env(safe-area-inset-bottom))]"
+      :class="
+        pages.length
+          ? 'space-y-3'
+          : 'flex flex-col justify-end gap-3 px-4 pt-4 pb-[max(2rem,env(safe-area-inset-bottom))]'
+      "
     >
+      <h1 v-if="pages.length" class="page-title">{{ t('selectedPages') }}</h1>
+      <template v-if="kind === 'photos'">
+        <button
+          type="button"
+          class="action-button w-full"
+          :disabled="busy || pages.length >= MAX_IMAGES"
+          @click="pick('camera')"
+        >
+          <AppIcon name="photos" />{{ t(pages.length ? 'cameraMore' : 'camera') }}
+        </button>
+        <FileAction
+          :label="t('photos')"
+          :progress-label="t('processing')"
+          primary
+          :disabled="busy || pages.length >= MAX_IMAGES"
+          @pick="pick('photos')"
+        />
+        <p class="text-sm text-muted">{{ t('photoLimits') }}</p>
+      </template>
       <FileAction
-        v-for="kind in ['photos', 'pdf'] as const"
-        :key="kind"
-        :label="t(kind)"
+        v-if="!pages.length"
+        :label="t('pdf')"
         :progress-label="t('processing')"
-        :primary="kind === 'photos'"
-        :disabled="Boolean(workspace.processing || workspace.dataOperation)"
-        :progress="workspace.processing?.kind === kind ? workspace.processing.percent : undefined"
-        @pick="pick(kind)"
+        :disabled="busy"
+        @pick="pick('pdf')"
       />
-      <Transition name="feedback">
-        <p v-if="error" class="feedback" role="alert">{{ error }}</p>
-      </Transition>
-      <input
-        ref="photos"
-        type="file"
-        data-kind="photos"
-        accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
-        multiple
-        hidden
-        @change="handleFiles($event, 'photos')"
-      />
-      <input
-        ref="pdf"
-        type="file"
-        data-kind="pdf"
-        accept="application/pdf,.pdf"
-        hidden
-        @change="handleFiles($event, 'pdf')"
+      <p v-if="collectingPhotos" class="rounded bg-brand-light p-3 text-sm">{{ t('batchHint') }}</p>
+      <p v-if="stage" role="status" class="text-sm text-brand-dark">{{ stage }}</p>
+      <p v-if="error" id="scan-error" class="feedback" role="alert">{{ error }}</p>
+      <button v-if="busy" type="button" class="text-action" @click="cancel">{{ t('stop') }}</button>
+    </section>
+    <section
+      v-if="pages.length"
+      aria-labelledby="ocr-review-heading"
+      :aria-busy="busy"
+      class="space-y-4"
+    >
+      <h2 id="ocr-review-heading" class="section-title">{{ t('ocrReview') }}</h2>
+      <p id="ocr-help" class="text-sm text-muted">{{ t('ocrHint') }}</p>
+      <ol class="space-y-4">
+        <li
+          v-for="(page, index) in pages"
+          :key="page.id"
+          class="space-y-3 rounded-lg border border-line p-3"
+        >
+          <img
+            :src="page.preview"
+            :alt="t('page', { n: index + 1 })"
+            class="max-h-64 w-full rounded bg-surface object-contain"
+          />
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="min-w-0 break-all text-sm font-semibold">
+              {{ index + 1 }}. {{ page.name }}
+            </span>
+            <div class="flex flex-wrap">
+              <button
+                v-if="kind === 'photos'"
+                type="button"
+                class="text-action"
+                :aria-label="t('moveUp', { n: index + 1 })"
+                :disabled="busy || index === 0"
+                @click="movePage(index, -1)"
+              >
+                ↑
+              </button>
+              <button
+                v-if="kind === 'photos'"
+                type="button"
+                class="text-action"
+                :aria-label="t('moveDown', { n: index + 1 })"
+                :disabled="busy || index === pages.length - 1"
+                @click="movePage(index, 1)"
+              >
+                ↓
+              </button>
+              <button
+                v-if="kind === 'photos' || pages.length === 1"
+                type="button"
+                class="text-action"
+                :aria-label="t('removePage', { n: index + 1 })"
+                :disabled="busy"
+                @click="removePage(index)"
+              >
+                {{ t('delete') }}
+              </button>
+            </div>
+          </div>
+          <label :for="`ocr-${page.id}`" class="block text-sm font-semibold">
+            {{ t('ocrText', { n: index + 1 }) }}
+          </label>
+          <textarea
+            :id="`ocr-${page.id}`"
+            v-model="page.text"
+            rows="4"
+            class="block w-full resize-y rounded-lg border border-line px-3 py-2"
+            :disabled="busy"
+            :aria-describedby="page.error ? `ocr-help error-${page.id}` : 'ocr-help'"
+            :aria-invalid="page.status === 'error'"
+            @input="corrected(page)"
+          ></textarea>
+          <p v-if="page.error" :id="`error-${page.id}`" role="alert" class="feedback">
+            {{ page.error }}
+          </p>
+        </li>
+      </ol>
+      <FileAction
+        :label="t(collectingPhotos ? 'finishCamera' : allReady ? 'correctedSummary' : 'recognize')"
+        :progress-label="t('processing')"
+        primary
+        :disabled="busy"
+        :progress="workspace.processing?.percent"
+        @pick="run"
       />
     </section>
+    <input
+      ref="camera"
+      type="file"
+      data-kind="camera"
+      accept="image/jpeg,image/png"
+      capture="environment"
+      hidden
+      @change="handlePhotos($event, true)"
+    />
+    <input
+      ref="photos"
+      type="file"
+      data-kind="photos"
+      accept="image/jpeg,image/png,.jpg,.jpeg,.png"
+      multiple
+      hidden
+      @change="handlePhotos($event)"
+    />
+    <input
+      ref="pdf"
+      type="file"
+      data-kind="pdf"
+      accept="application/pdf,.pdf"
+      hidden
+      @change="handlePdf"
+    />
   </div>
 </template>

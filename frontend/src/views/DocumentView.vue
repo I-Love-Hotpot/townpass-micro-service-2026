@@ -8,7 +8,8 @@ import { answerQuestion } from '@/services/answers';
 import { fixtures } from '@/services/fixtures';
 import { translate, type Label } from '@/services/i18n';
 import { delay, explainAgain } from '@/services/processing';
-import { askDocument, reExplain } from '@/services/offline';
+import { analyzeSixQuestions, askDocument, reExplain } from '@/services/offline';
+import { SIX_QUESTIONS } from '@/services/govclearSixQuestions';
 import { records } from '@/services/records';
 import { useWorkspace } from '@/stores/workspace';
 
@@ -23,6 +24,20 @@ const feedback = ref<Label>();
 const failed = ref(false);
 const pending = ref(false);
 const question = ref('');
+const draftSource = ref('');
+const sixError = ref('');
+const actionError = ref('');
+const sixCopied = ref(false);
+const phase = ref<'explain' | 'chat' | 'six'>();
+const sourceDirty = computed(() => draftSource.value !== (entry.value?.source ?? ''));
+const sixLabels = {
+  who: 'sixWho',
+  what: 'sixWhat',
+  when: 'sixWhen',
+  where: 'sixWhere',
+  why: 'sixWhy',
+  how: 'sixHow'
+} as const;
 const chatEnd = ref<HTMLElement>();
 let task: AbortController | undefined;
 let requestId = 0;
@@ -52,6 +67,8 @@ function cancelAction() {
   task = undefined;
   pending.value = false;
   feedback.value = undefined;
+  actionError.value = '';
+  phase.value = undefined;
 }
 
 async function load() {
@@ -71,12 +88,22 @@ async function load() {
     }
     if (request !== requestId) return;
     entry.value = record;
+    draftSource.value = record?.source ?? '';
+    sixError.value = '';
+    sixCopied.value = false;
     if (record) urls.value = record.pages.map((blob) => URL.createObjectURL(blob));
   } catch {
     if (request === requestId) loadError.value = true;
   } finally {
     if (request === requestId) loading.value = false;
   }
+  if (
+    request === requestId &&
+    route.name === 'document' &&
+    entry.value?.source &&
+    !entry.value.sixQuestions
+  )
+    void generateSix();
 }
 
 watch(documentId, load, { immediate: true });
@@ -90,20 +117,23 @@ onBeforeUnmount(() => {
 async function applyAction(action: 'explain' | 'chat') {
   const record = entry.value;
   const prompt = question.value.trim();
-  if (!record || pending.value || (action === 'chat' && !prompt)) return;
+  if (!record || pending.value || (action === 'chat' && (!prompt || sourceDirty.value))) return;
   const current = new AbortController();
   const locale = workspace.context.locale;
   task = current;
   pending.value = true;
+  phase.value = action;
+  actionError.value = '';
   feedback.value = undefined;
   failed.value = false;
+  let refreshSix = false;
   try {
     await delay(450, current.signal);
     const sample = fixtures.find((item) => item.id === record.fixtureId)?.summaries[locale];
     const summary =
       action === 'explain'
         ? record.source
-          ? await reExplain(record, locale, current.signal)
+          ? await reExplain({ ...record, source: draftSource.value }, locale, current.signal)
           : explainAgain(sample)
         : record.summary;
     const answer =
@@ -115,7 +145,15 @@ async function applyAction(action: 'explain' | 'chat') {
     current.signal.throwIfAborted();
     const updated = await records.update(record.id, (stored) => {
       current.signal.throwIfAborted();
-      if (action === 'explain') return { ...stored, summary: explainAgain(summary), locale };
+      if (action === 'explain')
+        return {
+          ...stored,
+          summary: explainAgain(summary),
+          locale,
+          source: record.source === undefined ? undefined : draftSource.value,
+          sixQuestions: undefined,
+          chat: sourceDirty.value ? [] : stored.chat
+        };
       const exchange = {
         question: prompt,
         answer,
@@ -125,21 +163,78 @@ async function applyAction(action: 'explain' | 'chat') {
     });
     if (task !== current) return;
     entry.value = updated;
-    if (action === 'explain') feedback.value = 'explained';
-    else {
+    if (action === 'explain') {
+      feedback.value = 'explained';
+      draftSource.value = updated.source ?? '';
+      sixError.value = '';
+      sixCopied.value = false;
+      refreshSix = Boolean(updated.source);
+    } else {
       question.value = '';
       await nextTick();
       chatEnd.value?.scrollIntoView({ block: 'nearest' });
     }
-  } catch {
+  } catch (cause) {
     if (task !== current) return;
+    actionError.value = cause instanceof Error ? cause.message : '';
     failed.value = true;
     feedback.value = action === 'explain' ? 'explainError' : 'chatError';
   } finally {
     if (task === current) {
       pending.value = false;
       task = undefined;
+      phase.value = undefined;
     }
+  }
+  if (refreshSix && !current.signal.aborted && route.name === 'document') void generateSix();
+}
+
+async function generateSix() {
+  const record = entry.value;
+  if (!record?.source || pending.value || sourceDirty.value) return;
+  const current = new AbortController();
+  task = current;
+  pending.value = true;
+  phase.value = 'six';
+  sixError.value = '';
+  sixCopied.value = false;
+  try {
+    const answers = await analyzeSixQuestions(
+      record.source,
+      workspace.context.locale,
+      current.signal
+    );
+    current.signal.throwIfAborted();
+    const updated = await records.update(record.id, (stored) => {
+      current.signal.throwIfAborted();
+      if (stored.source !== record.source) throw new Error(t.value('sourceChanged'));
+      return { ...stored, sixQuestions: answers };
+    });
+    if (task === current) entry.value = updated;
+  } catch (cause) {
+    if (task === current && !current.signal.aborted)
+      sixError.value = cause instanceof Error ? cause.message : t.value('processingError');
+  } finally {
+    if (task === current) {
+      task = undefined;
+      pending.value = false;
+      phase.value = undefined;
+    }
+  }
+}
+
+async function copySix() {
+  const answers = entry.value?.sixQuestions;
+  if (!answers || sourceDirty.value) return;
+  try {
+    await navigator.clipboard.writeText(
+      SIX_QUESTIONS.map(
+        ({ key }) => `${t.value(sixLabels[key])}：${answers[key] ?? t.value('notMentioned')}`
+      ).join('\n\n')
+    );
+    sixCopied.value = true;
+  } catch {
+    sixError.value = t.value('copyError');
   }
 }
 </script>
@@ -183,11 +278,16 @@ async function applyAction(action: 'explain' | 'chat') {
           <h1 class="page-title">{{ t('chat') }}</h1>
           <p class="break-words text-sm text-muted">{{ entry.summary.title }}</p>
         </div>
+        <p v-if="sourceDirty" class="feedback" role="status">{{ t('sourceChanged') }}</p>
         <p v-if="!entry.chat.length" class="rounded bg-surface p-4 text-sm text-muted">
           {{ t('chatEmpty') }}
         </p>
         <TransitionGroup name="list">
-          <div v-for="(exchange, index) in entry.chat" :key="index" class="space-y-2">
+          <div
+            v-for="(exchange, index) in sourceDirty ? [] : entry.chat"
+            :key="index"
+            class="space-y-2"
+          >
             <p
               class="ml-6 whitespace-pre-line break-words rounded-lg bg-brand-light p-3 text-right"
             >
@@ -212,19 +312,23 @@ async function applyAction(action: 'explain' | 'chat') {
           <button
             type="submit"
             class="action-button action-primary w-full"
-            :disabled="pending || !question.trim()"
+            :disabled="pending || sourceDirty || !question.trim()"
           >
             {{ t('send') }}
           </button>
           <Transition name="feedback">
-            <p v-if="feedback" class="feedback" role="alert">{{ t(feedback) }}</p>
+            <p v-if="feedback" class="feedback" role="alert">{{ actionError || t(feedback) }}</p>
           </Transition>
         </form>
         <div ref="chatEnd"></div>
       </section>
       <article v-else class="space-y-7">
         <h1 class="page-title">{{ entry.summary.title }}</h1>
-        <section class="rounded bg-surface p-4" aria-labelledby="summary-heading">
+        <section
+          v-if="!sourceDirty"
+          class="rounded bg-surface p-4"
+          aria-labelledby="summary-heading"
+        >
           <h2 id="summary-heading" class="section-title">{{ t('summary') }}</h2>
           <ul class="mt-3 list-disc space-y-2 pl-5">
             <li
@@ -252,7 +356,7 @@ async function applyAction(action: 'explain' | 'chat') {
               @click="applyAction('explain')"
             >
               <AppIcon name="refresh" class="h-5 w-5 shrink-0" />{{
-                t(pending ? 'explaining' : 'reExplain')
+                t(phase === 'explain' ? 'explaining' : 'reExplain')
               }}
             </button>
           </div>
@@ -263,10 +367,100 @@ async function applyAction(action: 'explain' | 'chat') {
               :class="{ feedback: failed }"
               :role="failed ? 'alert' : 'status'"
             >
-              {{ t(feedback) }}
+              {{ actionError || t(feedback) }}
             </p>
           </Transition>
         </section>
+        <section
+          v-if="entry.source !== undefined"
+          class="space-y-3"
+          aria-labelledby="source-heading"
+          :aria-busy="phase === 'explain'"
+        >
+          <h2 id="source-heading" class="section-title">{{ t('ocrReview') }}</h2>
+          <details class="rounded-lg border border-line p-3" :open="sourceDirty">
+            <summary class="cursor-pointer font-semibold text-brand-dark">
+              {{ t('sourceText') }}
+            </summary>
+            <label for="document-source" class="mt-3 block text-sm">{{ t('sourceText') }}</label>
+            <textarea
+              id="document-source"
+              v-model="draftSource"
+              rows="8"
+              :disabled="pending"
+              class="mt-2 block w-full resize-y rounded-lg border border-line px-3 py-2"
+              aria-describedby="source-notice"
+              @input="sixCopied = false"
+            ></textarea>
+          </details>
+          <p
+            id="source-notice"
+            class="text-sm text-muted"
+            :role="sourceDirty ? 'status' : undefined"
+          >
+            {{ t(sourceDirty ? 'sourceChanged' : 'ocrHint') }}
+          </p>
+          <template v-if="sourceDirty">
+            <p v-if="phase === 'explain'" role="status" class="text-sm text-brand-dark">
+              {{ t('explaining') }}
+            </p>
+            <button
+              type="button"
+              class="action-button action-primary w-full"
+              :disabled="pending || !draftSource.trim()"
+              @click="applyAction('explain')"
+            >
+              {{ t('correctedSummary') }}
+            </button>
+            <button
+              type="button"
+              class="text-action"
+              :disabled="pending"
+              @click="draftSource = entry.source ?? ''"
+            >
+              {{ t('discardEdits') }}
+            </button>
+            <p v-if="failed && actionError" role="alert" class="feedback">{{ actionError }}</p>
+          </template>
+        </section>
+        <section
+          v-if="entry.source && !sourceDirty"
+          class="space-y-3"
+          aria-labelledby="six-heading"
+          :aria-busy="phase === 'six'"
+        >
+          <h2 id="six-heading" class="section-title">{{ t('sixQuestions') }}</h2>
+          <p v-if="phase === 'six'" role="status" class="text-sm text-brand-dark">
+            {{ t('sixGenerating') }}
+          </p>
+          <dl v-if="entry.sixQuestions" class="grid gap-3 sm:grid-cols-2">
+            <div v-for="item in SIX_QUESTIONS" :key="item.key" class="rounded bg-surface p-4">
+              <dt class="font-semibold text-brand-dark">{{ t(sixLabels[item.key]) }}</dt>
+              <dd class="mt-2 whitespace-pre-line break-words">
+                {{ entry.sixQuestions[item.key] ?? t('notMentioned') }}
+              </dd>
+            </div>
+          </dl>
+          <p v-if="sixError" role="alert" class="feedback">{{ sixError }}</p>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="text-action" :disabled="pending" @click="generateSix">
+              {{ t(entry.sixQuestions ? 'sixRegenerate' : 'sixGenerate') }}
+            </button>
+            <button
+              v-if="entry.sixQuestions"
+              type="button"
+              class="text-action"
+              :disabled="pending"
+              @click="copySix"
+            >
+              {{ t('copySix') }}
+            </button>
+          </div>
+          <p v-if="sixCopied" role="status" class="text-sm text-brand-dark">{{ t('copied') }}</p>
+        </section>
+        <button v-if="pending" type="button" class="text-action" @click="cancelAction">
+          {{ t('stop') }}
+        </button>
         <DocumentGallery :id="entry.id" :urls="urls" :locale="workspace.context.locale" />
         <section aria-labelledby="next-heading">
           <h2 id="next-heading" class="section-title">{{ t('next') }}</h2>

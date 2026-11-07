@@ -3,7 +3,7 @@ import { preparePages } from './files';
 import { defaultDestinations, fixtures } from './fixtures';
 import { contentHash, findFixture } from './processing';
 import { records } from './records';
-import { readDocument } from './offline';
+import { summarizeDocument } from './offline';
 
 let catalogPromise: ReturnType<typeof loadCatalog> | undefined;
 
@@ -75,14 +75,15 @@ export async function makeDocument(
   originals: OriginalFile[],
   kind: FileKind,
   locale: Locale,
-  signal: AbortSignal
+  signal: AbortSignal,
+  pages: Blob[],
+  source: string
 ): Promise<DocumentRecord> {
   const hash = originals.length === 1 ? await contentHash(originals[0].blob) : null;
   const match = findFixture(fixtures, hash);
   signal.throwIfAborted();
-  const pages = await preparePages(originals, kind, signal);
   const title = originals[0].name.replace(/\.[^.]+$/, '');
-  const { source, summary } = await readDocument(pages, title, locale, signal);
+  const summary = await summarizeDocument(source, title, locale, signal);
   return {
     id: crypto.randomUUID(),
     fixtureId: match?.id,

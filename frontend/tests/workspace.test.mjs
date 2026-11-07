@@ -19,6 +19,7 @@ function document(id) {
     originals: [{ name: 'document.pdf', blob: new Blob(['original']) }],
     pages: [new Blob(['page'])],
     source: '通知原文與期限',
+    sixQuestions: { who: '申請人', what: '辦理申請', when: '11月30日前', where: null, why: null, how: '檢附資料' },
     summary: { title: '原始摘要', facts: ['文件重點'], action: '查看原文' },
     locale: 'zh-TW',
     destinations: [],
@@ -95,6 +96,7 @@ test('IndexedDB preserves source, pages, summary and chat across opens, and does
   assert.equal(await saved.originals[0].blob.text(), 'original');
   assert.equal(await saved.pages[0].text(), 'page');
   assert.equal(saved.source, sample.source);
+  assert.deepEqual(saved.sixQuestions, sample.sixQuestions);
   assert.deepEqual(saved.summary, sample.summary);
   assert.deepEqual(saved.chat, sample.chat);
   await reopened.delete('sample');
@@ -156,6 +158,7 @@ test('failed re-explanation leaves the existing summary, locale and card intact'
     db.update('sample', (record) => ({ ...record, summary: explainAgain(undefined), locale: 'id' }))
   );
   assert.deepEqual((await db.get('sample')).summary, old.summary);
+  assert.deepEqual((await db.get('sample')).sixQuestions, old.sixQuestions);
   assert.equal((await db.get('sample')).locale, 'zh-TW');
   assert.deepEqual((await db.list())[0].summary, old.summary);
 

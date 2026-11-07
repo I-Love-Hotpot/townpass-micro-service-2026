@@ -1,4 +1,5 @@
 import type { FileKind, OriginalFile } from '@/interfaces/document';
+import { validateSelection } from './govclearImages';
 
 const MiB = 1024 * 1024;
 
@@ -12,15 +13,8 @@ export function validateFiles(files: File[], kind: FileKind) {
     ) {
       throw new RangeError('Invalid PDF selection');
     }
-  } else if (
-    !files.length ||
-    files.length > 20 ||
-    files.some(
-      (file) => !/\.(jpe?g|png|webp)$/i.test(file.name) || !file.size || file.size > 10 * MiB
-    ) ||
-    files.reduce((total, file) => total + file.size, 0) > 50 * MiB
-  ) {
-    throw new RangeError('Invalid photo selection');
+  } else {
+    validateSelection([], files);
   }
 }
 
