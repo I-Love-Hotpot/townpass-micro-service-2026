@@ -2,6 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
 import AppIcon from '@/components/atoms/AppIcon.vue';
+import OfflineStatus from '@/components/organisms/OfflineStatus.vue';
 import { translate } from '@/services/i18n';
 import { useWorkspace } from '@/stores/workspace';
 
@@ -120,6 +121,7 @@ function close() {
         :class="{ 'translate-x-full': route.name === 'history' }"
       ></span>
     </nav>
+    <OfflineStatus />
     <main
       ref="viewport"
       class="relative min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain"

@@ -43,3 +43,7 @@ Client 首次下載 ZIP 後，應保存該 Release tag 中的 commit SHA。每�
 此流程適用於公開 repo，無須 GitHub token；GitHub API 對未驗證請求有頻率限制。
 
 拍照可連續累積多張後再開始辨識，支援相簿追加、排序與移除。OCR 文字可人工修正，摘要完成後自動產生六何，並可重新整理與複製。固定預覽：<https://townpass.fearnot.tw>。
+
+網站由 Cloudflare Pages 專案 `townpass` 託管，不需要本機持續開機。目前採手動部署，修改程式後需重新 build 與上傳，沒有 Git 自動部署；部署指令見 [固定公開預覽](../docs/integration-main-offline.md#固定公開預覽)。
+
+正式 build 會產生完整版本的 Service Worker 快取。首次在線開啟後，等待上方顯示「完整離線版本已備妥」即可離線重新開啟；下載中斷可重試，更新失敗保留上一個完整版本。App 不再附帶 localhost 頁面備援。新功能需部署網站及重新打包 App；清除網站資料後需重新連網。詳見整合說明的「線上首次下載與離線快取」。

@@ -1,11 +1,13 @@
 import type { SixQuestionAnswers } from '../services/govclearSixQuestions';
 
 export type Locale = 'zh-TW' | 'id';
+export type AppLanguage = Locale | 'en';
 export type FileKind = 'photos' | 'pdf';
 export type FilingStatus = 'due-soon' | 'completed';
 
 export interface AppContext {
   locale: Locale;
+  appLanguage: AppLanguage;
   embedded: boolean;
   showHeader: boolean;
 }

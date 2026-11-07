@@ -3,7 +3,6 @@ import argparse
 import hashlib
 import json
 import plistlib
-import shutil
 import subprocess
 from pathlib import Path
 
@@ -49,13 +48,6 @@ def prepare(app=APP):
     elif target.stat().st_size != SIZE or digest(target) != SHA256:
         raise RuntimeError('本機模型驗證失敗，請重新下載。')
     print('✓ 手機版 E4B 模型 SHA-256 已驗證', flush=True)
-    run(['pnpm', 'build'], ROOT / 'frontend')
-    assets = app / 'assets/govclear'
-    if assets.exists():
-        shutil.rmtree(assets)
-    shutil.copytree(ROOT / 'frontend/dist', assets)
-    (assets / '.gitkeep').touch()
-    (assets / 'assets/.gitkeep').touch()
     run(['flutter', 'pub', 'get'], app)
     return target
 
@@ -64,7 +56,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--app', type=Path, default=APP, help='TownPass release/govclear-iphone-offline checkout')
     parser.add_argument('--device', help='實體 iPhone UDID；僅一支已連接時自動選取')
-    parser.add_argument('--prepare-only', action='store_true', help='下載模型及打包介面，不安裝')
+    parser.add_argument('--prepare-only', action='store_true', help='下載模型，不安裝')
     args = parser.parse_args()
     app = args.app.resolve()
     target = prepare(app)
@@ -86,7 +78,7 @@ def main():
          '--domain-type', 'appDataContainer', '--domain-identifier', bundle_id,
          '--source', target, '--destination', 'Documents/' + MODEL])
     run(['xcrun', 'devicectl', 'device', 'process', 'launch', '--device', device, bundle_id])
-    print('✓ iPhone 已安裝離線版。進入服務 → GovClear 看懂文件；不需啟動 Mac 模型。')
+    print('✓ iPhone 已安裝。首次開啟請連網下載完整離線介面。進入服務 → GovClear 看懂文件；不需啟動 Mac 模型。')
 
 
 if __name__ == '__main__':
