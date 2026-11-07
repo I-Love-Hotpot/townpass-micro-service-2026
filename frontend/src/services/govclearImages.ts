@@ -9,6 +9,9 @@ export type ImagePage = {
   preview: string;
   size: number;
   file?: Blob;
+  original?: Blob;
+  cropConfirmed?: boolean;
+  cropDraft?: { corners: import('./documentCrop').Corners; turns: number };
   ownedPreview: boolean;
   text: string;
   status: 'pending' | 'processing' | 'done' | 'error';

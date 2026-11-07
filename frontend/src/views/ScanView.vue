@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, shallowRef } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, shallowRef } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import AppIcon from '@/components/atoms/AppIcon.vue';
 import FileAction from '@/components/molecules/FileAction.vue';
+import DocumentCrop from '@/components/molecules/DocumentCrop.vue';
 import type { FileKind, OriginalFile } from '@/interfaces/document';
 import { makeDocument } from '@/services/catalog';
 import { preparePages, validateFiles } from '@/services/files';
@@ -29,6 +30,10 @@ const pages = ref<ImagePage[]>([]);
 const kind = ref<FileKind>('photos');
 const pdfOriginal = shallowRef<OriginalFile>();
 const collectingPhotos = ref(false);
+const cropPage = ref<ImagePage>();
+const pendingCrops = computed(
+  () => kind.value === 'photos' && pages.value.some((page) => !page.cropConfirmed)
+);
 const error = ref('');
 const stage = ref('');
 const elapsed = ref(0);
@@ -57,6 +62,7 @@ function pick(target: 'photos' | 'pdf' | 'camera') {
 }
 
 function cancel() {
+  cropPage.value = undefined;
   clearInterval(timer);
   timer = undefined;
   controller?.abort();
@@ -109,6 +115,8 @@ function imagePage(file: Blob, name: string): ImagePage {
     preview: URL.createObjectURL(file),
     size: file.size,
     file,
+    original: file,
+    cropConfirmed: kind.value === 'pdf',
     ownedPreview: true,
     text: '',
     status: 'pending',
@@ -127,7 +135,7 @@ async function handlePhotos(event: Event, fromCamera = false) {
     pages.value.push(...files.map((file) => imagePage(file, file.name)));
     kind.value = 'photos';
     if (fromCamera) collectingPhotos.value = true;
-    if (!collectingPhotos.value) await run();
+    cropPage.value = pages.value.find((page) => !page.cropConfirmed);
   } catch (cause) {
     error.value = cause instanceof Error ? cause.message : t.value('photoError');
   }
@@ -162,8 +170,32 @@ async function handlePdf(event: Event) {
   if (!current.signal.aborted && pages.value.length) await run();
 }
 
+async function closeCrop() {
+  const id = cropPage.value?.id;
+  cropPage.value = undefined;
+  await nextTick();
+  document.getElementById(`crop-${id}`)?.focus();
+}
+
+function confirmCrop(blob: Blob) {
+  const page = cropPage.value;
+  if (!page || busy.value) return;
+  URL.revokeObjectURL(page.preview);
+  page.file = blob;
+  page.preview = URL.createObjectURL(blob);
+  page.cropConfirmed = true;
+  page.text = '';
+  page.status = 'pending';
+  page.error = '';
+  cropPage.value = pages.value.find((candidate) => !candidate.cropConfirmed);
+}
+
 async function run() {
   if (!pages.value.length || busy.value) return;
+  if (pendingCrops.value) {
+    cropPage.value = pages.value.find((page) => !page.cropConfirmed);
+    return;
+  }
   const current = new AbortController();
   const { signal } = current;
   controller = current;
@@ -187,7 +219,7 @@ async function run() {
     const originals =
       kind.value === 'pdf' && pdfOriginal.value
         ? [pdfOriginal.value]
-        : pages.value.map((page) => ({ name: page.name, blob: page.file! }));
+        : pages.value.map((page) => ({ name: page.name, blob: page.original ?? page.file! }));
     const record = await processWithProgress(
       () =>
         makeDocument(
@@ -229,145 +261,172 @@ async function run() {
       pages.length ? 'space-y-5 px-4 py-6' : 'grid min-h-full grid-rows-[minmax(220px,1fr)_auto]'
     "
   >
-    <section
-      v-if="!pages.length"
-      class="flex flex-col items-center justify-center gap-4 px-6 py-8 text-center"
-    >
-      <button
-        type="button"
-        class="grid h-[72px] w-[72px] place-items-center rounded-2xl bg-brand-light text-brand-dark"
-        :aria-label="t('app')"
-        :disabled="busy"
-        @click="tapHomeIcon"
+    <DocumentCrop
+      v-if="cropPage?.original"
+      :key="cropPage.id"
+      :original="cropPage.original"
+      :initial="cropPage.cropDraft"
+      @draft="cropPage && (cropPage.cropDraft = $event)"
+      @confirm="confirmCrop"
+      @cancel="closeCrop"
+    />
+    <template v-else>
+      <section
+        v-if="!pages.length"
+        class="flex flex-col items-center justify-center gap-4 px-6 py-8 text-center"
       >
-        <AppIcon name="document" class="h-9 w-9" />
-      </button>
-      <h1 class="page-title">{{ t('hero1') }}<br />{{ t('hero2') }}</h1>
-      <p class="text-sm text-muted">{{ t('intro') }}</p>
-    </section>
-    <section
-      :class="
-        pages.length
-          ? 'space-y-3'
-          : 'flex flex-col justify-end gap-3 px-4 pt-4 pb-[max(2rem,env(safe-area-inset-bottom))]'
-      "
-    >
-      <h1 v-if="pages.length" class="page-title">{{ t('selectedPages') }}</h1>
-      <template v-if="kind === 'photos'">
         <button
           type="button"
-          class="action-button w-full"
-          :disabled="busy || pages.length >= MAX_IMAGES"
-          @click="pick('camera')"
+          class="grid h-[72px] w-[72px] place-items-center rounded-2xl bg-brand-light text-brand-dark"
+          :aria-label="t('app')"
+          :disabled="busy"
+          @click="tapHomeIcon"
         >
-          <AppIcon name="photos" />{{ t(pages.length ? 'cameraMore' : 'camera') }}
+          <AppIcon name="document" class="h-9 w-9" />
         </button>
+        <h1 class="page-title">{{ t('hero1') }}<br />{{ t('hero2') }}</h1>
+        <p class="text-sm text-muted">{{ t('intro') }}</p>
+      </section>
+      <section
+        :class="
+          pages.length
+            ? 'space-y-3'
+            : 'flex flex-col justify-end gap-3 px-4 pt-4 pb-[max(2rem,env(safe-area-inset-bottom))]'
+        "
+      >
+        <h1 v-if="pages.length" class="page-title">{{ t('selectedPages') }}</h1>
+        <template v-if="kind === 'photos'">
+          <button
+            type="button"
+            class="action-button w-full"
+            :disabled="busy || pages.length >= MAX_IMAGES"
+            @click="pick('camera')"
+          >
+            <AppIcon name="photos" />{{ t(pages.length ? 'cameraMore' : 'camera') }}
+          </button>
+          <FileAction
+            :label="t('photos')"
+            :progress-label="t('processing')"
+            primary
+            :disabled="busy || pages.length >= MAX_IMAGES"
+            @pick="pick('photos')"
+          />
+          <p class="text-sm text-muted">{{ t('photoLimits') }}</p>
+        </template>
         <FileAction
-          :label="t('photos')"
+          v-if="!pages.length"
+          :label="t('pdf')"
+          :progress-label="t('processing')"
+          :disabled="busy"
+          @pick="pick('pdf')"
+        />
+        <p v-if="collectingPhotos" class="rounded bg-brand-light p-3 text-sm">
+          {{ t('batchHint') }}
+        </p>
+        <p v-if="stage" role="status" class="text-sm text-brand-dark">
+          {{ stage }} · {{ t('elapsedSeconds', { n: elapsed }) }}
+        </p>
+        <p v-if="error" id="scan-error" class="feedback" role="alert">{{ error }}</p>
+        <button v-if="busy" type="button" class="text-action" @click="cancel">
+          {{ t('stop') }}
+        </button>
+      </section>
+      <section
+        v-if="pages.length"
+        aria-labelledby="ocr-review-heading"
+        :aria-busy="busy"
+        class="space-y-4"
+      >
+        <h2 id="ocr-review-heading" class="section-title">{{ t('ocrReview') }}</h2>
+        <p id="ocr-help" class="text-sm text-muted">{{ t('ocrHint') }}</p>
+        <ol class="space-y-4">
+          <li
+            v-for="(page, index) in pages"
+            :key="page.id"
+            class="space-y-3 rounded-lg border border-line p-3"
+          >
+            <img
+              :src="page.preview"
+              :alt="t('page', { n: index + 1 })"
+              class="max-h-64 w-full rounded bg-surface object-contain"
+            />
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="min-w-0 break-all text-sm font-semibold">
+                {{ index + 1 }}. {{ page.name }}
+              </span>
+              <div class="flex flex-wrap">
+                <button
+                  v-if="kind === 'photos'"
+                  type="button"
+                  class="text-action"
+                  :aria-label="t('moveUp', { n: index + 1 })"
+                  :disabled="busy || index === 0"
+                  @click="movePage(index, -1)"
+                >
+                  ↑
+                </button>
+                <button
+                  v-if="kind === 'photos'"
+                  type="button"
+                  class="text-action"
+                  :aria-label="t('moveDown', { n: index + 1 })"
+                  :disabled="busy || index === pages.length - 1"
+                  @click="movePage(index, 1)"
+                >
+                  ↓
+                </button>
+                <button
+                  v-if="kind === 'photos' || pages.length === 1"
+                  type="button"
+                  class="text-action"
+                  :aria-label="t('removePage', { n: index + 1 })"
+                  :disabled="busy"
+                  @click="removePage(index)"
+                >
+                  {{ t('delete') }}
+                </button>
+              </div>
+            </div>
+            <button
+              v-if="kind === 'photos'"
+              :id="`crop-${page.id}`"
+              type="button"
+              class="action-button"
+              :disabled="busy"
+              @click="cropPage = page"
+            >
+              {{ page.cropConfirmed ? '重新調整文件範圍' : '調整並確認文件範圍（尚未確認）' }}
+            </button>
+            <label :for="`ocr-${page.id}`" class="block text-sm font-semibold">
+              {{ t('ocrText', { n: index + 1 }) }}
+            </label>
+            <textarea
+              :id="`ocr-${page.id}`"
+              v-model="page.text"
+              rows="4"
+              class="block w-full resize-y rounded-lg border border-line px-3 py-2"
+              :disabled="busy"
+              :aria-describedby="page.error ? `ocr-help error-${page.id}` : 'ocr-help'"
+              :aria-invalid="page.status === 'error'"
+              @input="corrected(page)"
+            ></textarea>
+            <p v-if="page.error" :id="`error-${page.id}`" role="alert" class="feedback">
+              {{ page.error }}
+            </p>
+          </li>
+        </ol>
+        <FileAction
+          :label="
+            t(collectingPhotos ? 'finishCamera' : allReady ? 'correctedSummary' : 'recognize')
+          "
           :progress-label="t('processing')"
           primary
-          :disabled="busy || pages.length >= MAX_IMAGES"
-          @pick="pick('photos')"
+          :disabled="busy"
+          :progress="workspace.processing?.percent"
+          @pick="run"
         />
-        <p class="text-sm text-muted">{{ t('photoLimits') }}</p>
-      </template>
-      <FileAction
-        v-if="!pages.length"
-        :label="t('pdf')"
-        :progress-label="t('processing')"
-        :disabled="busy"
-        @pick="pick('pdf')"
-      />
-      <p v-if="collectingPhotos" class="rounded bg-brand-light p-3 text-sm">{{ t('batchHint') }}</p>
-      <p v-if="stage" role="status" class="text-sm text-brand-dark">
-        {{ stage }} · {{ t('elapsedSeconds', { n: elapsed }) }}
-      </p>
-      <p v-if="error" id="scan-error" class="feedback" role="alert">{{ error }}</p>
-      <button v-if="busy" type="button" class="text-action" @click="cancel">{{ t('stop') }}</button>
-    </section>
-    <section
-      v-if="pages.length"
-      aria-labelledby="ocr-review-heading"
-      :aria-busy="busy"
-      class="space-y-4"
-    >
-      <h2 id="ocr-review-heading" class="section-title">{{ t('ocrReview') }}</h2>
-      <p id="ocr-help" class="text-sm text-muted">{{ t('ocrHint') }}</p>
-      <ol class="space-y-4">
-        <li
-          v-for="(page, index) in pages"
-          :key="page.id"
-          class="space-y-3 rounded-lg border border-line p-3"
-        >
-          <img
-            :src="page.preview"
-            :alt="t('page', { n: index + 1 })"
-            class="max-h-64 w-full rounded bg-surface object-contain"
-          />
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <span class="min-w-0 break-all text-sm font-semibold">
-              {{ index + 1 }}. {{ page.name }}
-            </span>
-            <div class="flex flex-wrap">
-              <button
-                v-if="kind === 'photos'"
-                type="button"
-                class="text-action"
-                :aria-label="t('moveUp', { n: index + 1 })"
-                :disabled="busy || index === 0"
-                @click="movePage(index, -1)"
-              >
-                ↑
-              </button>
-              <button
-                v-if="kind === 'photos'"
-                type="button"
-                class="text-action"
-                :aria-label="t('moveDown', { n: index + 1 })"
-                :disabled="busy || index === pages.length - 1"
-                @click="movePage(index, 1)"
-              >
-                ↓
-              </button>
-              <button
-                v-if="kind === 'photos' || pages.length === 1"
-                type="button"
-                class="text-action"
-                :aria-label="t('removePage', { n: index + 1 })"
-                :disabled="busy"
-                @click="removePage(index)"
-              >
-                {{ t('delete') }}
-              </button>
-            </div>
-          </div>
-          <label :for="`ocr-${page.id}`" class="block text-sm font-semibold">
-            {{ t('ocrText', { n: index + 1 }) }}
-          </label>
-          <textarea
-            :id="`ocr-${page.id}`"
-            v-model="page.text"
-            rows="4"
-            class="block w-full resize-y rounded-lg border border-line px-3 py-2"
-            :disabled="busy"
-            :aria-describedby="page.error ? `ocr-help error-${page.id}` : 'ocr-help'"
-            :aria-invalid="page.status === 'error'"
-            @input="corrected(page)"
-          ></textarea>
-          <p v-if="page.error" :id="`error-${page.id}`" role="alert" class="feedback">
-            {{ page.error }}
-          </p>
-        </li>
-      </ol>
-      <FileAction
-        :label="t(collectingPhotos ? 'finishCamera' : allReady ? 'correctedSummary' : 'recognize')"
-        :progress-label="t('processing')"
-        primary
-        :disabled="busy"
-        :progress="workspace.processing?.percent"
-        @pick="run"
-      />
-    </section>
+      </section>
+    </template>
     <input
       ref="camera"
       type="file"
