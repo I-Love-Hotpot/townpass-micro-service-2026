@@ -3,16 +3,43 @@
 @tailwind utilities;
 
 @layer base {
-  @font-face {
-    font-family: '"PingFang TC", Roboto';
+  html {
+    color-scheme: light;
+  }
+  body {
+    @apply bg-surface font-sans text-ink;
+  }
+  button,
+  a,
+  input,
+  textarea {
+    @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-dark;
+  }
+  button:disabled {
+    cursor: not-allowed;
   }
 }
 
 @layer components {
-  .search-button {
-    @apply bg-primary-500 p-1 rounded-lg;
-    @apply h-11 w-11;
-    @apply flex justify-center items-center;
-    @apply -translate-x-1;
+  .action-button {
+    @apply flex min-h-14 items-center justify-center gap-2 rounded-lg border border-brand bg-white px-4 py-3 font-semibold text-brand-dark;
+  }
+  .action-primary {
+    @apply bg-brand text-[#112629];
+  }
+  .action-button:disabled {
+    @apply border-line bg-line text-[#5E6D76];
+  }
+  .text-action {
+    @apply inline-flex min-h-11 items-center gap-2 rounded px-2 font-semibold text-brand-dark;
+  }
+  .page-title {
+    @apply break-words text-2xl font-semibold leading-8;
+  }
+  .section-title {
+    @apply text-base font-semibold leading-[22px];
+  }
+  .feedback {
+    @apply rounded-lg bg-red-50 p-3 text-sm text-red-800;
   }
 }
