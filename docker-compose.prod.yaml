@@ -8,8 +8,8 @@ services:
     restart: unless-stopped
     expose:
       - "80"
-    networks:
-      # - coolify
+    env_file:
+      - .env
     healthcheck:
       test: ["CMD", "wget", "--spider", "-nv", "http://127.0.0.1:80/"]
       interval: 10s
@@ -23,6 +23,8 @@ services:
     restart: unless-stopped
     expose:
       - "3001"
+    env_file:
+      - .env
     environment:
       MYSQL_HOST: database
       MYSQL_PORT: 3306
@@ -33,11 +35,8 @@ services:
       retries: 5
       start_period: 10s
     networks:
-      # - coolify
       - townpass-db
 
 networks:
-  # coolify:
-  #   external: true
   townpass-db:
     external: true
