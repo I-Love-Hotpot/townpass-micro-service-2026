@@ -5,7 +5,9 @@ import DocumentView from '@/views/DocumentView.vue';
 import SettingView from '@/views/SettingView.vue';
 
 export default createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(
+    location.pathname === '/govclear' ? '/govclear' : import.meta.env.BASE_URL
+  ),
   routes: [
     { path: '/', name: 'scan', component: ScanView },
     { path: '/history', name: 'history', component: HistoryView },

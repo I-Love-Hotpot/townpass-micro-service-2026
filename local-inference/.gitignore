@@ -1,0 +1,7 @@
+__pycache__/
+.runtime/
+results/
+
+# Personal document photos and screenshots stay local.
+examples/S*.jpg
+examples/Screenshot*.png

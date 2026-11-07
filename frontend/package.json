@@ -11,6 +11,7 @@
     "type-check": "vue-tsc --build --force",
     "lint": "eslint src --ext .vue,.ts",
     "format": "prettier --write src/",
+    "dev:govclear": "vite --host 127.0.0.1 --port 5173 --strictPort",
     "dev:local": "vite --host 127.0.0.1 --port 3000 --strictPort",
     "test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test tests/*.test.mjs"
   },

@@ -1,3 +1,8 @@
+# main 介面與離線處理整合
+
+本分支保留 main 的白話人前端，接入 `release/govclear-iphone-offline` 的 Native OCR 與摘要流程。
+執行方式、來源版本、支援範圍與驗證限制見 [整合說明](docs/integration-main-offline.md)。
+
 # TownPass 微服務架構
 
 城市通（TownPass）微服務平台是一個現代化的城市服務整合系統，提供公民報案、規費繳納、圖書館管理、優惠券等多項城市服務。本系統採用微服務架構，實現前後端分離，並通過 Flutter 應用的內嵌 WebView 進行交互。

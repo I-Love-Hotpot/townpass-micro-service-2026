@@ -13,7 +13,7 @@ function documentAssets(): Plugin {
   for (const folder of supportFolders) {
     for (const file of readdirSync(join(pdfDirectory, folder))) {
       const path = join(pdfDirectory, folder, file);
-      if (statSync(path).isFile()) support.set(`pdf-support/${folder}/${file}`, path);
+      if (statSync(path).isFile()) support.set(`assets/${file}`, path);
     }
   }
   const samples = new Map<string, string>();
@@ -59,7 +59,7 @@ function documentAssets(): Plugin {
           ? samples.get(path.slice('local-samples/'.length))
           : support.get(path);
         if (!file) {
-          if (isSample || path.startsWith('pdf-support/')) res.writeHead(404).end();
+          if (isSample || path.startsWith('assets/')) res.writeHead(404).end();
           else next();
           return;
         }
@@ -69,7 +69,9 @@ function documentAssets(): Plugin {
             ? 'application/pdf'
             : isSample
               ? 'image/jpeg'
-              : 'application/octet-stream'
+              : file.endsWith('.js')
+                ? 'application/javascript'
+                : 'application/octet-stream'
         );
         createReadStream(file)
           .on('error', () => res.destroy())
@@ -87,7 +89,16 @@ function documentAssets(): Plugin {
 export default defineConfig({
   plugins: [vue(), documentAssets()],
   server: { cors: false },
-  build: { reportCompressedSize: false },
+  build: {
+    reportCompressedSize: false,
+    rollupOptions: {
+      output: {
+        // The release iPhone host serves JavaScript MIME only for .js files.
+        assetFileNames: (asset) =>
+          asset.name?.endsWith('.mjs') ? 'assets/[name]-[hash].js' : 'assets/[name]-[hash][extname]'
+      }
+    }
+  },
   optimizeDeps: { exclude: ['pdfjs-dist'] },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) }

@@ -8,15 +8,15 @@ export async function renderPdf(file: Blob, signal: AbortSignal): Promise<Blob[]
   signal.throwIfAborted();
   if (!new TextDecoder().decode(data.slice(0, 1024)).includes('%PDF-'))
     throw new Error('Invalid PDF');
-  const support = new URL(`${import.meta.env.BASE_URL}pdf-support/`, location.origin);
+  const support = new URL(`${import.meta.env.BASE_URL}assets/`, location.origin);
   const task = getDocument({
     data,
     stopAtErrors: true,
-    cMapUrl: new URL('cmaps/', support).href,
+    cMapUrl: support.href,
     cMapPacked: true,
-    standardFontDataUrl: new URL('standard_fonts/', support).href,
-    wasmUrl: new URL('wasm/', support).href,
-    iccUrl: new URL('iccs/', support).href
+    standardFontDataUrl: support.href,
+    wasmUrl: support.href,
+    iccUrl: support.href
   });
   let destruction: Promise<void> | undefined;
   const cancel = () => {

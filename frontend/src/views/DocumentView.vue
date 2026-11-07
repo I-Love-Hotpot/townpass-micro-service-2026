@@ -8,6 +8,7 @@ import { answerQuestion } from '@/services/answers';
 import { fixtures } from '@/services/fixtures';
 import { translate, type Label } from '@/services/i18n';
 import { delay, explainAgain } from '@/services/processing';
+import { askDocument, reExplain } from '@/services/offline';
 import { records } from '@/services/records';
 import { useWorkspace } from '@/stores/workspace';
 
@@ -98,13 +99,26 @@ async function applyAction(action: 'explain' | 'chat') {
   failed.value = false;
   try {
     await delay(450, current.signal);
-    const summary = fixtures.find((item) => item.id === record.fixtureId)?.summaries[locale];
+    const sample = fixtures.find((item) => item.id === record.fixtureId)?.summaries[locale];
+    const summary =
+      action === 'explain'
+        ? record.source
+          ? await reExplain(record, locale, current.signal)
+          : explainAgain(sample)
+        : record.summary;
+    const answer =
+      action === 'chat'
+        ? record.source
+          ? await askDocument(record, prompt, locale, current.signal)
+          : answerQuestion(prompt, sample, locale)
+        : '';
+    current.signal.throwIfAborted();
     const updated = await records.update(record.id, (stored) => {
       current.signal.throwIfAborted();
       if (action === 'explain') return { ...stored, summary: explainAgain(summary), locale };
       const exchange = {
         question: prompt,
-        answer: answerQuestion(prompt, summary, locale),
+        answer,
         locale
       };
       return { ...stored, chat: [...stored.chat, exchange] };
@@ -213,7 +227,13 @@ async function applyAction(action: 'explain' | 'chat') {
         <section class="rounded bg-surface p-4" aria-labelledby="summary-heading">
           <h2 id="summary-heading" class="section-title">{{ t('summary') }}</h2>
           <ul class="mt-3 list-disc space-y-2 pl-5">
-            <li v-for="fact in entry.summary.facts" :key="fact" class="break-words">{{ fact }}</li>
+            <li
+              v-for="fact in entry.summary.facts"
+              :key="fact"
+              class="whitespace-pre-line break-words"
+            >
+              {{ fact }}
+            </li>
           </ul>
           <p class="mt-4 break-words border-t border-[#CAD1D5] pt-3 font-semibold text-[#22474E]">
             {{ entry.summary.action }}

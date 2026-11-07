@@ -41,6 +41,7 @@ export interface DocumentRecord {
   originals: OriginalFile[];
   pages: Blob[];
   summary: Summary;
+  source?: string;
   locale: Locale;
   status?: FilingStatus;
   scenarioDate?: string;

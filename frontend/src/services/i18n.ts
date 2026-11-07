@@ -18,6 +18,7 @@ const zh = {
   storageError: '無法存取此瀏覽器的文件紀錄，請重試。',
   photoError: '無法讀取照片。請選 JPG、PNG 或 WebP，最多 20 張，每張 10 MiB，總計 50 MiB。',
   pdfError: '無法開啟 PDF。請選擇可讀取且未加密的文件，上限 25 MiB、50 頁。',
+  processingError: '文件辨識或摘要失敗，請重試。',
   saveError: '無法保存文件。請確認瀏覽器允許儲存且空間足夠，再重新選檔。',
   summary: '摘要',
   original: '原始文件',
@@ -86,6 +87,7 @@ const id: Partial<Record<Label, string>> = {
   photoError:
     'Foto tidak dapat dibuka. Pilih JPG, PNG, atau WebP, maksimal 20 foto, 10 MiB per foto dan 50 MiB total.',
   pdfError: 'PDF tidak dapat dibuka. Pilih PDF tanpa kata sandi, maksimal 25 MiB dan 50 halaman.',
+  processingError: 'Pengenalan atau ringkasan gagal. Coba lagi.',
   saveError: 'Dokumen tidak dapat disimpan. Periksa izin dan ruang penyimpanan, lalu pilih ulang.',
   summary: 'Ringkasan',
   original: 'Dokumen asli',

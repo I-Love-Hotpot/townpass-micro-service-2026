@@ -18,6 +18,7 @@ function document(id) {
     createdAt: 100,
     originals: [{ name: 'document.pdf', blob: new Blob(['original']) }],
     pages: [new Blob(['page'])],
+    source: '通知原文與期限',
     summary: { title: '原始摘要', facts: ['文件重點'], action: '查看原文' },
     locale: 'zh-TW',
     destinations: [],
@@ -93,6 +94,7 @@ test('IndexedDB preserves source, pages, summary and chat across opens, and does
   const saved = await reopened.get('upload');
   assert.equal(await saved.originals[0].blob.text(), 'original');
   assert.equal(await saved.pages[0].text(), 'page');
+  assert.equal(saved.source, sample.source);
   assert.deepEqual(saved.summary, sample.summary);
   assert.deepEqual(saved.chat, sample.chat);
   await reopened.delete('sample');

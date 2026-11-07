@@ -3,6 +3,7 @@ import { preparePages } from './files';
 import { defaultDestinations, fixtures } from './fixtures';
 import { contentHash, findFixture } from './processing';
 import { records } from './records';
+import { readDocument } from './offline';
 
 let catalogPromise: ReturnType<typeof loadCatalog> | undefined;
 
@@ -81,15 +82,7 @@ export async function makeDocument(
   signal.throwIfAborted();
   const pages = await preparePages(originals, kind, signal);
   const title = originals[0].name.replace(/\.[^.]+$/, '');
-  const summary =
-    match?.summaries[locale] ??
-    (locale === 'id'
-      ? {
-          title,
-          facts: ['Ringkasan belum tersedia untuk dokumen ini.'],
-          action: 'Lihat halaman dokumen asli di bawah.'
-        }
-      : { title, facts: ['這份文件尚未配置摘要。'], action: '請先查看下方的原始文件。' });
+  const { source, summary } = await readDocument(pages, title, locale, signal);
   return {
     id: crypto.randomUUID(),
     fixtureId: match?.id,
@@ -98,6 +91,7 @@ export async function makeDocument(
     createdAt: Date.now(),
     originals,
     pages,
+    source,
     summary,
     locale,
     destinations: match?.destinations ?? defaultDestinations,

@@ -16,7 +16,7 @@ const router = useRouter();
 const t = computed(() => translate.bind(null, workspace.context.locale));
 const photos = ref<HTMLInputElement>();
 const pdf = ref<HTMLInputElement>();
-const error = ref<Label>();
+const error = ref<string>();
 let controller: AbortController | undefined;
 let iconTapCount = 0;
 let lastIconTap = 0;
@@ -54,9 +54,10 @@ async function handleFiles(event: Event, kind: FileKind) {
   const current = new AbortController();
   const { signal } = current;
   const fileError = kind === 'pdf' ? 'pdfError' : 'photoError';
-  let failedAt: Label = fileError;
+  const failure: { label: Label } = { label: fileError };
   try {
     validateFiles(files, kind);
+    failure.label = 'processingError';
     controller = current;
     const record = await processWithProgress(
       () =>
@@ -67,7 +68,7 @@ async function handleFiles(event: Event, kind: FileKind) {
           signal
         ),
       async (document) => {
-        failedAt = 'saveError';
+        failure.label = 'saveError';
         await records.put(document, signal);
       },
       (percent) => {
@@ -77,8 +78,12 @@ async function handleFiles(event: Event, kind: FileKind) {
     );
     await delay(300, signal);
     await router.push({ name: 'document', params: { id: record.id } });
-  } catch {
-    if (!signal.aborted) error.value = failedAt;
+  } catch (cause) {
+    if (!signal.aborted)
+      error.value =
+        failure.label !== 'processingError' || !(cause instanceof Error)
+          ? t.value(failure.label)
+          : cause.message;
   } finally {
     if (controller === current) cancel();
   }
@@ -114,7 +119,7 @@ async function handleFiles(event: Event, kind: FileKind) {
         @pick="pick(kind)"
       />
       <Transition name="feedback">
-        <p v-if="error" class="feedback" role="alert">{{ t(error) }}</p>
+        <p v-if="error" class="feedback" role="alert">{{ error }}</p>
       </Transition>
       <input
         ref="photos"
