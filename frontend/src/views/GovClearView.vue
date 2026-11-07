@@ -36,6 +36,8 @@ const completedSeconds = ref(0);
 const resultArea = ref<HTMLElement>();
 const reviewArea = ref<HTMLElement>();
 const fileInput = ref<HTMLInputElement>();
+const cameraInput = ref<HTMLInputElement>();
+const collectingPhotos = ref(false);
 const copied = ref(false);
 let generation = 0;
 let timer: ReturnType<typeof setInterval> | undefined;
@@ -119,7 +121,7 @@ async function loadSample() {
   clearResult();
   if (mode.value === 'image') await run('transcribe');
 }
-async function pickImages(event: Event) {
+async function pickImages(event: Event, fromCamera = false) {
   const element = event.target as HTMLInputElement;
   const files = Array.from(element.files || []);
   element.value = ''; // Permit selecting the same photo again after removal.
@@ -139,7 +141,8 @@ async function pickImages(event: Event) {
         error: ''
       });
     clearResult();
-    await run('transcribe');
+    if (fromCamera) collectingPhotos.value = true;
+    if (!collectingPhotos.value) await run('transcribe');
   } catch (e) {
     error.value = message(e);
   }
@@ -148,6 +151,7 @@ function removeImage(index: number) {
   if (busy.value) return;
   const [page] = images.value.splice(index, 1);
   if (page.ownedPreview) URL.revokeObjectURL(page.preview);
+  if (!images.value.length) collectingPhotos.value = false;
   clearResult();
 }
 function moveImage(index: number, direction: -1 | 1) {
@@ -214,6 +218,7 @@ async function run(action: 'transcribe' | 'summarize') {
         reviewPolicy: summaryReviewPolicy
       });
       if (id !== generation) return;
+      collectingPhotos.value = false;
       summary.value = value;
       source.value = text;
     }
@@ -338,7 +343,7 @@ onBeforeUnmount(() => {
           </div></template
         >
         <template v-else>
-          <p class="help">選好圖片就會自動辨識並產生摘要，不需逐張確認。可一次多選，最多 5 張，合計 50 MB。</p>
+          <p class="help">相簿可多選，選好即自動辨識。拍照可連續追加，拍完後一次辨識並產生摘要。最多 5 張，合計 50 MB。</p>
           <div v-if="!images.length" class="image-preview empty">
             <Icon name="photo" :size="38" /><strong>清晰拍下每一頁文件</strong>
             <span>PNG / JPEG · 單張 20 MB 以內</span>
@@ -401,8 +406,27 @@ onBeforeUnmount(() => {
             :disabled="!ready || busy || images.length >= MAX_IMAGES"
             aria-label="多選文件圖片"
             data-testid="imageFiles"
-            @change="pickImages"
+            @change="pickImages($event)"
           />
+          <input
+            ref="cameraInput"
+            class="sr-only"
+            type="file"
+            accept="image/png,image/jpeg"
+            capture="environment"
+            :disabled="!ready || busy || images.length >= MAX_IMAGES"
+            aria-label="拍攝文件照片"
+            data-testid="cameraFiles"
+            @change="pickImages($event, true)"
+          />
+          <button
+            class="secondary full"
+            :disabled="!ready || busy || images.length >= MAX_IMAGES"
+            data-testid="takePhoto"
+            @click="cameraInput?.click()"
+          >
+            <Icon name="photo" />{{ collectingPhotos ? '再拍一張' : '拍照加入' }}
+          </button>
           <button
             class="secondary full"
             :disabled="!ready || busy || images.length >= MAX_IMAGES"
@@ -412,6 +436,7 @@ onBeforeUnmount(() => {
           </button>
           <p v-if="images.length" class="batch-info" aria-live="polite">
             已加入 {{ images.length }} / {{ MAX_IMAGES }} 張 · {{ completedPages }} 張文字就緒
+            <span v-if="collectingPhotos">。可繼續拍照或從相簿追加，拍好後按下方按鈕開始。</span>
           </p>
         </template>
       </section>
@@ -450,7 +475,9 @@ onBeforeUnmount(() => {
         @click="run(mode === 'image' ? 'transcribe' : 'summarize')"
       >
         <Icon name="spark" />{{
-          mode === 'image' ? '重新產生摘要' : '產生白話摘要'
+          mode === 'image'
+            ? collectingPhotos ? '拍好了，開始辨識與摘要' : '重新產生摘要'
+            : '產生白話摘要'
         }}
       </button>
       <section v-if="summary" ref="resultArea" class="results" data-testid="summaryResult">
