@@ -42,7 +42,7 @@ test('processes photos or PDF pages in order, retains full source, then calls re
   assert.equal(calls.at(-1), 'dispose');
 });
 
-test('rejects empty OCR, total source overflow and empty model replies without synthesizing sample answers', async () => {
+test('passes OCR text through without input gates and rejects empty generated summaries', async () => {
   const signal = new AbortController().signal;
   const empty = host(() => '');
   assert.equal(await transcribePages(empty.bridge, [new Blob()], signal, async () => ''), '【第 1 頁】\n');
