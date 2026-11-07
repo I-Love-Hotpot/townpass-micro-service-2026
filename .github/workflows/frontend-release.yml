@@ -1,0 +1,80 @@
+name: Frontend release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/frontend-release.yml
+      - frontend/**
+
+permissions:
+  contents: write
+
+concurrency:
+  group: frontend-release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.1
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: Build frontend
+        working-directory: frontend
+        run: pnpm build
+
+      - name: Package dist
+        working-directory: frontend
+        run: zip -r "$GITHUB_WORKSPACE/townpass-baihua-frontend-dist.zip" dist
+
+      - name: Confirm this is still the latest main commit
+        id: current-main
+        run: |
+          git fetch origin main
+          if [ "$(git rev-parse origin/main)" = "$GITHUB_SHA" ]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping release because main has advanced beyond $GITHUB_SHA."
+          fi
+
+      - name: Publish GitHub release
+        if: steps.current-main.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="frontend-${GITHUB_SHA}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" \
+              "$GITHUB_WORKSPACE/townpass-baihua-frontend-dist.zip" \
+              --clobber
+            gh release edit "$tag" --latest
+          else
+            gh release create "$tag" \
+              "$GITHUB_WORKSPACE/townpass-baihua-frontend-dist.zip" \
+              --title "Frontend ${GITHUB_SHA}" \
+              --notes "Built from commit \`${GITHUB_SHA}\`." \
+              --target "$GITHUB_SHA" \
+              --latest
+          fi
