@@ -11,7 +11,7 @@ function compile(name, dependencies = {}) {
   return 'data:text/javascript;base64,' + Buffer.from(code).toString('base64');
 }
 const { withInference, transcribePages, summarizeSource } = await import(compile('govclearDocument', {
-  govclearGuard: compile('govclearGuard'), govclearBridge: compile('govclearBridge'), govclearSummary: compile('govclearSummary')
+  govclearBridge: compile('govclearBridge'), govclearSummary: compile('govclearSummary')
 }));
 const policies = { policy: 'full', mobilePolicy: 'mobile', reviewPolicy: 'review' };
 

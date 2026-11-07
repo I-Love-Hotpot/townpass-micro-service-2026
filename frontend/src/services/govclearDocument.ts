@@ -1,6 +1,5 @@
 import type { Locale, Summary } from '../interfaces/document.ts';
 import { GovClearBridge } from './govclearBridge';
-import { review, requireAllowed, outputCriteria } from './govclearGuard';
 import { parseSummary } from './govclearSummary';
 
 type Policies = { policy: string; mobilePolicy: string; reviewPolicy: string };
@@ -41,7 +40,6 @@ export async function summarizeSource(
     reviewPolicy: policies.reviewPolicy + language
   });
   if (!raw.trim()) throw new Error('模型未回傳摘要，請重試。');
-  requireAllowed(await review(bridge, text, 'G2-summary', raw, outputCriteria));
   const sections = parseSummary(raw);
   if (!sections.length) throw new Error('模型未回傳有效摘要，請重試。');
   return {

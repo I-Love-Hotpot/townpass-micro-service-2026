@@ -1,4 +1,4 @@
-import type { GuardedDocument, RagQuestion } from '../services/govclearRag';
+import type { DocumentAnalysis, RagQuestion } from '../services/govclearRag';
 import type { SixQuestionAnswers } from '../services/govclearSixQuestions';
 
 export type Locale = 'zh-TW' | 'id';
@@ -48,7 +48,7 @@ export interface DocumentRecord {
   pages: Blob[];
   summary: Summary;
   source?: string;
-  analysis?: GuardedDocument;
+  analysis?: DocumentAnalysis;
   sixQuestions?: SixQuestionAnswers;
   processingSeconds?: number;
   sixQuestionsSeconds?: number;

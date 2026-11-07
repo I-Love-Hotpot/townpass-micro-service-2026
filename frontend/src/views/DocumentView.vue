@@ -9,7 +9,7 @@ import { fixtures } from '@/services/fixtures';
 import { translate, type Label } from '@/services/i18n';
 import { delay, explainAgain } from '@/services/processing';
 import { analyzeDocument, analyzeSixQuestions, askDocument } from '@/services/offline';
-import { hashText } from '@/services/govclearGuard';
+import { hashText } from '@/services/govclearJson';
 import { SIX_QUESTIONS } from '@/services/govclearSixQuestions';
 import { records } from '@/services/records';
 import { useWorkspace } from '@/stores/workspace';
@@ -539,15 +539,15 @@ async function copySix() {
           <p class="text-sm text-muted">
             {{
               workspace.context.locale === 'id'
-                ? 'Ditinjau oleh model yang sama; versi sumber dan penerapan pada kasus Anda belum dipastikan.'
-                : '由同一模型複核，仍須核對原文。資料版本與個案適用性尚未確認。'
+                ? 'Konten dibuat oleh AI tanpa pemeriksaan tambahan. Periksa dokumen asli.'
+                : 'AI 直接生成，未經額外複核，請核對原文與引用來源。'
             }}
           </p>
           <p v-if="entry.analysis.publication === 'partial'" role="status" class="feedback">
             {{
               workspace.context.locale === 'id'
-                ? 'Sebagian pertanyaan atau jawaban belum lolos pemeriksaan.'
-                : '部分問題或回答未完成檢查；已保留可用結果。'
+                ? 'Sebagian pertanyaan atau jawaban belum tersedia.'
+                : '部分問題或回答未生成；已保留可用結果。'
             }}
           </p>
           <article
