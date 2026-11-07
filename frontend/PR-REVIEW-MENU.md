@@ -65,39 +65,34 @@ GET https://api.github.com/repos/{owner}/{repo}/pulls?state=open&per_page=50
 - 無身份驗證的請求：每小時 60 次
 - 建議在生產環境使用 GitHub Token 提高限制到每小時 5000 次
 
-## 配置
+## 環境配置
 
-### 修改 PR 預覽域名
-修改 [usePRList.ts](/Users/swchen1217/meichu26/townpass-micro-service-2026/frontend/src/composables/usePRList.ts) 中的 `handlePRPreviewClick` 函數：
+### 必需配置
 
-```typescript
-const handlePRPreviewClick = (prNumber: number) => {
-  const previewUrl = `https://${prNumber}.tp.dstw.dev`; // 修改這裡
-  window.open(previewUrl, '_blank');
-};
+如果倉庫是私有的或你需要提高 API 限制，請在 `frontend/.env.local` 中設置以下環境變數：
+
+```env
+# GitHub Repository Information (如果需要修改)
+VITE_GITHUB_OWNER=I-Love-Hotpot
+VITE_GITHUB_REPO=townpass-micro-service-2026
+
+# GitHub Personal Access Token (推薦用於提高 API 限制)
+VITE_GITHUB_TOKEN=your_github_token_here
+
+# PR Preview 域名配置 (如果需要修改)
+VITE_PR_PREVIEW_DOMAIN=tp.dstw.dev
 ```
 
-### 修改 GitHub 倉庫信息
-修改 [usePRList.ts](/Users/swchen1217/meichu26/townpass-micro-service-2026/frontend/src/composables/usePRList.ts) 中的 `fetchPRsFromGitHub` 函數：
+參考 [.env.example.pr-menu](.env.example.pr-menu)。
 
-```typescript
-const owner = 'I-Love-Hotpot';      // 修改這裡
-const repo = 'townpass-micro-service-2026'; // 修改這裡
-```
+### 獲取 GitHub Token
 
-### 使用 GitHub Token（可選）
-為了提高 API 限制，可以在請求中添加 Authorization header：
+1. 登入 GitHub 帳戶
+2. 進入 Settings → Developer settings → Personal access tokens
+3. 創建新 token，選擇 `repo` 權限
+4. 複製 token 並設置到 `.env.local`
 
-```typescript
-const response = await fetch(
-  `https://api.github.com/repos/${owner}/${repo}/pulls?state=open&per_page=50`,
-  {
-    headers: {
-      'Authorization': `Bearer ${YOUR_GITHUB_TOKEN}`
-    }
-  }
-);
-```
+**注意**: 不要將 token 提交到版本控制系統！確保 `.env.local` 在 `.gitignore` 中。
 
 ## 開發中的限制
 

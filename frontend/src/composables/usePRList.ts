@@ -21,15 +21,33 @@ export const usePRList = () => {
       loading.value = true;
       error.value = null;
 
-      // Using GitHub API to fetch open PRs from the current repository
-      const owner = 'I-Love-Hotpot';
-      const repo = 'townpass-micro-service-2026';
+      // Get configuration from environment variables or use defaults
+      const owner = import.meta.env.VITE_GITHUB_OWNER || 'I-Love-Hotpot';
+      const repo = import.meta.env.VITE_GITHUB_REPO || 'townpass-micro-service-2026';
+      const token = import.meta.env.VITE_GITHUB_TOKEN;
+
+      const headers: HeadersInit = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}/pulls?state=open&per_page=50`
+        `https://api.github.com/repos/${owner}/${repo}/pulls?state=open&per_page=50`,
+        { headers }
       );
 
       if (!response.ok) {
-        throw new Error(`GitHub API error: ${response.statusText}`);
+        // More informative error messages
+        if (response.status === 404) {
+          throw new Error(
+            `倉庫未找到: ${owner}/${repo}。請檢查倉庫是否存在或設置正確的環境變數 VITE_GITHUB_OWNER 和 VITE_GITHUB_REPO`
+          );
+        } else if (response.status === 403) {
+          throw new Error(
+            `API 限制或無權限訪問。請設置 VITE_GITHUB_TOKEN 環境變數以提高 API 限制`
+          );
+        }
+        throw new Error(`GitHub API 錯誤: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -44,7 +62,7 @@ export const usePRList = () => {
         preview_url: `${pr.number}.tp.dstw.dev`,
       }));
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Failed to fetch PRs';
+      error.value = err instanceof Error ? err.message : '無法獲取 PR 列表';
       console.error('Error fetching PRs:', err);
     } finally {
       loading.value = false;
