@@ -44,7 +44,7 @@ pnpm dev:local
 python3 local-inference/prepare_iphone.py --app /absolute/path/to/TownPass-release-checkout
 ```
 
-這個命令會下載約 3.66 GB 模型、重建並替換指定 Flutter checkout 的 `assets/govclear`、安裝 App。
+這個命令會下載約 3.66 GB 模型並安裝 App；不再將前端複製到 `assets/govclear`。介面由 App 首次連上線上網站後下載完整版本。
 請使用獨立的 release checkout。腳本會在下載與覆寫前檢查原生 host 路徑，避免覆蓋其他架構的 Flutter 專案。
 本次整合未執行手機安裝或模型下載。
 PDF 字型、CMap、WASM 與 worker 會平放在 `dist/assets/`，符合 release host 的資產白名單與 Flutter 打包規則。
@@ -69,15 +69,17 @@ Node 測試涵蓋 Native Bridge、原文／多頁順序、字數上限、摘要�
 
 ## 固定公開預覽
 
-網址：<https://townpass.fearnot.tw>，使用獨立 Cloudflare named tunnel `townpass-demo`。
+網址：<https://townpass.fearnot.tw>，由 Cloudflare Pages 專案 `townpass` 提供服務，備用網址為 <https://townpass.pages.dev>。
 公開內容是 `frontend/dist`；本機 Native 測試替身不會進入正式打包或公開網址。
 
 ```sh
-pnpm --dir frontend preview --host 127.0.0.1 --port 3001 --strictPort
-cloudflared tunnel --config ~/.cloudflared/townpass-demo.yml run townpass-demo
+cd frontend
+pnpm build
+CLOUDFLARE_ACCOUNT_ID=786dcef12567e51b3a85a4e9a32860d9 npx wrangler@4.158.0 pages deploy dist --project-name townpass --branch main
 ```
 
-Tunnel 設定與憑證只存在使用者的 `~/.cloudflared/`，不加入 Git。網址固定，但 Mac、preview 與 tunnel 必須持續運作。
+部署使用已登入的 Wrangler，憑證不加入 Git。這是手動 Direct Upload，修改程式後需重新 build 與部署，沒有 Git 自動部署。
+2026-11-08 起，網域 CNAME 指向 `townpass.pages.dev`，不再依賴 Mac、preview 或 `townpass-demo` Tunnel。原 Tunnel 目標為 `fefbfcb4-fe68-4dff-8889-55acc1ccd51c.cfargotunnel.com`，僅供回復設定參考。
 公開瀏覽器可以累積選圖與查看操作；實際 Apple Vision OCR／E4B 摘要與六何仍需 Native host。
 
 本機瀏覽器回歸可另開標準庫測試伺服器：
@@ -90,3 +92,15 @@ node frontend/tests/browser-harness.cjs
 這些不是實體相機或模型品質驗收。
 
 文件處理中顯示已用秒數，完成後保存本次處理耗時；六何另行計時。取消或離開頁面時停止計時器，重整後仍可查看已保存的完成耗時。時間包含 Native 連線與畫面進度流程，不等於純模型解碼時間。
+
+
+## 線上首次下載與離線快取（2026-11-08 更新）
+
+已移除 App 的 localhost HTTP server 與打包頁面備援，App 一律載入相同 HTTPS 來源。
+正式前端 build 會產生 `sw.js`，列出完整發布內容（包含動態載入程式、PDF worker、CMap、字型及 WASM），並以內容雜湊區分版本、以 SRI 驗證下載內容。開啟頁面後自動下載全部檔案，全部成功才安裝該版 service worker；失敗刪除未完成版本並保留舊版。
+頁面上方顯示下載中／離線備妥／失敗重試狀態。首次下載完成後，關閉頁面再斷網重新開啟，可從相同網址載入快取；語言 query 與 hash 路由不會建立另一份頁面快取。
+更新下載完成後等待現有頁面關閉再啟用，避免新舊程式混用。新發布內容需完整部署至網站，App 也需重新打包安裝新的 WebView 設定。
+
+iOS 使用持久 WebView 資料及 App-Bound Domains。`Info.plist` 目前允許 `townpass.fearnot.tw`、既有服務的 `taipei-pass-service.vercel.app`、`tp.dstw.dev`。自訂 `GOVCLEAR_URL` 時需同步調整白名單。其他外部網頁不提供原生橋接。
+清除網站資料、移除 App 或系統回收網站快取後，需要重新連網下載；Service Worker 快取不是不可刪除的 App 文件。原本 localhost 來源的 IndexedDB 不會自動搬到 HTTPS 來源。
+模型仍需先安裝到裝置，這次下載的是完整網站版本，不包含 Gemma 權重。開發 Vite 模式不註冊離線快取。

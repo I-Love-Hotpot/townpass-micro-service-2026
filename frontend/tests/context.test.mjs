@@ -15,3 +15,10 @@ test('Native owns the microservice header; the web only enables an explicit prev
   assert.equal(readAppContext(new URL('https://example.test/?embedded=1&header=1')).showHeader, true);
   assert.equal(readAppContext(new URL('https://example.test/#/?lang=id&header=0')).locale, 'id');
 });
+
+test('App language overrides system language and regional tags select App language', () => {
+  assert.equal(readAppContext(new URL('https://example.test/?lang=en-US'), 'zh-TW').appLanguage, 'en');
+  assert.equal(readAppContext(new URL('https://example.test/'), 'id-ID').appLanguage, 'id');
+  assert.equal(readAppContext(new URL('https://example.test/?lang=en#/?lang=zh-Hant'), 'id').appLanguage, 'zh-TW');
+  assert.equal(readAppContext(new URL('https://example.test/'), 'ja').appLanguage, 'zh-TW');
+});

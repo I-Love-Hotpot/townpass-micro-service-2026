@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig, type Plugin } from 'vite';
 import vue from '@vitejs/plugin-vue';
+import { buildOfflineBundle } from './build/offline.mjs';
 
 const pdfDirectory = fileURLToPath(new URL('./node_modules/pdfjs-dist/', import.meta.url));
 const sampleDirectory = fileURLToPath(new URL('../../docs/idea/papers/', import.meta.url));
@@ -87,7 +88,17 @@ function documentAssets(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [vue(), documentAssets()],
+  plugins: [
+    vue(),
+    documentAssets(),
+    {
+      name: 'govclear-offline-release',
+      apply: 'build',
+      closeBundle() {
+        buildOfflineBundle(fileURLToPath(new URL('./dist/', import.meta.url)));
+      }
+    }
+  ],
   server: { cors: false },
   build: {
     reportCompressedSize: false,
