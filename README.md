@@ -4,7 +4,7 @@
 
 GovClear 整合於城市通（TownPass），支援輸入文字、選擇圖片與累積多張拍照。iPhone 使用 Apple Vision 辨識文字，再透過手機上的 Gemma 4 E4B 產生白話摘要與六何整理；可另外把原文與結果以 JSON 儲存到微服務。
 
-開發團隊：**拖把吃火鍋不揪**
+開發團隊：**拖把吃火鍋又不揪**
 
 > 目前為開發驗證版本。RAG 問答與逐步 AI Guard 尚未實作；單張圖片完整流程 20 秒內是目標，尚未驗證達成。
 
@@ -223,7 +223,7 @@ python3 -m unittest discover -s local-inference/tests -v
 
 ## 授權
 
-Copyright (C) 2026 拖把吃火鍋不揪
+Copyright (C) 2026 拖把吃火鍋又不揪
 
 本專案自行開發且有權授權的程式碼採用 **GNU Affero General Public License v3.0 only**（`AGPL-3.0-only`），正式條文見 [LICENSE](LICENSE)。允許商用，使用者須遵守適用的原始碼提供、聲明保留等義務；不附加「商用另行同意」限制。
 
