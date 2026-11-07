@@ -2,14 +2,15 @@ import { existsSync } from "node:fs";
 import cors from "@fastify/cors";
 import Fastify from "fastify";
 import docsRoutes from "./routes/docs.routes.js";
+import govclearResultsRoutes from "./routes/govclear-results.routes.js";
 import healthRoutes from "./routes/health.routes.js";
 import { createDatabasePool } from "./services/database.service.js";
 
 if (existsSync(".env")) process.loadEnvFile();
 
-const app = Fastify({ logger: true });
+const app = Fastify({ logger: true, ajv: { customOptions: { coerceTypes: false, removeAdditional: false } } });
 const allowedOrigins = (
-  process.env.CORS_ALLOWED_ORIGINS ?? "http://localhost:5173"
+  process.env.CORS_ALLOWED_ORIGINS ?? "http://localhost:5173,http://127.0.0.1:5173"
 )
   .split(",")
   .map((origin) => origin.trim())
@@ -23,6 +24,7 @@ try {
   await app.register(cors, { origin: allowedOrigins, preflight: false });
   await app.register(healthRoutes, { allowedOrigins });
   await app.register(docsRoutes);
+  await app.register(govclearResultsRoutes, { allowedOrigins });
   await app.listen({ port: 3001, host: "0.0.0.0" });
 
   for (const signal of ["SIGINT", "SIGTERM"]) {

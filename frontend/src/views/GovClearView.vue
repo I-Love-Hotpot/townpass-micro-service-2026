@@ -21,6 +21,50 @@ import { SIX_QUESTIONS, parseSixQuestions, type SixQuestionAnswers } from '@/ser
 import sampleImage from '@/assets/govclear/notice.png';
 import sampleSecondImage from '@/assets/govclear/notice-page2.png';
 
+import { createResult, sendResult, type ResultExport } from '@/services/govclearResults';
+const exportEndpoint = (import.meta.env.VITE_GOVCLEAR_RESULTS_API_URL ?? '').trim();
+const resultExport = ref<ResultExport | null>(null);
+const saveStatus = ref('');
+const saveFailed = ref(false);
+const saving = ref(false);
+const jsonCopied = ref(false);
+let upload: AbortController | undefined;
+const exportJson = computed(() => JSON.stringify(resultExport.value, null, 2));
+function resetExport() {
+  upload?.abort();
+  resultExport.value = null;
+  saveStatus.value = '';
+  saveFailed.value = false;
+  saving.value = false;
+  jsonCopied.value = false;
+}
+async function uploadResult() {
+  const payload = resultExport.value;
+  if (!payload || saving.value) return;
+  if (!exportEndpoint) { saveStatus.value = '尚未設定後端網址；可先查看或複製 JSON。'; return; }
+  const controller = new AbortController();
+  upload = controller;
+  saving.value = true;
+  saveFailed.value = false;
+  saveStatus.value = '正在儲存到後端…';
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    await sendResult(exportEndpoint, payload, controller.signal);
+    if (resultExport.value?.resultId === payload.resultId) saveStatus.value = '已儲存到後端';
+  } catch {
+    if (resultExport.value?.resultId === payload.resultId) {
+      saveFailed.value = true;
+      saveStatus.value = '未確認儲存成功，請確認網路和後端服務後重試。摘要仍可閱讀。';
+    }
+  } finally {
+    clearTimeout(timeout);
+    if (resultExport.value?.resultId === payload.resultId) saving.value = false;
+  }
+}
+async function copyJson() {
+  try { await navigator.clipboard.writeText(exportJson.value); jsonCopied.value = true; }
+  catch { saveStatus.value = '無法使用剪貼簿，請展開 JSON 後長按複製。'; }
+}
 const bridge = new GovClearBridge();
 const mode = ref<'text' | 'image'>('text');
 const input = ref('');
@@ -74,6 +118,7 @@ const readingStats = computed(() =>
 );
 
 function clearResult() {
+  resetExport();
   sixAnswers.value = null;
   sixError.value = '';
   sixCopied.value = false;
@@ -259,6 +304,7 @@ async function runSixQuestions() {
   busy.value = true;
   sixError.value = '';
   sixCopied.value = false;
+  resetExport();
   stage.value = '正在整理六何資訊';
   elapsed.value = 0;
   const started = performance.now();
@@ -269,6 +315,8 @@ async function runSixQuestions() {
     const value = await bridge.request('sixQuestions', { text: document, policy: sixQuestionsPolicy });
     if (id !== generation) return;
     sixAnswers.value = parseSixQuestions(value);
+    resultExport.value = createResult(summary.value, sixAnswers.value, mode.value, document);
+    void uploadResult();
     sixSeconds.value = (performance.now() - started) / 1000;
   } catch (e) {
     if (id === generation) sixError.value = message(e);
@@ -310,6 +358,7 @@ async function copy() {
 }
 onMounted(connect);
 onBeforeUnmount(() => {
+  upload?.abort();
   generation++;
   clearInterval(timer);
   clearTimeout(scrollTimer);
@@ -573,6 +622,15 @@ onBeforeUnmount(() => {
             <Icon name="copy" :size="17" />{{ sixCopied ? '已複製六何整理' : '複製六何整理' }}
           </button>
         </section>
+        <section v-if="resultExport" class="panel" data-testid="resultExport">
+          <h3>結果 JSON</h3>
+          <p role="status" data-testid="saveStatus">{{ saveStatus }}</p>
+          <p style="overflow-wrap: anywhere">結果編號：{{ resultExport.resultId }}</p>
+          <details><summary>查看送出 JSON</summary><pre style="white-space: pre-wrap; overflow-wrap: anywhere">{{ exportJson }}</pre></details>
+          <button class="secondary full" @click="copyJson">{{ jsonCopied ? '已複製 JSON' : '複製 JSON' }}</button>
+          <button v-if="saveFailed" class="secondary full" :disabled="saving" @click="uploadResult">重試儲存</button>
+          <p class="help">離開此頁前請確認儲存成功；重試不會重複新增同一筆結果。</p>
+        </section>
         <details class="panel evidence">
           <summary>查看本次摘要依據的原文<Icon name="chevron" :size="17" /></summary>
           <p>{{ source }}</p>
@@ -583,7 +641,7 @@ onBeforeUnmount(() => {
       </section>
       <footer>
         <Icon name="shield" :size="18" />
-        <p>結果僅協助閱讀，不能取代原文。<br />文件不會上傳至城市通後端。</p>
+        <p>結果僅協助閱讀，不能取代原文。<br />設定後端後，摘要依據的原文、摘要與六何整理會自動送出儲存；不包含圖片檔。</p>
       </footer>
     </main>
   </div>
