@@ -8,8 +8,6 @@ services:
     restart: unless-stopped
     expose:
       - "80"
-    networks:
-      # - coolify
     healthcheck:
       test: ["CMD", "wget", "--spider", "-nv", "http://127.0.0.1:80/"]
       interval: 10s
@@ -33,11 +31,8 @@ services:
       retries: 5
       start_period: 10s
     networks:
-      # - coolify
       - townpass-db
 
 networks:
-  # coolify:
-  #   external: true
   townpass-db:
     external: true
