@@ -86,7 +86,9 @@ test('early summary generation excludes questions and retrieval reuses the extra
  assert.equal(calls[0].payload.prompt.includes('"q":'),false);
  assert.equal(bridge.calls.filter(c=>c.action==='retrieve').length,1);
  assert.deepEqual(JSON.parse(bridge.calls.find(c=>c.action==='retrieve').payload.terms),[draft.sixQuestions.what,draft.sixQuestions.how]);
- assert.match(calls[1].payload.prompt,/原文材料或期限的具體困難/);
+ assert.match(calls[1].payload.prompt,/自然提出最多3個相關問題並用白話回答/);
+ assert.match(calls[1].payload.prompt,/法條與檢索資料作為輔助說明/);
+ assert.doesNotMatch(calls[1].payload.prompt,/約20字|都用「若|不能問「需檢附|1～2句|不要問原文已寫明/);
  assert.match(result.questions[0].text,/未滿40歲但已婚/);
 });
 
