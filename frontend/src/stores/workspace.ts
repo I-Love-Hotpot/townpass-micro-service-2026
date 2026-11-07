@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, shallowRef } from 'vue';
 import type { AppContext, FileKind, RecordCard } from '@/interfaces/document';
-import { initializeRecords } from '@/services/catalog';
 import { readAppContext } from '@/services/context';
 import { records } from '@/services/records';
 
@@ -11,6 +10,7 @@ export const useWorkspace = defineStore('workspace', () => {
   const initializing = ref(false);
   const initError = ref(false);
   const processing = shallowRef<{ kind: FileKind; percent: number }>();
+  const dataOperation = ref<'import' | 'clear'>();
   let initialLoad: Promise<void> | undefined;
 
   async function refresh() {
@@ -21,8 +21,7 @@ export const useWorkspace = defineStore('workspace', () => {
     if (initialLoad) return initialLoad;
     initializing.value = true;
     initError.value = false;
-    initialLoad = initializeRecords(context.value.locale)
-      .then(refresh)
+    initialLoad = refresh()
       .catch(() => {
         initError.value = true;
         initialLoad = undefined;
@@ -33,5 +32,14 @@ export const useWorkspace = defineStore('workspace', () => {
     return initialLoad;
   }
 
-  return { context, cards, initializing, initError, processing, initialize, refresh };
+  return {
+    context,
+    cards,
+    initializing,
+    initError,
+    processing,
+    dataOperation,
+    initialize,
+    refresh
+  };
 });

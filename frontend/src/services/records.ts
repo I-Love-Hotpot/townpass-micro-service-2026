@@ -104,6 +104,10 @@ export function openRecords(name = 'baihua') {
         transaction.objectStore('documents').delete(id);
         transaction.objectStore('cards').delete(id);
       }),
+    clear: () =>
+      write((transaction) => {
+        for (const store of stores) transaction.objectStore(store).clear();
+      }),
     update: (id: string, change: (record: DocumentRecord) => DocumentRecord) =>
       write(async (transaction) => {
         const record = await request<DocumentRecord | undefined>(
@@ -115,12 +119,19 @@ export function openRecords(name = 'baihua') {
         return updated;
       }),
     seeded: async () => Boolean(await read('settings', (store) => store.get(seedKey))),
-    seed: (records: DocumentRecord[]) =>
+    seed: (records: DocumentRecord[], importMissing = false) =>
       write(async (transaction) => {
         const settings = transaction.objectStore('settings');
-        if (await request(settings.get(seedKey))) return;
-        for (const record of records) put(transaction, record);
+        if (!importMissing && (await request(settings.get(seedKey)))) return 0;
+        const documents = transaction.objectStore('documents');
+        let imported = 0;
+        for (const record of records) {
+          if (await request(documents.getKey(record.id))) continue;
+          put(transaction, record);
+          imported += 1;
+        }
         settings.put(true, seedKey);
+        return imported;
       })
   };
 }

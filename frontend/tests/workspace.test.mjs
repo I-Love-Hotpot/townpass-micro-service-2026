@@ -114,6 +114,38 @@ test('cancelled writes leave neither a card nor an original', async () => {
   assert.deepEqual(await db.list(), []);
 });
 
+test('manual import restores missing examples and preserves existing records across retries', async () => {
+  const db = openRecords('manual-import-test');
+  const sample = document('sample');
+  await db.seed([sample]);
+  await db.put(document('upload'));
+  await db.update('sample', (record) => ({
+    ...record,
+    summary: { ...record.summary, title: '已更新的摘要' }
+  }));
+  assert.equal(await db.seed([sample, document('other')], true), 1);
+  assert.equal((await db.get('sample')).summary.title, '已更新的摘要');
+  assert.ok(await db.get('upload'));
+  await db.delete('other');
+  assert.equal(await db.seed([sample, document('other')], true), 1);
+  assert.equal(await db.seed([sample, document('other')], true), 0);
+  assert.equal((await db.list()).length, 3);
+});
+
+test('clear removes documents, cards and settings across connections and permits a manual re-import', async () => {
+  const db = openRecords('clear-test');
+  await db.seed([document('sample')]);
+  await db.put(document('upload'));
+  await db.clear();
+  const reopened = openRecords('clear-test');
+  assert.deepEqual(await reopened.list(), []);
+  assert.equal(await reopened.get('sample'), undefined);
+  assert.equal(await reopened.get('upload'), undefined);
+  assert.equal(await reopened.seeded(), false);
+  assert.equal(await reopened.seed([document('sample')], true), 1);
+  assert.equal((await db.list()).length, 1);
+});
+
 test('failed re-explanation leaves the existing summary, locale and card intact', async () => {
   const db = openRecords('explain-test');
   const old = document('sample');

@@ -31,27 +31,27 @@ const date = computed(() =>
       <p class="break-words text-sm leading-5 text-muted">{{ card.summary.action }}</p>
       <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted">
         <span>
-          {{ t(card.kind === 'pdf' ? 'pdfCount' : 'imageCount', { n: card.pageCount }) }} ·
+          <!-- {{ t(card.kind === 'pdf' ? 'pdfCount' : 'imageCount', { n: card.pageCount }) }} · -->
           {{ date }}
-        </span>
-        <span
-          v-if="card.status"
-          class="rounded px-2 py-0.5 font-semibold"
-          :class="
-            card.status === 'due-soon'
-              ? 'bg-[#FDF8ED] text-[#74521B]'
-              : 'bg-brand-light text-brand-dark'
-          "
-        >
-          {{ t(card.status === 'due-soon' ? 'due' : 'completed') }}
         </span>
         <span v-if="card.scenarioDate">
           {{ t('scenario', { date: card.scenarioDate.split('-').join('/') }) }}
         </span>
       </div>
     </RouterLink>
-    <div class="flex justify-end border-t border-line px-2">
-      <button type="button" class="text-action !text-red-800" @click="$emit('remove')">
+    <div class="flex items-center justify-between border-t border-line px-2">
+      <span
+        v-if="card.status"
+        class="rounded px-2 py-0.5 font-semibold"
+        :class="
+          card.status === 'due-soon'
+            ? 'bg-[#FDF8ED] text-[#74521B]'
+            : 'bg-brand-light text-brand-dark'
+        "
+      >
+        {{ t(card.status === 'due-soon' ? 'due' : 'completed') }}
+      </span>
+      <button type="button" class="ml-auto text-action !text-red-800" @click="$emit('remove')">
         {{ t('delete') }}
       </button>
     </div>

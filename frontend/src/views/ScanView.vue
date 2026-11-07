@@ -18,10 +18,22 @@ const photos = ref<HTMLInputElement>();
 const pdf = ref<HTMLInputElement>();
 const error = ref<Label>();
 let controller: AbortController | undefined;
+let iconTapCount = 0;
+let lastIconTap = 0;
+
+function tapHomeIcon() {
+  const now = Date.now();
+  iconTapCount = now - lastIconTap > 2000 ? 1 : iconTapCount + 1;
+  lastIconTap = now;
+  if (iconTapCount === 5) {
+    iconTapCount = 0;
+    void router.push({ name: 'setting' });
+  }
+}
 
 function pick(kind: FileKind) {
   const input = kind === 'photos' ? photos.value : pdf.value;
-  if (!input || controller) return;
+  if (!input || controller || workspace.dataOperation) return;
   input.value = '';
   input.click();
 }
@@ -37,7 +49,7 @@ onBeforeUnmount(cancel);
 
 async function handleFiles(event: Event, kind: FileKind) {
   const files = Array.from((event.target as HTMLInputElement).files ?? []);
-  if (!files.length || controller) return;
+  if (!files.length || controller || workspace.dataOperation) return;
   error.value = undefined;
   const current = new AbortController();
   const { signal } = current;
@@ -76,11 +88,15 @@ async function handleFiles(event: Event, kind: FileKind) {
 <template>
   <div class="grid min-h-full grid-rows-[minmax(240px,2fr)_minmax(160px,1fr)]">
     <section class="flex flex-col items-center justify-center gap-4 px-6 py-8 text-center">
-      <div
+      <button
+        type="button"
         class="grid h-[72px] w-[72px] place-items-center rounded-2xl bg-brand-light text-brand-dark"
+        :aria-label="t('app')"
+        :disabled="Boolean(workspace.processing || workspace.dataOperation)"
+        @click="tapHomeIcon"
       >
         <AppIcon name="document" class="h-9 w-9" />
-      </div>
+      </button>
       <h1 class="page-title">{{ t('hero1') }}<br />{{ t('hero2') }}</h1>
       <p class="text-sm text-muted">{{ t('intro') }}</p>
     </section>
@@ -93,11 +109,13 @@ async function handleFiles(event: Event, kind: FileKind) {
         :label="t(kind)"
         :progress-label="t('processing')"
         :primary="kind === 'photos'"
-        :disabled="Boolean(workspace.processing)"
+        :disabled="Boolean(workspace.processing || workspace.dataOperation)"
         :progress="workspace.processing?.kind === kind ? workspace.processing.percent : undefined"
         @pick="pick(kind)"
       />
-      <p v-if="error" class="feedback" role="alert">{{ t(error) }}</p>
+      <Transition name="feedback">
+        <p v-if="error" class="feedback" role="alert">{{ t(error) }}</p>
+      </Transition>
       <input
         ref="photos"
         type="file"
