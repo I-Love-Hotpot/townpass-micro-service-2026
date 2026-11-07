@@ -6,8 +6,8 @@ const source = readFileSync(new URL('../src/services/context.ts', import.meta.ur
 const code = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 } }).outputText;
 const { readAppContext } = await import('data:text/javascript;base64,' + Buffer.from(code).toString('base64'));
 
-test('browser preview shows the microservice header; embedded Native route has one host header', () => {
-  assert.equal(readAppContext(new URL('https://townpass.fearnot.tw/')).showHeader, true);
+test('Native owns the microservice header; the web only enables an explicit preview', () => {
+  assert.equal(readAppContext(new URL('https://townpass.fearnot.tw/')).showHeader, false);
   assert.equal(readAppContext(new URL('http://127.0.0.1:5173/govclear#/documents/123')).showHeader, false);
   assert.equal(readAppContext(new URL('http://127.0.0.1:5173/govclear')).embedded, true);
   assert.equal(readAppContext(new URL('https://example.test/?embedded=1')).showHeader, false);

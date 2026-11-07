@@ -31,6 +31,8 @@ const pdfOriginal = shallowRef<OriginalFile>();
 const collectingPhotos = ref(false);
 const error = ref('');
 const stage = ref('');
+const elapsed = ref(0);
+let timer: ReturnType<typeof setInterval> | undefined;
 const busy = computed(() => Boolean(workspace.processing || workspace.dataOperation));
 const allReady = computed(() => pages.value.length > 0 && pages.value.every(pageReady));
 let controller: AbortController | undefined;
@@ -55,6 +57,8 @@ function pick(target: 'photos' | 'pdf' | 'camera') {
 }
 
 function cancel() {
+  clearInterval(timer);
+  timer = undefined;
   controller?.abort();
   controller = undefined;
   workspace.processing = undefined;
@@ -164,6 +168,11 @@ async function run() {
   const { signal } = current;
   controller = current;
   error.value = '';
+  const started = performance.now();
+  elapsed.value = 0;
+  timer = setInterval(() => {
+    elapsed.value = Math.floor((performance.now() - started) / 1000);
+  }, 1000);
   let saving = false;
   workspace.processing = { kind: kind.value, percent: 0 };
   try {
@@ -191,6 +200,7 @@ async function run() {
         ),
       async (document) => {
         saving = true;
+        document.processingSeconds = (performance.now() - started) / 1000;
         await records.put(document, signal);
       },
       (percent) => {
@@ -216,9 +226,7 @@ async function run() {
 <template>
   <div
     :class="
-      pages.length
-        ? 'space-y-5 px-4 py-6'
-        : 'grid min-h-full grid-rows-[minmax(220px,1fr)_auto]'
+      pages.length ? 'space-y-5 px-4 py-6' : 'grid min-h-full grid-rows-[minmax(220px,1fr)_auto]'
     "
   >
     <section
@@ -271,7 +279,9 @@ async function run() {
         @pick="pick('pdf')"
       />
       <p v-if="collectingPhotos" class="rounded bg-brand-light p-3 text-sm">{{ t('batchHint') }}</p>
-      <p v-if="stage" role="status" class="text-sm text-brand-dark">{{ stage }}</p>
+      <p v-if="stage" role="status" class="text-sm text-brand-dark">
+        {{ stage }} · {{ t('elapsedSeconds', { n: elapsed }) }}
+      </p>
       <p v-if="error" id="scan-error" class="feedback" role="alert">{{ error }}</p>
       <button v-if="busy" type="button" class="text-action" @click="cancel">{{ t('stop') }}</button>
     </section>

@@ -29,6 +29,18 @@ const sixError = ref('');
 const actionError = ref('');
 const sixCopied = ref(false);
 const phase = ref<'explain' | 'chat' | 'six'>();
+const elapsed = ref(0);
+let timer: ReturnType<typeof setInterval> | undefined;
+
+function startTimer() {
+  const started = performance.now();
+  clearInterval(timer);
+  elapsed.value = 0;
+  timer = setInterval(() => {
+    elapsed.value = Math.floor((performance.now() - started) / 1000);
+  }, 1000);
+  return started;
+}
 const sourceDirty = computed(() => draftSource.value !== (entry.value?.source ?? ''));
 const sixLabels = {
   who: 'sixWho',
@@ -63,6 +75,8 @@ function releaseUrls() {
 }
 
 function cancelAction() {
+  clearInterval(timer);
+  timer = undefined;
   task?.abort();
   task = undefined;
   pending.value = false;
@@ -127,6 +141,7 @@ async function applyAction(action: 'explain' | 'chat') {
   feedback.value = undefined;
   failed.value = false;
   let refreshSix = false;
+  const started = startTimer();
   try {
     await delay(450, current.signal);
     const sample = fixtures.find((item) => item.id === record.fixtureId)?.summaries[locale];
@@ -152,6 +167,8 @@ async function applyAction(action: 'explain' | 'chat') {
           locale,
           source: record.source === undefined ? undefined : draftSource.value,
           sixQuestions: undefined,
+          sixQuestionsSeconds: undefined,
+          processingSeconds: (performance.now() - started) / 1000,
           chat: sourceDirty.value ? [] : stored.chat
         };
       const exchange = {
@@ -181,6 +198,7 @@ async function applyAction(action: 'explain' | 'chat') {
     feedback.value = action === 'explain' ? 'explainError' : 'chatError';
   } finally {
     if (task === current) {
+      clearInterval(timer);
       pending.value = false;
       task = undefined;
       phase.value = undefined;
@@ -198,6 +216,7 @@ async function generateSix() {
   phase.value = 'six';
   sixError.value = '';
   sixCopied.value = false;
+  const started = startTimer();
   try {
     const answers = await analyzeSixQuestions(
       record.source,
@@ -208,7 +227,11 @@ async function generateSix() {
     const updated = await records.update(record.id, (stored) => {
       current.signal.throwIfAborted();
       if (stored.source !== record.source) throw new Error(t.value('sourceChanged'));
-      return { ...stored, sixQuestions: answers };
+      return {
+        ...stored,
+        sixQuestions: answers,
+        sixQuestionsSeconds: (performance.now() - started) / 1000
+      };
     });
     if (task === current) entry.value = updated;
   } catch (cause) {
@@ -216,6 +239,7 @@ async function generateSix() {
       sixError.value = cause instanceof Error ? cause.message : t.value('processingError');
   } finally {
     if (task === current) {
+      clearInterval(timer);
       task = undefined;
       pending.value = false;
       phase.value = undefined;
@@ -330,6 +354,12 @@ async function copySix() {
           aria-labelledby="summary-heading"
         >
           <h2 id="summary-heading" class="section-title">{{ t('summary') }}</h2>
+          <p v-if="phase === 'explain'" class="mt-2 text-sm text-brand-dark" role="status">
+            {{ t('elapsedSeconds', { n: elapsed }) }}
+          </p>
+          <p v-else-if="entry.processingSeconds !== undefined" class="mt-2 text-sm text-muted">
+            {{ t('completedSeconds', { n: entry.processingSeconds.toFixed(1) }) }}
+          </p>
           <ul class="mt-3 list-disc space-y-2 pl-5">
             <li
               v-for="fact in entry.summary.facts"
@@ -402,7 +432,7 @@ async function copySix() {
           </p>
           <template v-if="sourceDirty">
             <p v-if="phase === 'explain'" role="status" class="text-sm text-brand-dark">
-              {{ t('explaining') }}
+              {{ t('explaining') }} · {{ t('elapsedSeconds', { n: elapsed }) }}
             </p>
             <button
               type="button"
@@ -431,7 +461,13 @@ async function copySix() {
         >
           <h2 id="six-heading" class="section-title">{{ t('sixQuestions') }}</h2>
           <p v-if="phase === 'six'" role="status" class="text-sm text-brand-dark">
-            {{ t('sixGenerating') }}
+            {{ t('sixGenerating') }} · {{ t('elapsedSeconds', { n: elapsed }) }}
+          </p>
+          <p
+            v-else-if="entry.sixQuestions && entry.sixQuestionsSeconds !== undefined"
+            class="text-sm text-muted"
+          >
+            {{ t('sixCompletedSeconds', { n: entry.sixQuestionsSeconds.toFixed(1) }) }}
           </p>
           <dl v-if="entry.sixQuestions" class="grid gap-3 sm:grid-cols-2">
             <div v-for="item in SIX_QUESTIONS" :key="item.key" class="rounded bg-surface p-4">

@@ -45,7 +45,7 @@ export class GovClearBridge {
     }
     signal?.throwIfAborted();
     if (!this.object)
-      throw new Error('請從 TownPass 的 GovClear 入口開啟。瀏覽器只能預覽介面，無法進行本機推論。');
+      throw new Error('請從 TownPass 的「白話人」入口開啟。瀏覽器只能預覽介面，無法進行本機推論。');
     this.object.addEventListener('message', this.receive);
     return this.request('check');
   }

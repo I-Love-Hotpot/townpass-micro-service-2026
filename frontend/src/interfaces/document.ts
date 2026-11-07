@@ -45,6 +45,8 @@ export interface DocumentRecord {
   summary: Summary;
   source?: string;
   sixQuestions?: SixQuestionAnswers;
+  processingSeconds?: number;
+  sixQuestionsSeconds?: number;
   locale: Locale;
   status?: FilingStatus;
   scenarioDate?: string;

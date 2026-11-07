@@ -11,6 +11,6 @@ export function readAppContext(url: URL): AppContext {
   return {
     locale: language === 'id' ? 'id' : 'zh-TW',
     embedded,
-    showHeader: header === '1' || (header !== '0' && !embedded)
+    showHeader: header === '1'
   };
 }
