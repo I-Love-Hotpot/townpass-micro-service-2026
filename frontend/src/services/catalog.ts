@@ -1,9 +1,10 @@
+import type { DocumentAnalysis } from './govclearRag';
 import type { DocumentRecord, FileKind, Locale, OriginalFile } from '@/interfaces/document';
 import { preparePages } from './files';
 import { defaultDestinations, fixtures } from './fixtures';
 import { contentHash, findFixture } from './processing';
 import { records } from './records';
-import { summarizeDocument } from './offline';
+import { analyzeDocument } from './offline';
 
 let catalogPromise: ReturnType<typeof loadCatalog> | undefined;
 
@@ -77,13 +78,14 @@ export async function makeDocument(
   locale: Locale,
   signal: AbortSignal,
   pages: Blob[],
-  source: string
+  source: string,
+  onProgress?: (analysis: DocumentAnalysis) => void
 ): Promise<DocumentRecord> {
   const hash = originals.length === 1 ? await contentHash(originals[0].blob) : null;
   const match = findFixture(fixtures, hash);
   signal.throwIfAborted();
   const title = originals[0].name.replace(/\.[^.]+$/, '');
-  const summary = await summarizeDocument(source, title, locale, signal);
+  const analysis = await analyzeDocument(source, title, locale, signal, onProgress);
   return {
     id: crypto.randomUUID(),
     fixtureId: match?.id,
@@ -93,7 +95,9 @@ export async function makeDocument(
     originals,
     pages,
     source,
-    summary,
+    summary: analysis.summary,
+    sixQuestions: analysis.sixQuestions,
+    analysis,
     locale,
     destinations: match?.destinations ?? defaultDestinations,
     chat: []

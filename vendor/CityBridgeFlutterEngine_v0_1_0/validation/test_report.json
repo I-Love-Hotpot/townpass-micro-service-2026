@@ -1,0 +1,28 @@
+{
+  "checks": [
+    {
+      "check": "bundle_data",
+      "passed": true
+    },
+    {
+      "check": "engine_contract",
+      "passed": true
+    },
+    {
+      "check": "repository_contract",
+      "passed": true
+    },
+    {
+      "check": "dart_analysis",
+      "passed": true
+    },
+    {
+      "check": "replay_example",
+      "passed": true
+    }
+  ],
+  "dart_sdk": "3.10.7 Windows x64",
+  "ios_inference_tested": false,
+  "model_inference_executed": false,
+  "fixture_mode_only": true
+}

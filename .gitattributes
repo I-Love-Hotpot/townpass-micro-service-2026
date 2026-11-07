@@ -1,0 +1,4 @@
+# Preserve upstream bundle bytes so its manifest hashes remain valid.
+vendor/** -text -whitespace
+native/govclear/assets/** -text -whitespace
+native/govclear/flutter-integration.patch -whitespace

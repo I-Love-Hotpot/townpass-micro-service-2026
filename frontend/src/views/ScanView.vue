@@ -6,18 +6,14 @@ import FileAction from '@/components/molecules/FileAction.vue';
 import DocumentCrop from '@/components/molecules/DocumentCrop.vue';
 import type { FileKind, OriginalFile } from '@/interfaces/document';
 import { makeDocument } from '@/services/catalog';
-import { preparePages, validateFiles } from '@/services/files';
-import {
-  MAX_IMAGES,
-  mergePageText,
-  pageReady,
-  validateSelection,
-  type ImagePage
-} from '@/services/govclearImages';
+import { preparePages } from '@/services/files';
+import { mergePageText, pageReady, type ImagePage } from '@/services/govclearImages';
 import { translate } from '@/services/i18n';
 import { recognizeDocument } from '@/services/offline';
 import { processWithProgress } from '@/services/processing';
 import { records } from '@/services/records';
+import type { DocumentAnalysis } from '@/services/govclearRag';
+import { SIX_QUESTIONS } from '@/services/govclearSixQuestions';
 import { useWorkspace } from '@/stores/workspace';
 
 const workspace = useWorkspace();
@@ -31,11 +27,9 @@ const kind = ref<FileKind>('photos');
 const pdfOriginal = shallowRef<OriginalFile>();
 const collectingPhotos = ref(false);
 const cropPage = ref<ImagePage>();
-const pendingCrops = computed(
-  () => kind.value === 'photos' && pages.value.some((page) => !page.cropConfirmed)
-);
 const error = ref('');
 const stage = ref('');
+const preview = shallowRef<DocumentAnalysis>();
 const elapsed = ref(0);
 let timer: ReturnType<typeof setInterval> | undefined;
 const busy = computed(() => Boolean(workspace.processing || workspace.dataOperation));
@@ -103,7 +97,7 @@ function movePage(index: number, direction: -1 | 1) {
 }
 
 function corrected(page: ImagePage) {
-  page.status = page.text.trim() && page.text.trim() !== '[無法辨識]' ? 'done' : 'pending';
+  page.status = 'done';
   page.error = '';
   error.value = '';
 }
@@ -131,11 +125,9 @@ async function handlePhotos(event: Event, fromCamera = false) {
   if (!files.length || busy.value || (pages.value.length && kind.value === 'pdf')) return;
   error.value = '';
   try {
-    validateSelection(pages.value, files);
     pages.value.push(...files.map((file) => imagePage(file, file.name)));
     kind.value = 'photos';
     if (fromCamera) collectingPhotos.value = true;
-    cropPage.value = pages.value.find((page) => !page.cropConfirmed);
   } catch (cause) {
     error.value = cause instanceof Error ? cause.message : t.value('photoError');
   }
@@ -150,7 +142,6 @@ async function handlePdf(event: Event) {
   const current = new AbortController();
   controller = current;
   try {
-    validateFiles(files, 'pdf');
     workspace.processing = { kind: 'pdf', percent: 0 };
     const original = { name: files[0].name, blob: files[0] };
     const rendered = await preparePages([original], 'pdf', current.signal);
@@ -192,14 +183,11 @@ function confirmCrop(blob: Blob) {
 
 async function run() {
   if (!pages.value.length || busy.value) return;
-  if (pendingCrops.value) {
-    cropPage.value = pages.value.find((page) => !page.cropConfirmed);
-    return;
-  }
   const current = new AbortController();
   const { signal } = current;
   controller = current;
   error.value = '';
+  preview.value = undefined;
   const started = performance.now();
   elapsed.value = 0;
   timer = setInterval(() => {
@@ -228,7 +216,22 @@ async function run() {
           workspace.context.locale,
           signal,
           pages.value.map((page) => page.file!),
-          mergePageText(pages.value)
+          mergePageText(pages.value),
+          (analysis) => {
+            if (controller === current && !signal.aborted) {
+              const firstResult = !preview.value;
+              preview.value = analysis;
+              if (firstResult)
+                void nextTick(() => {
+                  if (controller === current && !signal.aborted)
+                    document.getElementById('preview-heading')?.scrollIntoView({ block: 'start' });
+                });
+              stage.value =
+                workspace.context.locale === 'id'
+                  ? 'Menyiapkan jawaban'
+                  : '重點已完成，正在補上問題回答';
+            }
+          }
         ),
       async (document) => {
         saving = true;
@@ -299,7 +302,7 @@ async function run() {
           <button
             type="button"
             class="action-button w-full"
-            :disabled="busy || pages.length >= MAX_IMAGES"
+            :disabled="busy"
             @click="pick('camera')"
           >
             <AppIcon name="photos" />{{ t(pages.length ? 'cameraMore' : 'camera') }}
@@ -308,10 +311,9 @@ async function run() {
             :label="t('photos')"
             :progress-label="t('processing')"
             primary
-            :disabled="busy || pages.length >= MAX_IMAGES"
+            :disabled="busy"
             @pick="pick('photos')"
           />
-          <p class="text-sm text-muted">{{ t('photoLimits') }}</p>
         </template>
         <FileAction
           v-if="!pages.length"
@@ -330,6 +332,39 @@ async function run() {
         <button v-if="busy" type="button" class="text-action" @click="cancel">
           {{ t('stop') }}
         </button>
+      </section>
+      <section
+        v-if="preview"
+        aria-labelledby="preview-heading"
+        class="space-y-4"
+        aria-live="polite"
+      >
+        <h2 id="preview-heading" class="section-title">
+          {{ workspace.context.locale === 'id' ? 'Ringkasan' : '先看重點' }}
+        </h2>
+        <p v-for="fact in preview.summary.facts" :key="fact" class="whitespace-pre-line">
+          {{ fact }}
+        </p>
+        <dl class="grid gap-3 sm:grid-cols-2">
+          <div v-for="item in SIX_QUESTIONS" :key="item.key" class="rounded bg-surface p-3">
+            <dt class="font-semibold">{{ item.title }}</dt>
+            <dd class="whitespace-pre-line">
+              {{ preview.sixQuestions[item.key] ?? t('notMentioned') }}
+            </dd>
+          </div>
+        </dl>
+        <article v-for="item in preview.questions" :key="item.id" class="rounded bg-surface p-3">
+          <h3 class="font-semibold">{{ item.text }}</h3>
+          <p class="whitespace-pre-line">
+            {{
+              item.status === 'pending'
+                ? workspace.context.locale === 'id'
+                  ? 'Menyiapkan jawaban…'
+                  : '正在查資料並產生回答…'
+                : item.answer
+            }}
+          </p>
+        </article>
       </section>
       <section
         v-if="pages.length"
@@ -431,7 +466,7 @@ async function run() {
       ref="camera"
       type="file"
       data-kind="camera"
-      accept="image/jpeg,image/png"
+      accept="image/*"
       capture="environment"
       hidden
       @change="handlePhotos($event, true)"
@@ -440,7 +475,7 @@ async function run() {
       ref="photos"
       type="file"
       data-kind="photos"
-      accept="image/jpeg,image/png,.jpg,.jpeg,.png"
+      accept="image/*"
       multiple
       hidden
       @change="handlePhotos($event)"

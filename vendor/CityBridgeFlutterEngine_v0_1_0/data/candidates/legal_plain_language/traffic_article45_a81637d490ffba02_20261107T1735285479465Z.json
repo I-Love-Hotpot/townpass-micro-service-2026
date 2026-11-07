@@ -1,0 +1,1588 @@
+{
+  "schema_version": "legal_plain_language_frontend_v1",
+  "mode": "internal_review_only",
+  "generated_at": "2026-11-07T17:35:43.944465+00:00",
+  "verification_status": "candidate",
+  "requires_verification": true,
+  "display_allowed": false,
+  "workflow": null,
+  "administrative_actions": [],
+  "articles": [
+    {
+      "record_id": "plain_legal_K0040012_article_45_a81637d490ffba02",
+      "law_name": "道路交通管理處罰條例",
+      "law_code": "K0040012",
+      "article_no": "第 45 條",
+      "verification_status": "candidate",
+      "verified_at": null,
+      "requires_verification": true,
+      "source": {
+        "source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=K0040012",
+        "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+        "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+        "article_text_zh": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：\n一、不按遵行之方向行駛。\n二、在單車道駕車與他車並行。\n三、不依規定駛入來車道。\n四、在多車道不依規定駕車。\n五、插入正在連貫行駛汽車之中間。\n六、駕車行駛人行道。\n七、行至無號誌之圓環路口，不讓已進入圓環之車輛先行。\n八、行經多車道之圓環，不讓內側車道之車輛先行。\n九、支線道車不讓幹線道車先行。少線道車不讓多線道車先行。車道數相同時，左方車不讓右方車先行。\n十、起駛前，不讓行進中之車輛、行人優先通行。\n十一、聞消防車、救護車、警備車、工程救險車、毒性化學物質災害事故應變車之警號，在後跟隨急駛，或駛過在救火時放置於路上之消防水帶。\n十二、任意駛出邊線，或任意跨越兩條車道行駛。\n十三、機車不在規定車道行駛。\n十四、遇幼童專用車、校車、教練車不依規定禮讓，或減速慢行。\n十五、行經無號誌交叉路口及巷道不依規定或標誌、標線指示。\n十六、占用自行車專用道。\n十七、聞或見大眾捷運系統車輛之聲號或燈光，不依規定避讓或在後跟隨迫近。\n十八、行經設有停車再開標誌、停標字或閃光紅燈號誌之交岔路口，不依規定停讓。\n聞消防車、救護車、警備車、工程救險車、毒性化學物質災害事故應變車之警號，不立即避讓者，處汽車駕駛人新臺幣六千元以上三萬元以下罰鍰，並吊銷駕駛執照及吊扣該汽車牌照六個月。\n前項情形致人死傷者，處汽車駕駛人新臺幣一萬元以上十萬元以下罰鍰，並吊銷駕駛執照及該汽車牌照。",
+        "verification_status": "candidate",
+        "amended_at": "2026-08-17",
+        "effective_at": null,
+        "effective_at_raw": "99991231",
+        "effective_content_zh": "1.一百十年十二月十五日修正之第 18-1 條第 6  項施行日期，由行政院\n  以命令定之。\n2.一百十四年十一月十九日修正之第 35 條第 6、13  項施行日期，由行\n  政院以命令定之；第 92-2 條定自一百十五年十二月三十一日施行。\n3.一百十五年八月十七日修正之第 35 條第 6、15  項定自一百十五年十\n  二月三十一日施行；第 21、21-1、67、73、85-2、85-3 條條文及第\n  35  條第 1～5、7～14  項定自一百十五年十月三十一日施行。",
+        "paragraph_structure_status": "full_original_text; paragraph_and_clause_structure_not_verified",
+        "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+        "effective_version_confirmed": false,
+        "case_applicability": "not_assessed"
+      },
+      "source_record": {
+        "law_name": "道路交通管理處罰條例",
+        "law_code": "K0040012",
+        "jurisdiction": "TW",
+        "law_level": "法律",
+        "amended_at": "2026-08-17",
+        "effective_at": null,
+        "effective_at_raw": "99991231",
+        "effective_at_basis": "law_wide_field_not_article_effectivity; raw_99991231_semantics_unconfirmed",
+        "effective_content_zh": "1.一百十年十二月十五日修正之第 18-1 條第 6  項施行日期，由行政院\n  以命令定之。\n2.一百十四年十一月十九日修正之第 35 條第 6、13  項施行日期，由行\n  政院以命令定之；第 92-2 條定自一百十五年十二月三十一日施行。\n3.一百十五年八月十七日修正之第 35 條第 6、15  項定自一百十五年十\n  二月三十一日施行；第 21、21-1、67、73、85-2、85-3 條條文及第\n  35  條第 1～5、7～14  項定自一百十五年十月三十一日施行。",
+        "repealed": null,
+        "repeal_marker_raw": null,
+        "source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=K0040012",
+        "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+        "verified_at": null,
+        "verification_status": "candidate",
+        "retrieved_at": "2026-11-07T16:09:59.503141+00:00",
+        "current_validity": "current_applicability_unconfirmed",
+        "eligible_for_current_legal_rag": false,
+        "source_snapshot": {
+          "archive": "data/raw/legal/FalV.zip",
+          "member": "FalV.xml",
+          "archive_sha256": "bf710bb9836b7a5e717799660bb5155d95eebec87f78fc0adcaec25fc33dfa53",
+          "root_attributes": {
+            "UpdateDate": "2026/10/30 上午 12:00:00"
+          },
+          "law_subtree_sha256": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+          "file": "data/raw/legal/traffic/K0040012_a81637d490ffba02.xml"
+        },
+        "record_id": "legal_K0040012_article_45_a81637d490ffba02",
+        "record_type": "legal_article",
+        "article_no": "第 45 條",
+        "article_number_key": "45",
+        "article_text_zh": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：\n一、不按遵行之方向行駛。\n二、在單車道駕車與他車並行。\n三、不依規定駛入來車道。\n四、在多車道不依規定駕車。\n五、插入正在連貫行駛汽車之中間。\n六、駕車行駛人行道。\n七、行至無號誌之圓環路口，不讓已進入圓環之車輛先行。\n八、行經多車道之圓環，不讓內側車道之車輛先行。\n九、支線道車不讓幹線道車先行。少線道車不讓多線道車先行。車道數相同時，左方車不讓右方車先行。\n十、起駛前，不讓行進中之車輛、行人優先通行。\n十一、聞消防車、救護車、警備車、工程救險車、毒性化學物質災害事故應變車之警號，在後跟隨急駛，或駛過在救火時放置於路上之消防水帶。\n十二、任意駛出邊線，或任意跨越兩條車道行駛。\n十三、機車不在規定車道行駛。\n十四、遇幼童專用車、校車、教練車不依規定禮讓，或減速慢行。\n十五、行經無號誌交叉路口及巷道不依規定或標誌、標線指示。\n十六、占用自行車專用道。\n十七、聞或見大眾捷運系統車輛之聲號或燈光，不依規定避讓或在後跟隨迫近。\n十八、行經設有停車再開標誌、停標字或閃光紅燈號誌之交岔路口，不依規定停讓。\n聞消防車、救護車、警備車、工程救險車、毒性化學物質災害事故應變車之警號，不立即避讓者，處汽車駕駛人新臺幣六千元以上三萬元以下罰鍰，並吊銷駕駛執照及吊扣該汽車牌照六個月。\n前項情形致人死傷者，處汽車駕駛人新臺幣一萬元以上十萬元以下罰鍰，並吊銷駕駛執照及該汽車牌照。",
+        "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+        "article_deleted": false,
+        "chapter_path": [
+          "第 二 章 汽車"
+        ],
+        "source_article_index": 62,
+        "paragraph_structure_status": "full_original_text; paragraph_and_clause_structure_not_verified",
+        "review_flags": [
+          "candidate_requires_human_review",
+          "article_and_paragraph_effectivity_unconfirmed",
+          "raw_effective_date_semantics_unconfirmed",
+          "case_applicability_not_assessed"
+        ]
+      },
+      "plain_language": {
+        "overview_zh": null,
+        "overview_status": "not_generated_full_coverage_prioritized",
+        "display_policy": "show_all_points_with_source_and_context_in_review_mode",
+        "supports_standalone_point_display": false,
+        "points": [
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u001",
+            "unit_id": "u001",
+            "plain_text_zh": "汽車駕駛人若有爭道行駛下列情形之一，應處新臺幣六百元以上一千八百元以下的罰鍰：",
+            "conditions_zh": [],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "context_evidence": [],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "source_markers": [
+              {
+                "kind": "condition_or_modality",
+                "quote": "有下列",
+                "start": 10,
+                "end": 13
+              },
+              {
+                "kind": "condition_or_modality",
+                "quote": "情形",
+                "start": 13,
+                "end": 15
+              },
+              {
+                "kind": "condition_or_modality",
+                "quote": "以上",
+                "start": 26,
+                "end": 28
+              },
+              {
+                "kind": "condition_or_modality",
+                "quote": "以下",
+                "start": 33,
+                "end": 35
+              }
+            ],
+            "must_display_with_unit_ids": [],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u002",
+            "unit_id": "u002",
+            "plain_text_zh": "不依規定行駛方向。",
+            "conditions_zh": [],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u002",
+                "quote": "一、不按遵行之方向行駛。",
+                "start": 39,
+                "end": 51,
+                "line_ids": [
+                  2
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u002",
+                "quote": "一、不按遵行之方向行駛。",
+                "start": 39,
+                "end": 51,
+                "line_ids": [
+                  2
+                ]
+              }
+            ],
+            "source_markers": [],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u003",
+            "unit_id": "u003",
+            "plain_text_zh": "在單車道內與其他車輛並行行駛。",
+            "conditions_zh": [],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u003",
+                "quote": "二、在單車道駕車與他車並行。",
+                "start": 52,
+                "end": 66,
+                "line_ids": [
+                  3
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u003",
+                "quote": "二、在單車道駕車與他車並行。",
+                "start": 52,
+                "end": 66,
+                "line_ids": [
+                  3
+                ]
+              }
+            ],
+            "source_markers": [],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u004",
+            "unit_id": "u004",
+            "plain_text_zh": "汽車駕駛人若不依規定駛入來車道，應處新臺幣六百元以上一千八百元以下的罰鍰。",
+            "conditions_zh": [
+              "汽車駕駛人，爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u004",
+                "quote": "三、不依規定駛入來車道。",
+                "start": 67,
+                "end": 79,
+                "line_ids": [
+                  4
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u004",
+                "quote": "三、不依規定駛入來車道。",
+                "start": 67,
+                "end": 79,
+                "line_ids": [
+                  4
+                ]
+              }
+            ],
+            "source_markers": [
+              {
+                "kind": "condition_or_modality",
+                "quote": "不依",
+                "start": 69,
+                "end": 71
+              }
+            ],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u005",
+            "unit_id": "u005",
+            "plain_text_zh": "汽車駕駛人若在多車道不依規定駕車，應處新臺幣六百元以上一千八百元以下的罰鍰。",
+            "conditions_zh": [
+              "汽車駕駛人，爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u005",
+                "quote": "四、在多車道不依規定駕車。",
+                "start": 80,
+                "end": 93,
+                "line_ids": [
+                  5
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u005",
+                "quote": "四、在多車道不依規定駕車。",
+                "start": 80,
+                "end": 93,
+                "line_ids": [
+                  5
+                ]
+              }
+            ],
+            "source_markers": [
+              {
+                "kind": "condition_or_modality",
+                "quote": "不依",
+                "start": 86,
+                "end": 88
+              }
+            ],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u006",
+            "unit_id": "u006",
+            "plain_text_zh": "汽車駕駛人若插入正在連貫行駛汽車之中間，應處新臺幣六百元以上一千八百元以下的罰鍰。",
+            "conditions_zh": [
+              "汽車駕駛人，爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u006",
+                "quote": "五、插入正在連貫行駛汽車之中間。",
+                "start": 94,
+                "end": 110,
+                "line_ids": [
+                  6
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u006",
+                "quote": "五、插入正在連貫行駛汽車之中間。",
+                "start": 94,
+                "end": 110,
+                "line_ids": [
+                  6
+                ]
+              }
+            ],
+            "source_markers": [],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u007",
+            "unit_id": "u007",
+            "plain_text_zh": "汽車駕駛人若在人行道上行駛，應處新臺幣六百元以上一千八百元以下的罰鍰。",
+            "conditions_zh": [
+              "汽車駕駛人，爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u007",
+                "quote": "六、駕車行駛人行道。",
+                "start": 111,
+                "end": 121,
+                "line_ids": [
+                  7
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u007",
+                "quote": "六、駕車行駛人行道。",
+                "start": 111,
+                "end": 121,
+                "line_ids": [
+                  7
+                ]
+              }
+            ],
+            "source_markers": [],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u008",
+            "unit_id": "u008",
+            "plain_text_zh": "汽車駕駛人若行至沒有號誌的圓環路口時，未讓已經進入圓環的車輛先行，應處新臺幣六百元以上一千八百元以下的罰鍰。",
+            "conditions_zh": [
+              "汽車駕駛人，爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u008",
+                "quote": "七、行至無號誌之圓環路口，不讓已進入圓環之車輛先行。",
+                "start": 122,
+                "end": 148,
+                "line_ids": [
+                  8
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u008",
+                "quote": "七、行至無號誌之圓環路口，不讓已進入圓環之車輛先行。",
+                "start": 122,
+                "end": 148,
+                "line_ids": [
+                  8
+                ]
+              }
+            ],
+            "source_markers": [],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u009",
+            "unit_id": "u009",
+            "plain_text_zh": "汽車駕駛人若行經多車道的圓環時，未讓內側車道的車輛先行，應處新臺幣六百元以上一千八百元以下的罰鍰。",
+            "conditions_zh": [
+              "汽車駕駛人，爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u009",
+                "quote": "八、行經多車道之圓環，不讓內側車道之車輛先行。",
+                "start": 149,
+                "end": 172,
+                "line_ids": [
+                  9
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u009",
+                "quote": "八、行經多車道之圓環，不讓內側車道之車輛先行。",
+                "start": 149,
+                "end": 172,
+                "line_ids": [
+                  9
+                ]
+              }
+            ],
+            "source_markers": [
+              {
+                "kind": "condition_or_modality",
+                "quote": "經",
+                "start": 152,
+                "end": 153
+              }
+            ],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u010",
+            "unit_id": "u010",
+            "plain_text_zh": "汽車駕駛人若在爭道行駛時，有支線道車不讓幹線道車先行、少線道車不讓多線道車先行，或車道數相同時左方車不讓右方車先行之情形，應處新臺幣六百元以上一千八百元以下的罰鍰。",
+            "conditions_zh": [
+              "汽車駕駛人，爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u010",
+                "quote": "九、支線道車不讓幹線道車先行。少線道車不讓多線道車先行。車道數相同時，左方車不讓右方車先行。",
+                "start": 173,
+                "end": 219,
+                "line_ids": [
+                  10
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u010",
+                "quote": "九、支線道車不讓幹線道車先行。少線道車不讓多線道車先行。車道數相同時，左方車不讓右方車先行。",
+                "start": 173,
+                "end": 219,
+                "line_ids": [
+                  10
+                ]
+              }
+            ],
+            "source_markers": [],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed",
+              "previous_draft_blocked_new_gpu_draft_requires_review"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u011",
+            "unit_id": "u011",
+            "plain_text_zh": "在起駛前，未讓正在行駛的車輛或行人優先通行。",
+            "conditions_zh": [
+              "汽車駕駛人，爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u011",
+                "quote": "十、起駛前，不讓行進中之車輛、行人優先通行。",
+                "start": 220,
+                "end": 242,
+                "line_ids": [
+                  11
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u011",
+                "quote": "十、起駛前，不讓行進中之車輛、行人優先通行。",
+                "start": 220,
+                "end": 242,
+                "line_ids": [
+                  11
+                ]
+              }
+            ],
+            "source_markers": [],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u012",
+            "unit_id": "u012",
+            "plain_text_zh": "聽到消防車、救護車、警備車、工程救險車、毒性化學物質災害事故應變車的警號時，在後跟隨急駛，或經過正在救火時放置在路上的消防水帶。",
+            "conditions_zh": [
+              "汽車駕駛人，爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u012",
+                "quote": "十一、聞消防車、救護車、警備車、工程救險車、毒性化學物質災害事故應變車之警號，在後跟隨急駛，或駛過在救火時放置於路上之消防水帶。",
+                "start": 243,
+                "end": 307,
+                "line_ids": [
+                  12
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u012",
+                "quote": "十一、聞消防車、救護車、警備車、工程救險車、毒性化學物質災害事故應變車之警號，在後跟隨急駛，或駛過在救火時放置於路上之消防水帶。",
+                "start": 243,
+                "end": 307,
+                "line_ids": [
+                  12
+                ]
+              }
+            ],
+            "source_markers": [
+              {
+                "kind": "condition_or_modality",
+                "quote": "應",
+                "start": 275,
+                "end": 276
+              },
+              {
+                "kind": "condition_or_modality",
+                "quote": "於",
+                "start": 298,
+                "end": 299
+              }
+            ],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u013",
+            "unit_id": "u013",
+            "plain_text_zh": "汽車駕駛人若任意駛出邊線或任意跨越兩條車道行駛，應處新臺幣六百元以上一千八百元以下的罰鍰。",
+            "conditions_zh": [
+              "汽車駕駛人，爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u013",
+                "quote": "十二、任意駛出邊線，或任意跨越兩條車道行駛。",
+                "start": 308,
+                "end": 330,
+                "line_ids": [
+                  13
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u013",
+                "quote": "十二、任意駛出邊線，或任意跨越兩條車道行駛。",
+                "start": 308,
+                "end": 330,
+                "line_ids": [
+                  13
+                ]
+              }
+            ],
+            "source_markers": [],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u014",
+            "unit_id": "u014",
+            "plain_text_zh": "汽車駕駛人若機車不在規定車道行駛，應處新臺幣六百元以上一千八百元以下的罰鍰。",
+            "conditions_zh": [
+              "汽車駕駛人，爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u014",
+                "quote": "十三、機車不在規定車道行駛。",
+                "start": 331,
+                "end": 345,
+                "line_ids": [
+                  14
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u014",
+                "quote": "十三、機車不在規定車道行駛。",
+                "start": 331,
+                "end": 345,
+                "line_ids": [
+                  14
+                ]
+              }
+            ],
+            "source_markers": [
+              {
+                "kind": "condition_or_modality",
+                "quote": "不在",
+                "start": 336,
+                "end": 338
+              }
+            ],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u015",
+            "unit_id": "u015",
+            "plain_text_zh": "汽車駕駛人若遇幼童專用車、校車、教練車不依規定禮讓或未減速慢行，應處新臺幣六百元以上一千八百元以下的罰鍰。",
+            "conditions_zh": [
+              "汽車駕駛人，爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u015",
+                "quote": "十四、遇幼童專用車、校車、教練車不依規定禮讓，或減速慢行。",
+                "start": 346,
+                "end": 375,
+                "line_ids": [
+                  15
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u015",
+                "quote": "十四、遇幼童專用車、校車、教練車不依規定禮讓，或減速慢行。",
+                "start": 346,
+                "end": 375,
+                "line_ids": [
+                  15
+                ]
+              }
+            ],
+            "source_markers": [
+              {
+                "kind": "condition_or_modality",
+                "quote": "不依",
+                "start": 362,
+                "end": 364
+              }
+            ],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u016",
+            "unit_id": "u016",
+            "plain_text_zh": "汽車駕駛人若行經沒有號誌的交叉路口或巷道時，不依規定或標誌、標線的指示，將處新臺幣六百元以上一千八百元以下的罰鍰。",
+            "conditions_zh": [
+              "汽車駕駛人，爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u016",
+                "quote": "十五、行經無號誌交叉路口及巷道不依規定或標誌、標線指示。",
+                "start": 376,
+                "end": 404,
+                "line_ids": [
+                  16
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u016",
+                "quote": "十五、行經無號誌交叉路口及巷道不依規定或標誌、標線指示。",
+                "start": 376,
+                "end": 404,
+                "line_ids": [
+                  16
+                ]
+              }
+            ],
+            "source_markers": [
+              {
+                "kind": "condition_or_modality",
+                "quote": "經",
+                "start": 380,
+                "end": 381
+              },
+              {
+                "kind": "condition_or_modality",
+                "quote": "不依",
+                "start": 391,
+                "end": 393
+              }
+            ],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u017",
+            "unit_id": "u017",
+            "plain_text_zh": "汽車駕駛人若佔用自行車專用道，將處新臺幣六百元以上一千八百元以下的罰鍰。",
+            "conditions_zh": [
+              "汽車駕駛人，爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u017",
+                "quote": "十六、占用自行車專用道。",
+                "start": 405,
+                "end": 417,
+                "line_ids": [
+                  17
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u017",
+                "quote": "十六、占用自行車專用道。",
+                "start": 405,
+                "end": 417,
+                "line_ids": [
+                  17
+                ]
+              }
+            ],
+            "source_markers": [],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u018",
+            "unit_id": "u018",
+            "plain_text_zh": "汽車駕駛人若聽到或看到大眾捷運系統車輛的聲號或燈光時，不依規定避讓或在後跟隨迫近，將處新臺幣六百元以上一千八百元以下的罰鍰。",
+            "conditions_zh": [
+              "汽車駕駛人，爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u018",
+                "quote": "十七、聞或見大眾捷運系統車輛之聲號或燈光，不依規定避讓或在後跟隨迫近。",
+                "start": 418,
+                "end": 453,
+                "line_ids": [
+                  18
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u018",
+                "quote": "十七、聞或見大眾捷運系統車輛之聲號或燈光，不依規定避讓或在後跟隨迫近。",
+                "start": 418,
+                "end": 453,
+                "line_ids": [
+                  18
+                ]
+              }
+            ],
+            "source_markers": [
+              {
+                "kind": "condition_or_modality",
+                "quote": "不依",
+                "start": 439,
+                "end": 441
+              }
+            ],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u019",
+            "unit_id": "u019",
+            "plain_text_zh": "汽車駕駛人若行經設有停車再開標誌、停標字或閃光紅燈號誌的交岔路口時，未依規定停讓，將處新臺幣六百元以上一千八百元以下的罰鍰。",
+            "conditions_zh": [
+              "汽車駕駛人爭道行駛有下列情形之一者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u019",
+                "quote": "十八、行經設有停車再開標誌、停標字或閃光紅燈號誌之交岔路口，不依規定停讓。",
+                "start": 454,
+                "end": 491,
+                "line_ids": [
+                  19
+                ]
+              }
+            ],
+            "context_evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u001",
+                "quote": "汽車駕駛人，爭道行駛有下列情形之一者，處新臺幣六百元以上一千八百元以下罰鍰：",
+                "start": 0,
+                "end": 38,
+                "line_ids": [
+                  1
+                ]
+              }
+            ],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u019",
+                "quote": "十八、行經設有停車再開標誌、停標字或閃光紅燈號誌之交岔路口，不依規定停讓。",
+                "start": 454,
+                "end": 491,
+                "line_ids": [
+                  19
+                ]
+              }
+            ],
+            "source_markers": [
+              {
+                "kind": "condition_or_modality",
+                "quote": "經",
+                "start": 458,
+                "end": 459
+              },
+              {
+                "kind": "condition_or_modality",
+                "quote": "不依",
+                "start": 484,
+                "end": 486
+              }
+            ],
+            "must_display_with_unit_ids": [
+              "u001"
+            ],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "list_preface_must_be_displayed"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u020",
+            "unit_id": "u020",
+            "plain_text_zh": "汽車駕駛人若聽到消防車、救護車、警備車、工程救險車、毒性化學物質災害事故應變車的警號，未立即避讓，將處新臺幣六千元以上三萬元以下的罰鍰，並吊銷駕駛執照及吊扣該汽車牌照六個月。",
+            "conditions_zh": [
+              "聞消防車、救護車、警備車、工程救險車、毒性化學物質災害事故應變車之警號"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u020",
+                "quote": "聞消防車、救護車、警備車、工程救險車、毒性化學物質災害事故應變車之警號，不立即避讓者，處汽車駕駛人新臺幣六千元以上三萬元以下罰鍰，並吊銷駕駛執照及吊扣該汽車牌照六個月。",
+                "start": 492,
+                "end": 576,
+                "line_ids": [
+                  20
+                ]
+              }
+            ],
+            "context_evidence": [],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u020",
+                "quote": "聞消防車、救護車、警備車、工程救險車、毒性化學物質災害事故應變車之警號，不立即避讓者，處汽車駕駛人新臺幣六千元以上三萬元以下罰鍰，並吊銷駕駛執照及吊扣該汽車牌照六個月。",
+                "start": 492,
+                "end": 576,
+                "line_ids": [
+                  20
+                ]
+              }
+            ],
+            "source_markers": [
+              {
+                "kind": "condition_or_modality",
+                "quote": "應",
+                "start": 521,
+                "end": 522
+              },
+              {
+                "kind": "condition_or_modality",
+                "quote": "以上",
+                "start": 547,
+                "end": 549
+              },
+              {
+                "kind": "condition_or_modality",
+                "quote": "以下",
+                "start": 552,
+                "end": 554
+              }
+            ],
+            "must_display_with_unit_ids": [],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review"
+            ],
+            "uncertainties": []
+          },
+          {
+            "point_id": "plain_legal_K0040012_article_45_a81637d490ffba02_u021",
+            "unit_id": "u021",
+            "plain_text_zh": "若前項情形致人死傷，汽車駕駛人將處新臺幣一萬元以上十萬元以下的罰鍰，並吊銷駕駛執照及該汽車牌照。",
+            "conditions_zh": [
+              "前項情形致人死傷者"
+            ],
+            "exceptions_zh": [],
+            "evidence": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u021",
+                "quote": "前項情形致人死傷者，處汽車駕駛人新臺幣一萬元以上十萬元以下罰鍰，並吊銷駕駛執照及該汽車牌照。",
+                "start": 577,
+                "end": 623,
+                "line_ids": [
+                  21
+                ]
+              }
+            ],
+            "context_evidence": [],
+            "model_quotes_validated": [
+              {
+                "source_record_id": "legal_K0040012_article_45_a81637d490ffba02",
+                "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+                "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+                "unit_id": "u021",
+                "quote": "前項情形致人死傷者，處汽車駕駛人新臺幣一萬元以上十萬元以下罰鍰，並吊銷駕駛執照及該汽車牌照。",
+                "start": 577,
+                "end": 623,
+                "line_ids": [
+                  21
+                ]
+              }
+            ],
+            "source_markers": [
+              {
+                "kind": "condition_or_modality",
+                "quote": "情形",
+                "start": 579,
+                "end": 581
+              },
+              {
+                "kind": "condition_or_modality",
+                "quote": "以上",
+                "start": 599,
+                "end": 601
+              },
+              {
+                "kind": "condition_or_modality",
+                "quote": "以下",
+                "start": 604,
+                "end": 606
+              },
+              {
+                "kind": "cross_reference",
+                "quote": "前項",
+                "start": 577,
+                "end": 579
+              }
+            ],
+            "must_display_with_unit_ids": [],
+            "verification_status": "candidate",
+            "verified_at": null,
+            "requires_verification": true,
+            "guard_status": "candidate_checks_passed",
+            "review_flags": [
+              "semantic_support_not_verified",
+              "conditions_and_exceptions_require_human_review",
+              "cross_reference_unresolved"
+            ],
+            "uncertainties": []
+          }
+        ],
+        "conditions_source_units": [
+          "u001",
+          "u004",
+          "u005",
+          "u009",
+          "u012",
+          "u014",
+          "u015",
+          "u016",
+          "u018",
+          "u019",
+          "u020",
+          "u021"
+        ],
+        "exceptions_source_units": [],
+        "cross_reference_source_units": [
+          "u021"
+        ],
+        "coverage": {
+          "source_units": 21,
+          "points_with_valid_draft": 21,
+          "points_blocked": 0,
+          "all_source_units_preserved": true,
+          "semantic_completeness_verified": false
+        }
+      },
+      "review_flags": [
+        "candidate_source",
+        "candidate_generated_explanation",
+        "effective_version_unconfirmed",
+        "legal_paragraph_structure_unverified",
+        "cross_references_not_expanded",
+        "no_case_applicability_decision"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "package_version": "0.1.0",
+  "built_at": "2026-11-08T04:07:05.482425+08:00",
+  "status": "HANDOFF_KIT_NOT_READY_IOS_ENGINE",
+  "native_inference_implemented": false,
+  "ios_device_tested": false,
+  "http_transport_included": false,
+  "bge_included": false,
+  "vector_files_included": false,
+  "model_weights_included": false,
+  "verification_status": "candidate",
+  "data": [
+    {
+      "pack": "opendata",
+      "units": 1075,
+      "source_sha256": "1aa1640cda1df0f5b02ab53ea4071afda89a642a444649561125fcb994e8cc0a",
+      "export_sha256": "dd6a1e91b58c4c39899f466f56ed1b75b8d1fe9f8614c7a2856ce89977fd6aa8",
+      "full_original_metadata_preserved": true,
+      "vectors_included": false,
+      "verification_status": "candidate"
+    },
+    {
+      "pack": "housing",
+      "units": 60,
+      "source_sha256": "c9479ff0f2da727e7d50be0d155dc77ae9753192a7b4f518dfbfaf7436de2313",
+      "export_sha256": "11b4162cf69e79a3754313b11c0ef9d975879245f1c8cb0ceb121e682d7ee8f3",
+      "full_original_metadata_preserved": true,
+      "vectors_included": false,
+      "verification_status": "candidate"
+    }
+  ],
+  "required_ports": [
+    "native Gemma runtime and tokenizer/chat template",
+    "full JSON Schema validation",
+    "OCR extraction guards and normalization offsets",
+    "recall, reranking and cross-batch guards",
+    "plain-language source binding and compact projection",
+    "real cancellation and app lifecycle",
+    "iOS SQLite read-only/FTS5 adapter",
+    "device memory, latency, energy and accuracy tests"
+  ]
+}

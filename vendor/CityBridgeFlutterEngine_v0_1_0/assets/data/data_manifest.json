@@ -1,0 +1,27 @@
+{
+  "schema_version": "citybridge_data_v1",
+  "packs": [
+    {
+      "pack": "opendata",
+      "units": 1075,
+      "source_sha256": "1aa1640cda1df0f5b02ab53ea4071afda89a642a444649561125fcb994e8cc0a",
+      "export_sha256": "dd6a1e91b58c4c39899f466f56ed1b75b8d1fe9f8614c7a2856ce89977fd6aa8",
+      "full_original_metadata_preserved": true,
+      "vectors_included": false,
+      "verification_status": "candidate"
+    },
+    {
+      "pack": "housing",
+      "units": 60,
+      "source_sha256": "c9479ff0f2da727e7d50be0d155dc77ae9753192a7b4f518dfbfaf7436de2313",
+      "export_sha256": "11b4162cf69e79a3754313b11c0ef9d975879245f1c8cb0ceb121e682d7ee8f3",
+      "full_original_metadata_preserved": true,
+      "vectors_included": false,
+      "verification_status": "candidate"
+    }
+  ],
+  "verification_status": "candidate",
+  "runtime_verification": "Do not infer per-record verification from source-level claims",
+  "effective_date_policy": "Preserve law-wide dates and raw 9999 sentinel; no confirmed historical applicability",
+  "housing_rights_status": "official source; open-data license not verified; retained source notice"
+}

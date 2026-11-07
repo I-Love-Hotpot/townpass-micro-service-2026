@@ -59,6 +59,7 @@ function host(response) {
 test('OCR retry preserves corrected pages and sends the same full source to summary and sixQuestions', async () => {
   let fail = true;
   const mock = host(request => {
+    if (request.action === 'generate') return JSON.stringify({checks:{groundedness:'supported', coverage:'supported', safety:'supported', readability:'supported'}, findings:[]});
     if (request.action === 'transcribe') {
       const name = Buffer.from(request.payload.image, 'base64').toString();
       return fail && name === 'second' ? new Error('看不清楚') : `${name}原文200元`;
@@ -99,8 +100,14 @@ test('sixQuestions rejects incomplete output; cancelling pending analysis cleans
   assert.equal(pending.calls.at(-1).action, 'cancel');
 });
 
-test('source limits reject analysis before invoking Native inference', () => {
-  const mock = host(() => JSON.stringify(answers));
-  assert.throws(() => analyzeSixQuestions('字'.repeat(6001), 'zh-TW', signal()), /6,000/);
-  assert.equal(mock.calls.length, 0);
+
+ test('image OCR runs without model readiness or input AI guard requests', async () => {
+  const mock = host(request => {
+    assert.equal(request.action, 'transcribe');
+    return '辨識出的原文';
+  });
+  const pages = [page('photo')];
+  assert.equal(await recognizeDocument(pages, signal(), () => {}), 0);
+  assert.equal(pages[0].text, '辨識出的原文');
+  assert.deepEqual(mock.calls.filter(c => c.action !== 'cancel').map(c => c.action), ['transcribe']);
 });

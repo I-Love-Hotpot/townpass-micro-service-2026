@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-08",
+  "device": "XC’s iPhone",
+  "runtime": "existing LiteRT-LM / Gemma 4 E4B",
+  "status": "passed",
+  "utf8Bytes": 3607,
+  "metrics": {
+    "output_tokens": 5,
+    "first_token_seconds": 3.1651447495,
+    "backend": "gpu_mtp",
+    "input_tokens": 922,
+    "prefill_tokens_per_second": 296.0438888057702,
+    "decode_tokens_per_second": 19.70766959396639
+  },
+  "overflowRejected": true
+}

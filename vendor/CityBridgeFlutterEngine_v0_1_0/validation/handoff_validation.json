@@ -1,0 +1,16 @@
+{
+  "protected_original_files_unchanged": 52,
+  "original_demo_inputs_unchanged": true,
+  "gemma_weights_unchanged": true,
+  "private_case_identifiers_absent_from_all_delivered_files": true,
+  "real_sqlite_integrity_passed": true,
+  "legal_units": 1075,
+  "housing_units": 60,
+  "dart_contract_programs_passed": 2,
+  "dart_static_analysis": "No issues found",
+  "offline_replay_example_passed": true,
+  "ios_device_tested": false,
+  "native_inference_implemented": false,
+  "http_transport_included": false,
+  "model_weights_included": false
+}

@@ -151,3 +151,9 @@ vite.config.ts.timestamp-*
 
 # Wrangler local state
 .wrangler/
+
+# Auditable public RAG bundle (not database runtime state).
+!vendor/CityBridgeFlutterEngine_v0_1_0/assets/data/
+!vendor/CityBridgeFlutterEngine_v0_1_0/assets/data/**
+!vendor/CityBridgeFlutterEngine_v0_1_0/data/
+!vendor/CityBridgeFlutterEngine_v0_1_0/data/**

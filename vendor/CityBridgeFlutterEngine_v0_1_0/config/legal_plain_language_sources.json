@@ -1,0 +1,17 @@
+{
+  "schema_version": "legal_plain_language_registry_v1",
+  "mode": "candidate_preview_only",
+  "created_at": "2026-11-07T17:37:05.975386+00:00",
+  "sources": [
+    {
+      "law_code": "K0040012",
+      "article_key": "45",
+      "version_id": "a81637d490ffba02638ecc9e963d190cac53e075e79fb4818bdd5043e42a4f2d",
+      "article_text_sha256": "724a676a3c83153d9adf5d22bb422657e6c17785d6e63437367002094303461e",
+      "path": "data/candidates/legal_plain_language/traffic_article45_a81637d490ffba02_20261107T1735285479465Z.json",
+      "sha256": "2664af7b970839836c3159ce8718b3d26f30d3f7e9930947ac93a8a01d88f022",
+      "generation_report": "reports/legal_plain_language/20261107T1735285479465Z_article45_retry/execution_report.json",
+      "verification_status": "candidate"
+    }
+  ]
+}

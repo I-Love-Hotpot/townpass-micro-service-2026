@@ -1,4 +1,11 @@
-type Action = 'check' | 'transcribe' | 'summarize' | 'sixQuestions' | 'cancel';
+type Action =
+  | 'check'
+  | 'transcribe'
+  | 'summarize'
+  | 'sixQuestions'
+  | 'generate'
+  | 'retrieve'
+  | 'cancel';
 type Bridge = {
   postMessage(message: string): void;
   addEventListener(name: 'message', callback: (event: MessageEvent) => void): void;
@@ -18,6 +25,7 @@ type Pending = {
 /** No fetch to a backend or Ollama: private input crosses the local Native bridge only. */
 export class GovClearBridge {
   private object?: Bridge;
+  private stopped = false;
   private pending = new Map<string, Pending>();
   private receive = (event: MessageEvent) => {
     try {
@@ -41,7 +49,7 @@ export class GovClearBridge {
     }
   };
 
-  async connect(signal?: AbortSignal) {
+  async connect(signal?: AbortSignal, checkModel = true) {
     const native = window as unknown as NativeWindow;
     for (let n = 0; n < 120; n++) {
       signal?.throwIfAborted();
@@ -66,10 +74,11 @@ export class GovClearBridge {
       );
     }
     this.object.addEventListener('message', this.receive);
-    return this.request('check');
+    if (checkModel) return this.request('check');
   }
 
   request(action: Action, payload?: Record<string, string>): Promise<string> {
+    if (this.stopped) return Promise.reject(new Error('已停止處理。'));
     if (!this.object) return Promise.reject(new Error('尚未連上本機推論橋接。'));
     const id = crypto.randomUUID();
     return new Promise((resolve, reject) => {
@@ -92,6 +101,7 @@ export class GovClearBridge {
   }
 
   cancel() {
+    this.stopped = true;
     for (const request of this.pending.values()) {
       clearTimeout(request.timer);
       request.reject(new Error('已停止處理。'));

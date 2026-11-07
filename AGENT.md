@@ -134,3 +134,7 @@ PYTHONPATH=local-inference /usr/bin/python3 -m unittest discover -s local-infere
 - 依修改範圍執行檢查，區分單元測試、模擬 Native、真機測試；歷次驗證文件不代表本次已通過。
 
 延伸閱讀：`docs/integration-main-offline.md`、`docs/govclear-webview.md`、`docs/govclear-iphone-offline.md`、`docs/govclear-summary.md`、`docs/document-corners.md`、`local-inference/VALIDATION.md`。
+
+## 2026-11-08 RAG／Guard 更新
+
+新文件建立改走 `services/govclearRag.ts` 的摘要／六何／推測問題／RAG／逐階段檢查；`govclearGuard.ts` 產生來源綁定的複核報告。Flutter 新增 `generate` 與 `retrieve` 動作，正式模型仍在手機本機執行，沒有 Python runtime。資料及可重套 Flutter patch 位於 `native/govclear/`；目前已同步修改相鄰 TownPass-merge。詳細現況與上下文／效能限制見 `docs/govclear-rag-guard.md`，不要把本檔較早的「先保存摘要再產生六何」流程當作新紀錄流程。

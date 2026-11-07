@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Gemma OCR extraction v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "document_type",
+    "issuing_agency",
+    "violation",
+    "legal_references",
+    "dates",
+    "uncertainties"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ocr_extraction_v1"
+    },
+    "document_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "quote"
+      ],
+      "properties": {
+        "value": {
+          "enum": [
+            "traffic_violation_notice",
+            "administrative_ruling",
+            "other",
+            "unknown"
+          ]
+        },
+        "quote": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "issuing_agency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "quote"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "quote": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "violation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "quote"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "quote": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "legal_references": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "law_name",
+          "citation",
+          "quote"
+        ],
+        "properties": {
+          "law_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "citation": {
+            "type": "string"
+          },
+          "quote": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dates": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "role",
+          "raw",
+          "quote"
+        ],
+        "properties": {
+          "role": {
+            "enum": [
+              "issued",
+              "violation",
+              "document_due",
+              "unknown"
+            ]
+          },
+          "raw": {
+            "type": "string"
+          },
+          "quote": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "uncertainties": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

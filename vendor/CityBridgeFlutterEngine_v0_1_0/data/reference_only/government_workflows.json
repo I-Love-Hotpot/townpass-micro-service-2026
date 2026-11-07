@@ -1,0 +1,1647 @@
+{
+  "schema_version": "government_workflows_v2",
+  "dataset_type": "official",
+  "workflows": [
+    {
+      "workflow_id": "taipei_P17000198_rental_conciliation",
+      "service_id": "taipei_rental_dispute_conciliation",
+      "sop_id": "P17000198",
+      "title_zh": "臺北市政府地政局 「不動產糾紛(租賃爭議事件)調處」作業流程圖",
+      "conditions": [
+        {
+          "condition_id": "P17000198_article_2",
+          "text_zh": "下列各款不動產糾紛案件，依本辦法調處之：\n一、本法第三十四條之一第六項規定之共有物分割爭議。\n二、本法第四十六條之二規定之地籍圖重測界址爭議。\n三、本法第五十九條第二項規定之土地權利爭議。\n四、本法第一百零一條規定之房屋租用爭議。\n五、本法第一百零五條規定之建築基地租用爭議。\n六、本法第一百二十二條規定之耕地租用爭議。\n七、本法施行法第三十條規定之有永佃權土地租用爭議。\n八、租賃住宅市場發展及管理條例第十六條規定之住宅租賃爭議。\n九、地籍清理條例第十四條第三項及第十五條之一規定之土地權利價金發\n    給爭議。\n十、地籍清理條例第十五條第二項規定之發還土地爭議。\n十一、地籍清理條例第十七條規定之以日據時期會社或組合名義更正登記\n      爭議。\n十二、地籍清理條例第二十條規定之神明會申報涉及土地權利爭議。\n十三、地籍清理條例第二十三條規定之更正神明會現會員、信徒名冊或土\n      地清冊涉及土地權利爭議。\n十四、地籍清理條例第二十七條規定之土地權利塗銷登記爭議。\n十五、地籍清理條例第二十八條規定之抵押權塗銷登記爭議。\n十六、地籍清理條例第二十九條規定之地上權塗銷登記爭議。\n十七、地籍清理條例第三十條規定之查封、假扣押、假處分塗銷登記爭議\n      。\n十八、地籍清理條例第三十一條第一項規定之共有土地各共有人之權利範\n      圍合計不等於一之更正登記爭議。\n十九、地籍清理條例第三十一條之一第一項與第二項規定之所有權權利範\n      圍空白之更正登記及第三項規定之所有權權利範圍空白之逕為更正\n      登記爭議。\n二十、地籍清理條例第三十二條規定之登記名義人姓名、名稱或住址記載\n      不全或不符更正登記爭議。\n二十一、地籍清理條例第三十三條規定之非以自然人、法人或適用監督寺\n        廟條例之寺廟名義更正登記爭議。\n二十二、地籍清理條例第三十六條規定之寺廟或宗教團體申報發給更名證\n        明爭議。\n二十三、地籍清理條例第三十八條規定之寺廟或宗教性質之法人申購土地\n        權利爭議。\n二十四、土地登記規則第七十五條規定之土地總登記爭議。\n二十五、土地登記規則第八十四條規定之建物所有權第一次登記爭議。\n二十六、土地登記規則第一百十八條第四項、第五項規定之時效取得地上\n        權、不動產役權或農育權登記爭議。",
+          "source_id": "P17000198_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL021824-20230926",
+            "article_no": 2,
+            "selector": "ul.law-content containing a[id=\"FL021824-20230926\"] > li: .col-no=\"第 2 條\"",
+            "quote_zh": "下列各款不動產糾紛案件，依本辦法調處之：\n一、本法第三十四條之一第六項規定之共有物分割爭議。\n二、本法第四十六條之二規定之地籍圖重測界址爭議。\n三、本法第五十九條第二項規定之土地權利爭議。\n四、本法第一百零一條規定之房屋租用爭議。\n五、本法第一百零五條規定之建築基地租用爭議。\n六、本法第一百二十二條規定之耕地租用爭議。\n七、本法施行法第三十條規定之有永佃權土地租用爭議。\n八、租賃住宅市場發展及管理條例第十六條規定之住宅租賃爭議。\n九、地籍清理條例第十四條第三項及第十五條之一規定之土地權利價金發\n    給爭議。\n十、地籍清理條例第十五條第二項規定之發還土地爭議。\n十一、地籍清理條例第十七條規定之以日據時期會社或組合名義更正登記\n      爭議。\n十二、地籍清理條例第二十條規定之神明會申報涉及土地權利爭議。\n十三、地籍清理條例第二十三條規定之更正神明會現會員、信徒名冊或土\n      地清冊涉及土地權利爭議。\n十四、地籍清理條例第二十七條規定之土地權利塗銷登記爭議。\n十五、地籍清理條例第二十八條規定之抵押權塗銷登記爭議。\n十六、地籍清理條例第二十九條規定之地上權塗銷登記爭議。\n十七、地籍清理條例第三十條規定之查封、假扣押、假處分塗銷登記爭議\n      。\n十八、地籍清理條例第三十一條第一項規定之共有土地各共有人之權利範\n      圍合計不等於一之更正登記爭議。\n十九、地籍清理條例第三十一條之一第一項與第二項規定之所有權權利範\n      圍空白之更正登記及第三項規定之所有權權利範圍空白之逕為更正\n      登記爭議。\n二十、地籍清理條例第三十二條規定之登記名義人姓名、名稱或住址記載\n      不全或不符更正登記爭議。\n二十一、地籍清理條例第三十三條規定之非以自然人、法人或適用監督寺\n        廟條例之寺廟名義更正登記爭議。\n二十二、地籍清理條例第三十六條規定之寺廟或宗教團體申報發給更名證\n        明爭議。\n二十三、地籍清理條例第三十八條規定之寺廟或宗教性質之法人申購土地\n        權利爭議。\n二十四、土地登記規則第七十五條規定之土地總登記爭議。\n二十五、土地登記規則第八十四條規定之建物所有權第一次登記爭議。\n二十六、土地登記規則第一百十八條第四項、第五項規定之時效取得地上\n        權、不動產役權或農育權登記爭議。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "condition_id": "P17000198_article_13",
+          "text_zh": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。",
+          "source_id": "P17000198_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL021824-20230926",
+            "article_no": 13,
+            "selector": "ul.law-content containing a[id=\"FL021824-20230926\"] > li: .col-no=\"第 13 條\"",
+            "quote_zh": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "condition_id": "P17000198_article_15",
+          "text_zh": "申請調處案件有下列各款情形之一者，直轄市、縣（市）政府應以書面敘\n明理由，通知申請人於接到通知書之日起十五日內補正：\n一、申請書格式不合或所提出之證明文件不符或欠缺。\n二、申請書記載事項與土地、建物登記簿或其證明文件不符。\n三、申請人之資格不符或其代理人之代理權有欠缺。\n四、調處當事人為無行為能力人或限制行為能力人，而未由法定代理人代\n    理。\n五、未依規定繳納調處費用。",
+          "source_id": "P17000198_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL021824-20230926",
+            "article_no": 15,
+            "selector": "ul.law-content containing a[id=\"FL021824-20230926\"] > li: .col-no=\"第 15 條\"",
+            "quote_zh": "申請調處案件有下列各款情形之一者，直轄市、縣（市）政府應以書面敘\n明理由，通知申請人於接到通知書之日起十五日內補正：\n一、申請書格式不合或所提出之證明文件不符或欠缺。\n二、申請書記載事項與土地、建物登記簿或其證明文件不符。\n三、申請人之資格不符或其代理人之代理權有欠缺。\n四、調處當事人為無行為能力人或限制行為能力人，而未由法定代理人代\n    理。\n五、未依規定繳納調處費用。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "condition_id": "P17000198_article_16",
+          "text_zh": "申請調處案件有下列各款情形之一者，直轄市、縣（市）政府應以書面敘\n明理由駁回之：\n一、非屬第二條之不動產糾紛事件。\n二、調處事件不屬受理機關管轄。\n三、曾依本辦法申請調處並作成調處結果。\n四、已訴請法院審理或調處標的為確定判決、調解或和解之效力所及。\n五、土地登記簿住址空白或不全，致權屬無法查明。\n六、登記名義人死亡，其繼承人有無不明致無法通知。\n七、申請人未於前條規定期限內補正或未依補正事項完全補正。\n八、其他依法律規定不得辦理。",
+          "source_id": "P17000198_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL021824-20230926",
+            "article_no": 16,
+            "selector": "ul.law-content containing a[id=\"FL021824-20230926\"] > li: .col-no=\"第 16 條\"",
+            "quote_zh": "申請調處案件有下列各款情形之一者，直轄市、縣（市）政府應以書面敘\n明理由駁回之：\n一、非屬第二條之不動產糾紛事件。\n二、調處事件不屬受理機關管轄。\n三、曾依本辦法申請調處並作成調處結果。\n四、已訴請法院審理或調處標的為確定判決、調解或和解之效力所及。\n五、土地登記簿住址空白或不全，致權屬無法查明。\n六、登記名義人死亡，其繼承人有無不明致無法通知。\n七、申請人未於前條規定期限內補正或未依補正事項完全補正。\n八、其他依法律規定不得辦理。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "condition_id": "P17000198_article_17",
+          "text_zh": "本會或區域性不動產糾紛調處委員會應訂定調處時間，書面通知當事人到\n場進行調處，並將文件繕本一併送達於對造及權利關係人。當事人應攜帶\n身分證明文件親自到場；當事人如不能親自到場，得出具委託書，委託代\n理人到場進行調處。但申請書已載明委任關係者，免出具委託書。\n前項調處應自接受申請之日起三十日內辦理之，必要時得視實際需要情形\n予以延長。",
+          "source_id": "P17000198_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL021824-20230926",
+            "article_no": 17,
+            "selector": "ul.law-content containing a[id=\"FL021824-20230926\"] > li: .col-no=\"第 17 條\"",
+            "quote_zh": "本會或區域性不動產糾紛調處委員會應訂定調處時間，書面通知當事人到\n場進行調處，並將文件繕本一併送達於對造及權利關係人。當事人應攜帶\n身分證明文件親自到場；當事人如不能親自到場，得出具委託書，委託代\n理人到場進行調處。但申請書已載明委任關係者，免出具委託書。\n前項調處應自接受申請之日起三十日內辦理之，必要時得視實際需要情形\n予以延長。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        }
+      ],
+      "required_documents": [
+        {
+          "document_id": "P17000198_doc_1",
+          "name_zh": "申請書",
+          "requirement_type": "stated_required",
+          "condition": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。",
+          "source_id": "P17000198_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL021824-20230926",
+            "article_no": 13,
+            "selector": "ul.law-content containing a[id=\"FL021824-20230926\"] > li: .col-no=\"第 13 條\"",
+            "quote_zh": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "document_id": "P17000198_doc_2",
+          "name_zh": "申請人之身分證明文件",
+          "requirement_type": "stated_required",
+          "condition": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。",
+          "source_id": "P17000198_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL021824-20230926",
+            "article_no": 13,
+            "selector": "ul.law-content containing a[id=\"FL021824-20230926\"] > li: .col-no=\"第 13 條\"",
+            "quote_zh": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "document_id": "P17000198_doc_3",
+          "name_zh": "委託書",
+          "requirement_type": "conditional",
+          "condition": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。",
+          "source_id": "P17000198_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL021824-20230926",
+            "article_no": 13,
+            "selector": "ul.law-content containing a[id=\"FL021824-20230926\"] > li: .col-no=\"第 13 條\"",
+            "quote_zh": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "document_id": "P17000198_doc_4",
+          "name_zh": "爭議要點及調處建議方案",
+          "requirement_type": "stated_required",
+          "condition": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。",
+          "source_id": "P17000198_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL021824-20230926",
+            "article_no": 13,
+            "selector": "ul.law-content containing a[id=\"FL021824-20230926\"] > li: .col-no=\"第 13 條\"",
+            "quote_zh": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "document_id": "P17000198_doc_5",
+          "name_zh": "其他依法令規定應提出之文件",
+          "requirement_type": "unspecified",
+          "condition": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。",
+          "source_id": "P17000198_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL021824-20230926",
+            "article_no": 13,
+            "selector": "ul.law-content containing a[id=\"FL021824-20230926\"] > li: .col-no=\"第 13 條\"",
+            "quote_zh": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "document_id": "P17000198_doc_6",
+          "name_zh": "繕本",
+          "requirement_type": "conditional",
+          "condition": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。",
+          "source_id": "P17000198_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL021824-20230926",
+            "article_no": 13,
+            "selector": "ul.law-content containing a[id=\"FL021824-20230926\"] > li: .col-no=\"第 13 條\"",
+            "quote_zh": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        }
+      ],
+      "required_documents_complete": false,
+      "steps": {
+        "citizen_actions": [
+          {
+            "step_id": "P17000198_citizen_apply",
+            "sequence": 1,
+            "actor": "當事人一造",
+            "actor_type": "citizen",
+            "procedure_group": "citizen_action",
+            "node_type": "source_action_excerpt",
+            "title_zh": "申請",
+            "description_zh": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。",
+            "condition": null,
+            "source_id": "P17000198_page",
+            "source_location": {
+              "kind": "html_article",
+              "law_anchor": "FL021824-20230926",
+              "article_no": 13,
+              "selector": "ul.law-content containing a[id=\"FL021824-20230926\"] > li: .col-no=\"第 13 條\"",
+              "quote_zh": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "interpretation_note": "描述保留完整法條及限制；此為頁面相關法規明載行動，不是流程圖新增節點。尚未確認個案適用。"
+          },
+          {
+            "step_id": "P17000198_citizen_correct",
+            "sequence": 2,
+            "actor": "申請人",
+            "actor_type": "citizen",
+            "procedure_group": "citizen_action",
+            "node_type": "source_action_excerpt",
+            "title_zh": "補正",
+            "description_zh": "申請調處案件有下列各款情形之一者，直轄市、縣（市）政府應以書面敘\n明理由，通知申請人於接到通知書之日起十五日內補正：\n一、申請書格式不合或所提出之證明文件不符或欠缺。\n二、申請書記載事項與土地、建物登記簿或其證明文件不符。\n三、申請人之資格不符或其代理人之代理權有欠缺。\n四、調處當事人為無行為能力人或限制行為能力人，而未由法定代理人代\n    理。\n五、未依規定繳納調處費用。",
+            "condition": "通知申請人於接到通知書之日起十五日內補正",
+            "source_id": "P17000198_page",
+            "source_location": {
+              "kind": "html_article",
+              "law_anchor": "FL021824-20230926",
+              "article_no": 15,
+              "selector": "ul.law-content containing a[id=\"FL021824-20230926\"] > li: .col-no=\"第 15 條\"",
+              "quote_zh": "申請調處案件有下列各款情形之一者，直轄市、縣（市）政府應以書面敘\n明理由，通知申請人於接到通知書之日起十五日內補正：\n一、申請書格式不合或所提出之證明文件不符或欠缺。\n二、申請書記載事項與土地、建物登記簿或其證明文件不符。\n三、申請人之資格不符或其代理人之代理權有欠缺。\n四、調處當事人為無行為能力人或限制行為能力人，而未由法定代理人代\n    理。\n五、未依規定繳納調處費用。"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "interpretation_note": "描述保留完整法條及限制；此為頁面相關法規明載行動，不是流程圖新增節點。尚未確認個案適用。"
+          },
+          {
+            "step_id": "P17000198_citizen_attend",
+            "sequence": 3,
+            "actor": "當事人",
+            "actor_type": "citizen",
+            "procedure_group": "citizen_action",
+            "node_type": "source_action_excerpt",
+            "title_zh": "到場進行調處",
+            "description_zh": "本會或區域性不動產糾紛調處委員會應訂定調處時間，書面通知當事人到\n場進行調處，並將文件繕本一併送達於對造及權利關係人。當事人應攜帶\n身分證明文件親自到場；當事人如不能親自到場，得出具委託書，委託代\n理人到場進行調處。但申請書已載明委任關係者，免出具委託書。\n前項調處應自接受申請之日起三十日內辦理之，必要時得視實際需要情形\n予以延長。",
+            "condition": "書面通知當事人到場進行調處",
+            "source_id": "P17000198_page",
+            "source_location": {
+              "kind": "html_article",
+              "law_anchor": "FL021824-20230926",
+              "article_no": 17,
+              "selector": "ul.law-content containing a[id=\"FL021824-20230926\"] > li: .col-no=\"第 17 條\"",
+              "quote_zh": "本會或區域性不動產糾紛調處委員會應訂定調處時間，書面通知當事人到\n場進行調處，並將文件繕本一併送達於對造及權利關係人。當事人應攜帶\n身分證明文件親自到場；當事人如不能親自到場，得出具委託書，委託代\n理人到場進行調處。但申請書已載明委任關係者，免出具委託書。\n前項調處應自接受申請之日起三十日內辦理之，必要時得視實際需要情形\n予以延長。"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "interpretation_note": "描述保留完整法條及限制；此為頁面相關法規明載行動，不是流程圖新增節點。尚未確認個案適用。"
+          }
+        ],
+        "agency_internal": [
+          {
+            "step_id": "P17000198_receive",
+            "sequence": 1,
+            "actor": "秘書室",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "start",
+            "title_zh": "1.收件",
+            "description_zh": "1.收件",
+            "condition": null,
+            "source_id": "P17000198_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                125,
+                141,
+                216,
+                174
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "1.收件"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P17000198_review",
+            "sequence": 2,
+            "actor": "地權及不動產交易科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "decision",
+            "title_zh": "2.地政局審查",
+            "description_zh": "2.地政局\n審查",
+            "condition": null,
+            "source_id": "P17000198_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                140,
+                272,
+                197,
+                305
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "2.地政局\n審查"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P17000198_notify",
+            "sequence": 3,
+            "actor": "地權及不動產交易科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "process",
+            "title_zh": "2.1通知補正",
+            "description_zh": "2.1\n通知補正",
+            "condition": null,
+            "source_id": "P17000198_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                269,
+                280,
+                343,
+                324
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "2.1\n通知補正"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P17000198_correction_review",
+            "sequence": 4,
+            "actor": "地權及不動產交易科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "decision",
+            "title_zh": "2.於限期內完全補正",
+            "description_zh": "2.於限期內\n完全補正",
+            "condition": null,
+            "source_id": "P17000198_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                234,
+                186,
+                374,
+                259
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "2.於限期內\n完全補正"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P17000198_reject",
+            "sequence": 5,
+            "actor": "地權及不動產交易科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "end",
+            "title_zh": "2.3駁回",
+            "description_zh": "2.3駁回",
+            "condition": null,
+            "source_id": "P17000198_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                364,
+                280,
+                471,
+                321
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "2.3駁回"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P17000198_prepare1",
+            "sequence": 6,
+            "actor": "地權及不動產交易科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "process",
+            "title_zh": "3.聯絡及準備第1次調處會議相關事宜",
+            "description_zh": "3.聯絡及準備\n第1次調處會議\n相關事宜",
+            "condition": null,
+            "source_id": "P17000198_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                125,
+                369,
+                213,
+                432
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "3.聯絡及準備\n第1次調處會議\n相關事宜"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P17000198_meeting1",
+            "sequence": 7,
+            "actor": "地權及不動產交易科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "decision",
+            "title_zh": "4.召開第1次調處會議",
+            "description_zh": "4.召開第1次\n調處會議",
+            "condition": null,
+            "source_id": "P17000198_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                250,
+                433,
+                318,
+                466
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "4.召開第1次\n調處會議"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P17000198_send_final1",
+            "sequence": 8,
+            "actor": "地權及不動產交易科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "end",
+            "title_zh": "5.函送調處紀錄表",
+            "description_zh": "5.函送調處紀錄表",
+            "condition": null,
+            "source_id": "P17000198_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                110,
+                518,
+                235,
+                552
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "5.函送調處紀錄表"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P17000198_send_continue",
+            "sequence": 9,
+            "actor": "地權及不動產交易科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "process",
+            "title_zh": "5.函送調處紀錄表",
+            "description_zh": "5.函送調處紀錄表",
+            "condition": null,
+            "source_id": "P17000198_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                357,
+                465,
+                475,
+                497
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "5.函送調處紀錄表"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P17000198_prepare2",
+            "sequence": 10,
+            "actor": "地權及不動產交易科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "process",
+            "title_zh": "6.聯絡及準備第2次調處會議相關事宜",
+            "description_zh": "6.聯絡及準備第2次\n調處會議相關事宜",
+            "condition": null,
+            "source_id": "P17000198_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                357,
+                522,
+                479,
+                572
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "6.聯絡及準備第2次\n調處會議相關事宜"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P17000198_meeting2",
+            "sequence": 11,
+            "actor": "地權及不動產交易科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "process",
+            "title_zh": "7.召開第2次調處會議",
+            "description_zh": "7.召開第2次調處會議",
+            "condition": null,
+            "source_id": "P17000198_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                351,
+                589,
+                479,
+                620
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "7.召開第2次調處會議"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P17000198_send_final2",
+            "sequence": 12,
+            "actor": "地權及不動產交易科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "end",
+            "title_zh": "8.函送調處紀錄表",
+            "description_zh": "8.函送調處紀錄表",
+            "condition": null,
+            "source_id": "P17000198_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                354,
+                634,
+                479,
+                671
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "8.函送調處紀錄表"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          }
+        ]
+      },
+      "transitions": [
+        {
+          "from_step_id": "P17000198_receive",
+          "to_step_id": "P17000198_review",
+          "condition": null,
+          "source_id": "P17000198_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "receive",
+            "to_node": "review",
+            "label_zh": null
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P17000198_review",
+          "to_step_id": "P17000198_notify",
+          "condition": "不符合",
+          "source_id": "P17000198_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "review",
+            "to_node": "notify",
+            "label_zh": "不符合",
+            "label_bbox": [
+              221,
+              270,
+              262,
+              288
+            ],
+            "quote_zh": "不符合"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P17000198_review",
+          "to_step_id": "P17000198_prepare1",
+          "condition": "符合",
+          "source_id": "P17000198_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "review",
+            "to_node": "prepare1",
+            "label_zh": "符合",
+            "label_bbox": [
+              172,
+              335,
+              201,
+              352
+            ],
+            "quote_zh": "符合"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P17000198_notify",
+          "to_step_id": "P17000198_correction_review",
+          "condition": null,
+          "source_id": "P17000198_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "notify",
+            "to_node": "correction_review",
+            "label_zh": null
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P17000198_correction_review",
+          "to_step_id": "P17000198_review",
+          "condition": "是",
+          "source_id": "P17000198_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "correction_review",
+            "to_node": "review",
+            "label_zh": "是",
+            "label_bbox": [
+              194,
+              204,
+              210,
+              221
+            ],
+            "quote_zh": "是"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P17000198_correction_review",
+          "to_step_id": "P17000198_reject",
+          "condition": "否",
+          "source_id": "P17000198_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "correction_review",
+            "to_node": "reject",
+            "label_zh": "否",
+            "label_bbox": [
+              384,
+              205,
+              400,
+              222
+            ],
+            "quote_zh": "否"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P17000198_prepare1",
+          "to_step_id": "P17000198_meeting1",
+          "condition": null,
+          "source_id": "P17000198_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "prepare1",
+            "to_node": "meeting1",
+            "label_zh": null
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P17000198_meeting1",
+          "to_step_id": "P17000198_send_final1",
+          "condition": "協議成立或予以裁處者",
+          "source_id": "P17000198_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "meeting1",
+            "to_node": "send_final1",
+            "label_zh": "協議成立或予以裁處者",
+            "label_bbox": [
+              152,
+              470,
+              229,
+              502
+            ],
+            "quote_zh": "協議成立或予\n以裁處者"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P17000198_meeting1",
+          "to_step_id": "P17000198_send_continue",
+          "condition": "任何一造經通知而未到場或續行調處者",
+          "source_id": "P17000198_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "meeting1",
+            "to_node": "send_continue",
+            "label_zh": "任何一造經通知而未到場或續行調處者",
+            "label_bbox": [
+              350,
+              407,
+              463,
+              439
+            ],
+            "quote_zh": "任何一造經通知而未\n到場或續行調處者"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P17000198_send_continue",
+          "to_step_id": "P17000198_prepare2",
+          "condition": null,
+          "source_id": "P17000198_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "send_continue",
+            "to_node": "prepare2",
+            "label_zh": null
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P17000198_prepare2",
+          "to_step_id": "P17000198_meeting2",
+          "condition": null,
+          "source_id": "P17000198_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "prepare2",
+            "to_node": "meeting2",
+            "label_zh": null
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P17000198_meeting2",
+          "to_step_id": "P17000198_send_final2",
+          "condition": null,
+          "source_id": "P17000198_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "meeting2",
+            "to_node": "send_final2",
+            "label_zh": null
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        }
+      ],
+      "source_url": "https://laws.gov.taipei/Law/SOPContent/SOPContent?id=P17000198",
+      "source_ids": [
+        "P17000198_page",
+        "P17000198_pdf"
+      ],
+      "sop_updated_at": "2025-04-10",
+      "sop_updated_at_raw": "民國 114 年 04 月 10 日",
+      "verification_status": "candidate",
+      "last_verified_at": null,
+      "current_version_confirmed": false,
+      "applicability_confirmed": false,
+      "sequence_semantics": "各分組內展示序號，不是必經順序；機關程序須按 transitions 的條件、迴圈及終點判讀。",
+      "review_issues": [
+        "本 SOP 對象為租賃爭議調處；一般房東拒退押金是否受理，需核對具體租賃類型、管轄及排除事項。",
+        "原圖將『於限期內完全補正』放在機關權責欄的判斷節點；不將它直接當成民眾自行審查的動作。",
+        "兩個編號同為 5 的函送節點依原圖左右位置及分支分開保存，不合併。",
+        "個別節點的處理時限文字擷取存在重疊，不轉換成自動期限或逾期判定。",
+        "尚未確認外籍居民身分證明文件種類、完整申辦附件格式、費用及目前 SOP 適用版本。"
+      ]
+    },
+    {
+      "workflow_id": "taipei_P09000044_labor_mediator",
+      "service_id": "taipei_labor_dispute_mediation_individual",
+      "sop_id": "P09000044",
+      "title_zh": "「臺北市政府勞資爭議調解案-調解人」作業流程圖",
+      "conditions": [
+        {
+          "condition_id": "P09000044_article_3",
+          "text_zh": "本法於雇主或有法人資格之雇主團體（以下簡稱雇主團體）與勞工或工會\n發生勞資爭議時，適用之。但教師之勞資爭議屬依法提起行政救濟之事項\n者，不適用之。",
+          "source_id": "P09000044_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL014924-20210428",
+            "article_no": 3,
+            "selector": "ul.law-content containing a[id=\"FL014924-20210428\"] > li: .col-no=\"第 3 條\"",
+            "quote_zh": "本法於雇主或有法人資格之雇主團體（以下簡稱雇主團體）與勞工或工會\n發生勞資爭議時，適用之。但教師之勞資爭議屬依法提起行政救濟之事項\n者，不適用之。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "condition_id": "P09000044_article_7",
+          "text_zh": "調整事項之勞資爭議，依本法所定之調解、仲裁程序處理之。\n前項勞資爭議之勞方當事人，應為工會。但有下列情形者，亦得為勞方當\n事人：\n一、未加入工會，而具有相同主張之勞工達十人以上。\n二、受僱於僱用勞工未滿十人之事業單位，其未加入工會之勞工具有相同\n    主張者達三分之二以上。",
+          "source_id": "P09000044_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL014924-20210428",
+            "article_no": 7,
+            "selector": "ul.law-content containing a[id=\"FL014924-20210428\"] > li: .col-no=\"第 7 條\"",
+            "quote_zh": "調整事項之勞資爭議，依本法所定之調解、仲裁程序處理之。\n前項勞資爭議之勞方當事人，應為工會。但有下列情形者，亦得為勞方當\n事人：\n一、未加入工會，而具有相同主張之勞工達十人以上。\n二、受僱於僱用勞工未滿十人之事業單位，其未加入工會之勞工具有相同\n    主張者達三分之二以上。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "condition_id": "P09000044_article_9",
+          "text_zh": "勞資爭議當事人一方申請調解時，應向勞方當事人勞務提供地之直轄市或\n縣（市）主管機關提出調解申請書。\n前項爭議當事人一方為團體協約法第十條第二項規定之機關（構）、學校\n者，其出席調解時之代理人應檢附同條項所定有核可權機關之同意書。\n第一項直轄市、縣（市）主管機關對於勞資爭議認為必要時，得依職權交\n付調解，並通知勞資爭議雙方當事人。\n第一項及前項調解，其勞方當事人有二人以上者，各勞方當事人勞務提供\n地之主管機關，就該調解案件均有管轄權。",
+          "source_id": "P09000044_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL014924-20210428",
+            "article_no": 9,
+            "selector": "ul.law-content containing a[id=\"FL014924-20210428\"] > li: .col-no=\"第 9 條\"",
+            "quote_zh": "勞資爭議當事人一方申請調解時，應向勞方當事人勞務提供地之直轄市或\n縣（市）主管機關提出調解申請書。\n前項爭議當事人一方為團體協約法第十條第二項規定之機關（構）、學校\n者，其出席調解時之代理人應檢附同條項所定有核可權機關之同意書。\n第一項直轄市、縣（市）主管機關對於勞資爭議認為必要時，得依職權交\n付調解，並通知勞資爭議雙方當事人。\n第一項及前項調解，其勞方當事人有二人以上者，各勞方當事人勞務提供\n地之主管機關，就該調解案件均有管轄權。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "condition_id": "P09000044_article_10",
+          "text_zh": "調解之申請，應提出調解申請書，並載明下列事項：\n一、當事人姓名、性別、年齡、職業及住所或居所；如為法人、雇主團體\n    或工會時，其名稱、代表人及事務所或營業所；有代理人者，其姓名\n    、名稱及住居所或事務所。\n二、請求調解事項。\n三、依第十一條第一項選定之調解方式。",
+          "source_id": "P09000044_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL014924-20210428",
+            "article_no": 10,
+            "selector": "ul.law-content containing a[id=\"FL014924-20210428\"] > li: .col-no=\"第 10 條\"",
+            "quote_zh": "調解之申請，應提出調解申請書，並載明下列事項：\n一、當事人姓名、性別、年齡、職業及住所或居所；如為法人、雇主團體\n    或工會時，其名稱、代表人及事務所或營業所；有代理人者，其姓名\n    、名稱及住居所或事務所。\n二、請求調解事項。\n三、依第十一條第一項選定之調解方式。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "condition_id": "P09000044_article_11",
+          "text_zh": "直轄市或縣（市）主管機關受理調解之申請，應依申請人之請求，以下列\n方式之一進行調解：\n一、指派調解人。\n二、組成勞資爭議調解委員會（以下簡稱調解委員會）。\n直轄市或縣（市）主管機關依職權交付調解者，得依前項方式之一進行調\n解。\n第一項第一款之調解，直轄市、縣（市）主管機關得委託民間團體指派調\n解人進行調解。\n第一項調解之相關處理程序、充任調解人或調解委員之遴聘條件與前項受\n託民間團體之資格及其他應遵行事項之辦法，由中央主管機關定之。\n主管機關對第三項之民間團體，除委託費用外，並得予補助。",
+          "source_id": "P09000044_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL014924-20210428",
+            "article_no": 11,
+            "selector": "ul.law-content containing a[id=\"FL014924-20210428\"] > li: .col-no=\"第 11 條\"",
+            "quote_zh": "直轄市或縣（市）主管機關受理調解之申請，應依申請人之請求，以下列\n方式之一進行調解：\n一、指派調解人。\n二、組成勞資爭議調解委員會（以下簡稱調解委員會）。\n直轄市或縣（市）主管機關依職權交付調解者，得依前項方式之一進行調\n解。\n第一項第一款之調解，直轄市、縣（市）主管機關得委託民間團體指派調\n解人進行調解。\n第一項調解之相關處理程序、充任調解人或調解委員之遴聘條件與前項受\n託民間團體之資格及其他應遵行事項之辦法，由中央主管機關定之。\n主管機關對第三項之民間團體，除委託費用外，並得予補助。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "condition_id": "P09000044_article_12",
+          "text_zh": "直轄市或縣（市）主管機關指派調解人進行調解者，應於收到調解申請書\n三日內為之。\n調解人應調查事實，並於指派之日起七日內開始進行調解。\n直轄市或縣（市）主管機關於調解人調查時，得通知當事人、相關人員或\n事業單位，以言詞或書面提出說明；調解人為調查之必要，得經主管機關\n同意，進入相關事業單位訪查。\n前項受通知或受訪查人員，不得為虛偽說明、提供不實資料或無正當理由\n拒絕說明。\n調解人應於開始進行調解十日內作出調解方案，並準用第十九條、第二十\n條及第二十二條之規定。",
+          "source_id": "P09000044_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL014924-20210428",
+            "article_no": 12,
+            "selector": "ul.law-content containing a[id=\"FL014924-20210428\"] > li: .col-no=\"第 12 條\"",
+            "quote_zh": "直轄市或縣（市）主管機關指派調解人進行調解者，應於收到調解申請書\n三日內為之。\n調解人應調查事實，並於指派之日起七日內開始進行調解。\n直轄市或縣（市）主管機關於調解人調查時，得通知當事人、相關人員或\n事業單位，以言詞或書面提出說明；調解人為調查之必要，得經主管機關\n同意，進入相關事業單位訪查。\n前項受通知或受訪查人員，不得為虛偽說明、提供不實資料或無正當理由\n拒絕說明。\n調解人應於開始進行調解十日內作出調解方案，並準用第十九條、第二十\n條及第二十二條之規定。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "condition_id": "P09000044_article_19",
+          "text_zh": "依前條規定作成之調解方案，經勞資爭議雙方當事人同意在調解紀錄簽名\n者，為調解成立。但當事人之一方為團體協約法第十條第二項規定之機關\n（構）、學校者，其代理人簽名前，應檢附同條項所定有核可權機關之同\n意書。",
+          "source_id": "P09000044_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL014924-20210428",
+            "article_no": 19,
+            "selector": "ul.law-content containing a[id=\"FL014924-20210428\"] > li: .col-no=\"第 19 條\"",
+            "quote_zh": "依前條規定作成之調解方案，經勞資爭議雙方當事人同意在調解紀錄簽名\n者，為調解成立。但當事人之一方為團體協約法第十條第二項規定之機關\n（構）、學校者，其代理人簽名前，應檢附同條項所定有核可權機關之同\n意書。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        }
+      ],
+      "required_documents": [
+        {
+          "document_id": "P09000044_doc_1",
+          "name_zh": "調解申請書",
+          "requirement_type": "stated_required",
+          "condition": "勞資爭議當事人一方申請調解時，應向勞方當事人勞務提供地之直轄市或\n縣（市）主管機關提出調解申請書。\n前項爭議當事人一方為團體協約法第十條第二項規定之機關（構）、學校\n者，其出席調解時之代理人應檢附同條項所定有核可權機關之同意書。\n第一項直轄市、縣（市）主管機關對於勞資爭議認為必要時，得依職權交\n付調解，並通知勞資爭議雙方當事人。\n第一項及前項調解，其勞方當事人有二人以上者，各勞方當事人勞務提供\n地之主管機關，就該調解案件均有管轄權。",
+          "source_id": "P09000044_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL014924-20210428",
+            "article_no": 9,
+            "selector": "ul.law-content containing a[id=\"FL014924-20210428\"] > li: .col-no=\"第 9 條\"",
+            "quote_zh": "勞資爭議當事人一方申請調解時，應向勞方當事人勞務提供地之直轄市或\n縣（市）主管機關提出調解申請書。\n前項爭議當事人一方為團體協約法第十條第二項規定之機關（構）、學校\n者，其出席調解時之代理人應檢附同條項所定有核可權機關之同意書。\n第一項直轄市、縣（市）主管機關對於勞資爭議認為必要時，得依職權交\n付調解，並通知勞資爭議雙方當事人。\n第一項及前項調解，其勞方當事人有二人以上者，各勞方當事人勞務提供\n地之主管機關，就該調解案件均有管轄權。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "document_id": "P09000044_doc_2",
+          "name_zh": "有核可權機關之同意書",
+          "requirement_type": "conditional",
+          "condition": "勞資爭議當事人一方申請調解時，應向勞方當事人勞務提供地之直轄市或\n縣（市）主管機關提出調解申請書。\n前項爭議當事人一方為團體協約法第十條第二項規定之機關（構）、學校\n者，其出席調解時之代理人應檢附同條項所定有核可權機關之同意書。\n第一項直轄市、縣（市）主管機關對於勞資爭議認為必要時，得依職權交\n付調解，並通知勞資爭議雙方當事人。\n第一項及前項調解，其勞方當事人有二人以上者，各勞方當事人勞務提供\n地之主管機關，就該調解案件均有管轄權。",
+          "source_id": "P09000044_page",
+          "source_location": {
+            "kind": "html_article",
+            "law_anchor": "FL014924-20210428",
+            "article_no": 9,
+            "selector": "ul.law-content containing a[id=\"FL014924-20210428\"] > li: .col-no=\"第 9 條\"",
+            "quote_zh": "勞資爭議當事人一方申請調解時，應向勞方當事人勞務提供地之直轄市或\n縣（市）主管機關提出調解申請書。\n前項爭議當事人一方為團體協約法第十條第二項規定之機關（構）、學校\n者，其出席調解時之代理人應檢附同條項所定有核可權機關之同意書。\n第一項直轄市、縣（市）主管機關對於勞資爭議認為必要時，得依職權交\n付調解，並通知勞資爭議雙方當事人。\n第一項及前項調解，其勞方當事人有二人以上者，各勞方當事人勞務提供\n地之主管機關，就該調解案件均有管轄權。"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        }
+      ],
+      "required_documents_complete": false,
+      "steps": {
+        "citizen_actions": [
+          {
+            "step_id": "P09000044_citizen_apply",
+            "sequence": 1,
+            "actor": "勞資爭議當事人一方",
+            "actor_type": "citizen",
+            "procedure_group": "citizen_action",
+            "node_type": "source_action_excerpt",
+            "title_zh": "提出調解申請書",
+            "description_zh": "勞資爭議當事人一方申請調解時，應向勞方當事人勞務提供地之直轄市或\n縣（市）主管機關提出調解申請書。\n前項爭議當事人一方為團體協約法第十條第二項規定之機關（構）、學校\n者，其出席調解時之代理人應檢附同條項所定有核可權機關之同意書。\n第一項直轄市、縣（市）主管機關對於勞資爭議認為必要時，得依職權交\n付調解，並通知勞資爭議雙方當事人。\n第一項及前項調解，其勞方當事人有二人以上者，各勞方當事人勞務提供\n地之主管機關，就該調解案件均有管轄權。",
+            "condition": "勞資爭議當事人一方申請調解時",
+            "source_id": "P09000044_page",
+            "source_location": {
+              "kind": "html_article",
+              "law_anchor": "FL014924-20210428",
+              "article_no": 9,
+              "selector": "ul.law-content containing a[id=\"FL014924-20210428\"] > li: .col-no=\"第 9 條\"",
+              "quote_zh": "勞資爭議當事人一方申請調解時，應向勞方當事人勞務提供地之直轄市或\n縣（市）主管機關提出調解申請書。\n前項爭議當事人一方為團體協約法第十條第二項規定之機關（構）、學校\n者，其出席調解時之代理人應檢附同條項所定有核可權機關之同意書。\n第一項直轄市、縣（市）主管機關對於勞資爭議認為必要時，得依職權交\n付調解，並通知勞資爭議雙方當事人。\n第一項及前項調解，其勞方當事人有二人以上者，各勞方當事人勞務提供\n地之主管機關，就該調解案件均有管轄權。"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "interpretation_note": "描述保留完整法條及限制；此為頁面相關法規明載行動，不是流程圖新增節點。尚未確認個案適用。"
+          },
+          {
+            "step_id": "P09000044_citizen_consent_signature",
+            "sequence": 2,
+            "actor": "勞資爭議雙方當事人",
+            "actor_type": "citizen",
+            "procedure_group": "citizen_action",
+            "node_type": "source_action_excerpt",
+            "title_zh": "同意在調解紀錄簽名",
+            "description_zh": "依前條規定作成之調解方案，經勞資爭議雙方當事人同意在調解紀錄簽名\n者，為調解成立。但當事人之一方為團體協約法第十條第二項規定之機關\n（構）、學校者，其代理人簽名前，應檢附同條項所定有核可權機關之同\n意書。",
+            "condition": "經勞資爭議雙方當事人同意",
+            "source_id": "P09000044_page",
+            "source_location": {
+              "kind": "html_article",
+              "law_anchor": "FL014924-20210428",
+              "article_no": 19,
+              "selector": "ul.law-content containing a[id=\"FL014924-20210428\"] > li: .col-no=\"第 19 條\"",
+              "quote_zh": "依前條規定作成之調解方案，經勞資爭議雙方當事人同意在調解紀錄簽名\n者，為調解成立。但當事人之一方為團體協約法第十條第二項規定之機關\n（構）、學校者，其代理人簽名前，應檢附同條項所定有核可權機關之同\n意書。"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "interpretation_note": "描述保留完整法條及限制；此為頁面相關法規明載行動，不是流程圖新增節點。尚未確認個案適用。"
+          }
+        ],
+        "agency_internal": [
+          {
+            "step_id": "P09000044_receive",
+            "sequence": 1,
+            "actor": "勞動基準科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "start",
+            "title_zh": "1.收件",
+            "description_zh": "1.收件",
+            "condition": null,
+            "source_id": "P09000044_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                115,
+                120,
+                200,
+                155
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "1.收件"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P09000044_review",
+            "sequence": 2,
+            "actor": "勞動基準科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "decision",
+            "title_zh": "2.審查",
+            "description_zh": "2.審查",
+            "condition": null,
+            "source_id": "P09000044_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                100,
+                200,
+                212,
+                266
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "2.審查"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P09000044_notify",
+            "sequence": 3,
+            "actor": "勞動基準科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "process",
+            "title_zh": "2.1通知補正",
+            "description_zh": "2.1通知\n補正",
+            "condition": null,
+            "source_id": "P09000044_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                270,
+                205,
+                345,
+                260
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "2.1通知\n補正"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P09000044_correction_review",
+            "sequence": 4,
+            "actor": "勞動基準科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "decision",
+            "title_zh": "2.2補正資料審查",
+            "description_zh": "2.2 補正\n資料審查",
+            "condition": null,
+            "source_id": "P09000044_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                412,
+                219,
+                468,
+                252
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "2.2 補正\n資料審查"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P09000044_reject",
+            "sequence": 5,
+            "actor": "勞動基準科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "end",
+            "title_zh": "2.3駁回",
+            "description_zh": "2.3 駁回",
+            "condition": null,
+            "source_id": "P09000044_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                398,
+                296,
+                490,
+                330
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "2.3 駁回"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P09000044_assign",
+            "sequence": 6,
+            "actor": "勞動基準科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "process",
+            "title_zh": "3.指派調解人並定調解會議日期",
+            "description_zh": "3.指派調解人並定調解\n會議日期",
+            "condition": null,
+            "source_id": "P09000044_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                126,
+                318,
+                267,
+                365
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "3.指派調解人並定調解\n會議日期"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P09000044_meeting",
+            "sequence": 7,
+            "actor": "勞動基準科（原圖權責欄；實際召集與調查執行者待核對）",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "process",
+            "title_zh": "4.召開勞資議調解會議並進行事實調查",
+            "description_zh": "4.召開勞資議調解會議並進\n行事實調查",
+            "condition": null,
+            "source_id": "P09000044_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                116,
+                397,
+                278,
+                453
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "4.召開勞資議調解會議並進\n行事實調查"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P09000044_proposal",
+            "sequence": 8,
+            "actor": "調解人",
+            "actor_type": "commissioned_mediator",
+            "procedure_group": "agency_internal",
+            "node_type": "process",
+            "title_zh": "5.調解人作成調解方案",
+            "description_zh": "5.調解人作成調解方案",
+            "condition": null,
+            "source_id": "P09000044_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                128,
+                482,
+                270,
+                518
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "5.調解人作成調解方案"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P09000044_result",
+            "sequence": 9,
+            "actor": "勞動基準科（原圖權責欄；本節點實際執行者待核對）",
+            "actor_type": "unknown",
+            "procedure_group": "agency_internal",
+            "node_type": "process",
+            "title_zh": "6.調解結果",
+            "description_zh": "6.調解結果",
+            "condition": null,
+            "source_id": "P09000044_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                150,
+                544,
+                230,
+                574
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "6.調解結果"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P09000044_return_records",
+            "sequence": 10,
+            "actor": "待確認（原圖權責欄為勞動基準科；送回本局的執行者未明列）",
+            "actor_type": "unknown",
+            "procedure_group": "agency_internal",
+            "node_type": "process",
+            "title_zh": "7.將調解會議紀錄正本及相關資料送回本局",
+            "description_zh": "7.將調解會議紀錄正本\n及相關資料送回本局",
+            "condition": null,
+            "source_id": "P09000044_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                128,
+                604,
+                270,
+                657
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "7.將調解會議紀錄正本\n及相關資料送回本局"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          },
+          {
+            "step_id": "P09000044_send_records",
+            "sequence": 11,
+            "actor": "勞動基準科",
+            "actor_type": "agency",
+            "procedure_group": "agency_internal",
+            "node_type": "end",
+            "title_zh": "8.檢送調解會議紀錄予勞資爭議當事人",
+            "description_zh": "8.檢送調解會議紀錄\n予勞資爭議當事人",
+            "condition": null,
+            "source_id": "P09000044_pdf",
+            "source_location": {
+              "kind": "pdf_region",
+              "page": 1,
+              "bbox": [
+                330,
+                608,
+                490,
+                658
+              ],
+              "unit": "PDF points; origin top-left",
+              "quote_zh": "8.檢送調解會議紀錄\n予勞資爭議當事人"
+            },
+            "verified": false,
+            "verification_status": "candidate",
+            "actor_basis": "原圖權責欄或節點明載調解人；非民眾待辦。含待確認文字時不可推定實際執行者。"
+          }
+        ]
+      },
+      "transitions": [
+        {
+          "from_step_id": "P09000044_receive",
+          "to_step_id": "P09000044_review",
+          "condition": null,
+          "source_id": "P09000044_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "receive",
+            "to_node": "review",
+            "label_zh": null
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P09000044_review",
+          "to_step_id": "P09000044_notify",
+          "condition": "不符合",
+          "source_id": "P09000044_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "review",
+            "to_node": "notify",
+            "label_zh": "不符合",
+            "label_bbox": [
+              217,
+              209,
+              259,
+              226
+            ],
+            "quote_zh": "不符合"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P09000044_review",
+          "to_step_id": "P09000044_assign",
+          "condition": "符合",
+          "source_id": "P09000044_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "review",
+            "to_node": "assign",
+            "label_zh": "符合",
+            "label_bbox": [
+              115,
+              275,
+              144,
+              292
+            ],
+            "quote_zh": "符合"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P09000044_notify",
+          "to_step_id": "P09000044_correction_review",
+          "condition": null,
+          "source_id": "P09000044_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "notify",
+            "to_node": "correction_review",
+            "label_zh": null
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P09000044_correction_review",
+          "to_step_id": "P09000044_review",
+          "condition": "符合",
+          "source_id": "P09000044_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "correction_review",
+            "to_node": "review",
+            "label_zh": "符合",
+            "label_bbox": [
+              444,
+              176,
+              473,
+              193
+            ],
+            "quote_zh": "符合"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P09000044_correction_review",
+          "to_step_id": "P09000044_reject",
+          "condition": "不符合",
+          "source_id": "P09000044_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "correction_review",
+            "to_node": "reject",
+            "label_zh": "不符合",
+            "label_bbox": [
+              446,
+              272,
+              487,
+              289
+            ],
+            "quote_zh": "不符合"
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P09000044_assign",
+          "to_step_id": "P09000044_meeting",
+          "condition": null,
+          "source_id": "P09000044_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "assign",
+            "to_node": "meeting",
+            "label_zh": null
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P09000044_meeting",
+          "to_step_id": "P09000044_proposal",
+          "condition": null,
+          "source_id": "P09000044_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "meeting",
+            "to_node": "proposal",
+            "label_zh": null
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P09000044_proposal",
+          "to_step_id": "P09000044_result",
+          "condition": null,
+          "source_id": "P09000044_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "proposal",
+            "to_node": "result",
+            "label_zh": null
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P09000044_result",
+          "to_step_id": "P09000044_return_records",
+          "condition": null,
+          "source_id": "P09000044_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "result",
+            "to_node": "return_records",
+            "label_zh": null
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        },
+        {
+          "from_step_id": "P09000044_return_records",
+          "to_step_id": "P09000044_send_records",
+          "condition": null,
+          "source_id": "P09000044_pdf",
+          "source_location": {
+            "kind": "pdf_arrow",
+            "page": 1,
+            "from_node": "return_records",
+            "to_node": "send_records",
+            "label_zh": null
+          },
+          "verified": false,
+          "verification_status": "candidate"
+        }
+      ],
+      "source_url": "https://laws.gov.taipei/Law/SOPContent/SOPContent?id=P09000044",
+      "source_ids": [
+        "P09000044_page",
+        "P09000044_pdf"
+      ],
+      "sop_updated_at": "2025-12-16",
+      "sop_updated_at_raw": "民國 114 年 12 月 16 日",
+      "verification_status": "candidate",
+      "last_verified_at": null,
+      "current_version_confirmed": false,
+      "applicability_confirmed": false,
+      "sequence_semantics": "各分組內展示序號，不是必經順序；機關程序須按 transitions 的條件、迴圈及終點判讀。",
+      "review_issues": [
+        "正式附件限定『調解人』方式，不得冒充調解委員會方式的完整 SOP。",
+        "PDF 第 4 節點原文為『召開勞資議調解會議並進行事實調查』，疑似用字問題保留原文，未自行改寫。",
+        "PDF 第 7 節點『送回本局』的執行者未明列，actor 標記待確認；不轉成民眾送回會議紀錄。",
+        "『調解結果』節點沒有成功、失敗的圖示分支，不自行補造後續仲裁、訴訟或領款流程。",
+        "一般案件與特殊案件有不同總處理時限，但特殊案件的判定條件未在流程圖列明。",
+        "尚未確認外籍工作者身分、雇傭型態與個案適用性；亦未確認完整附件清單及目前版本。"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "P17000198_page",
+      "source_url": "https://laws.gov.taipei/Law/SOPContent/SOPContent?id=P17000198",
+      "title_zh": "臺北市政府地政局 「不動產糾紛(租賃爭議事件)調處」作業流程圖",
+      "media_type": "text/html",
+      "local_path": "data/raw/government_sops/20261107T151556961684Z/P17000198.html",
+      "sha256": "27a0c14557d4477a79d31e46cd226596c198892f242d72bf3ea24aa10ab5f456",
+      "retrieved_at": "2026-11-07T15:15:56.964197+00:00",
+      "verification_status": "candidate",
+      "last_verified_at": null,
+      "sop_updated_at_raw": "民國 114 年 04 月 10 日",
+      "date_semantics": "官方 SOP 頁面異動日期；不是法律生效日或人工核對日期。",
+      "articles": {
+        "FL021824-20230926:2": {
+          "law_title_zh": "直轄市縣（市）不動產糾紛調處委員會設置及調處辦法（民國 112 年 09 月 26 日）",
+          "article_no": 2,
+          "text_zh": "下列各款不動產糾紛案件，依本辦法調處之：\n一、本法第三十四條之一第六項規定之共有物分割爭議。\n二、本法第四十六條之二規定之地籍圖重測界址爭議。\n三、本法第五十九條第二項規定之土地權利爭議。\n四、本法第一百零一條規定之房屋租用爭議。\n五、本法第一百零五條規定之建築基地租用爭議。\n六、本法第一百二十二條規定之耕地租用爭議。\n七、本法施行法第三十條規定之有永佃權土地租用爭議。\n八、租賃住宅市場發展及管理條例第十六條規定之住宅租賃爭議。\n九、地籍清理條例第十四條第三項及第十五條之一規定之土地權利價金發\n    給爭議。\n十、地籍清理條例第十五條第二項規定之發還土地爭議。\n十一、地籍清理條例第十七條規定之以日據時期會社或組合名義更正登記\n      爭議。\n十二、地籍清理條例第二十條規定之神明會申報涉及土地權利爭議。\n十三、地籍清理條例第二十三條規定之更正神明會現會員、信徒名冊或土\n      地清冊涉及土地權利爭議。\n十四、地籍清理條例第二十七條規定之土地權利塗銷登記爭議。\n十五、地籍清理條例第二十八條規定之抵押權塗銷登記爭議。\n十六、地籍清理條例第二十九條規定之地上權塗銷登記爭議。\n十七、地籍清理條例第三十條規定之查封、假扣押、假處分塗銷登記爭議\n      。\n十八、地籍清理條例第三十一條第一項規定之共有土地各共有人之權利範\n      圍合計不等於一之更正登記爭議。\n十九、地籍清理條例第三十一條之一第一項與第二項規定之所有權權利範\n      圍空白之更正登記及第三項規定之所有權權利範圍空白之逕為更正\n      登記爭議。\n二十、地籍清理條例第三十二條規定之登記名義人姓名、名稱或住址記載\n      不全或不符更正登記爭議。\n二十一、地籍清理條例第三十三條規定之非以自然人、法人或適用監督寺\n        廟條例之寺廟名義更正登記爭議。\n二十二、地籍清理條例第三十六條規定之寺廟或宗教團體申報發給更名證\n        明爭議。\n二十三、地籍清理條例第三十八條規定之寺廟或宗教性質之法人申購土地\n        權利爭議。\n二十四、土地登記規則第七十五條規定之土地總登記爭議。\n二十五、土地登記規則第八十四條規定之建物所有權第一次登記爭議。\n二十六、土地登記規則第一百十八條第四項、第五項規定之時效取得地上\n        權、不動產役權或農育權登記爭議。"
+        },
+        "FL021824-20230926:13": {
+          "law_title_zh": "直轄市縣（市）不動產糾紛調處委員會設置及調處辦法（民國 112 年 09 月 26 日）",
+          "article_no": 13,
+          "text_zh": "不動產糾紛案件，除第二條第二款、第三款、第九款至第二十六款之不動\n產糾紛案件得由該管登記機關或直轄市、縣（市）政府主動移送調處外，\n當事人一造應具備下列文件向土地所在地之直轄市、縣（市）政府申請，\n並按對造及權利關係人人數，提出繕本：\n一、申請書。\n二、申請人之身分證明文件。\n三、委託他人代為申請時，應檢附委託書。但申請書已載明委任關係者，\n    免附。\n四、爭議要點及調處建議方案。\n五、其他依法令規定應提出之文件。"
+        },
+        "FL021824-20230926:15": {
+          "law_title_zh": "直轄市縣（市）不動產糾紛調處委員會設置及調處辦法（民國 112 年 09 月 26 日）",
+          "article_no": 15,
+          "text_zh": "申請調處案件有下列各款情形之一者，直轄市、縣（市）政府應以書面敘\n明理由，通知申請人於接到通知書之日起十五日內補正：\n一、申請書格式不合或所提出之證明文件不符或欠缺。\n二、申請書記載事項與土地、建物登記簿或其證明文件不符。\n三、申請人之資格不符或其代理人之代理權有欠缺。\n四、調處當事人為無行為能力人或限制行為能力人，而未由法定代理人代\n    理。\n五、未依規定繳納調處費用。"
+        },
+        "FL021824-20230926:16": {
+          "law_title_zh": "直轄市縣（市）不動產糾紛調處委員會設置及調處辦法（民國 112 年 09 月 26 日）",
+          "article_no": 16,
+          "text_zh": "申請調處案件有下列各款情形之一者，直轄市、縣（市）政府應以書面敘\n明理由駁回之：\n一、非屬第二條之不動產糾紛事件。\n二、調處事件不屬受理機關管轄。\n三、曾依本辦法申請調處並作成調處結果。\n四、已訴請法院審理或調處標的為確定判決、調解或和解之效力所及。\n五、土地登記簿住址空白或不全，致權屬無法查明。\n六、登記名義人死亡，其繼承人有無不明致無法通知。\n七、申請人未於前條規定期限內補正或未依補正事項完全補正。\n八、其他依法律規定不得辦理。"
+        },
+        "FL021824-20230926:17": {
+          "law_title_zh": "直轄市縣（市）不動產糾紛調處委員會設置及調處辦法（民國 112 年 09 月 26 日）",
+          "article_no": 17,
+          "text_zh": "本會或區域性不動產糾紛調處委員會應訂定調處時間，書面通知當事人到\n場進行調處，並將文件繕本一併送達於對造及權利關係人。當事人應攜帶\n身分證明文件親自到場；當事人如不能親自到場，得出具委託書，委託代\n理人到場進行調處。但申請書已載明委任關係者，免出具委託書。\n前項調處應自接受申請之日起三十日內辦理之，必要時得視實際需要情形\n予以延長。"
+        }
+      }
+    },
+    {
+      "source_id": "P17000198_pdf",
+      "source_url": "https://laws.gov.taipei/Law/SOPSearch/DownloadFile?sop_no=P17000198.pdf",
+      "title_zh": "臺北市政府地政局 「不動產糾紛(租賃爭議事件)調處」作業流程圖",
+      "media_type": "application/pdf",
+      "local_path": "data/raw/government_sops/20261107T151556961684Z/P17000198.pdf",
+      "sha256": "2e16a6494e8c2b6eb423d0119e9b5625010ff6b4b2a74494fd4b7e7b3ad99feb",
+      "retrieved_at": "2026-11-07T15:15:56.964197+00:00",
+      "verification_status": "candidate",
+      "last_verified_at": null,
+      "page_count": 1,
+      "page_text_zh": "地政類\n臺北市政府地政局\n「不動產糾紛（租賃爭議事件）調處」作業流程圖\n權責單位 作業流程 處理時限\n秘\n書 1.收件 1.1日\n室\n地 是 2.於限期內 否\n權 完全補正\n及\n2.32日\n不\n動\n產 2.地政局 不符合\n交 2.1\n審查\n易 2.3駁回\n通知補正\n科\n符合\n3.聯絡及準備\n3.47日\n第1次調處會議\n任何一造經通知而未\n相關事宜\n到場或續行調處者\n4.召開第1次\n地 444.44 小時\n權 調處會議\n及\n協議成立或予\n44\n不 5.函送調處紀錄表 5 . 6 日\n動 以裁處者\n產\n交\n易\n5.函送調處紀錄表\n科 6.聯絡及準備第2次\n6.47日\n調處會議相關事宜\n7.4小時\n7.召開第2次調處會議\n8.6日\n8.函送調處紀錄表\n申請方式：臨櫃親自申辦、委託申辦、郵寄申辦、網路申辦（非全程式）\n總處理時限：140日（含假日/日曆日）",
+      "pdf_version_date": null,
+      "visual_review": "以渲染圖輔助解析，仍需人工核對；不等於 verified。"
+    },
+    {
+      "source_id": "P09000044_page",
+      "source_url": "https://laws.gov.taipei/Law/SOPContent/SOPContent?id=P09000044",
+      "title_zh": "「臺北市政府勞資爭議調解案-調解人」作業流程圖",
+      "media_type": "text/html",
+      "local_path": "data/raw/government_sops/20261107T151556961684Z/P09000044.html",
+      "sha256": "4bd3ac4eaaa6b86e1b135cbf21340743f59d0ee0867ac7ccbca22b5bc48bd51a",
+      "retrieved_at": "2026-11-07T15:15:56.964197+00:00",
+      "verification_status": "candidate",
+      "last_verified_at": null,
+      "sop_updated_at_raw": "民國 114 年 12 月 16 日",
+      "date_semantics": "官方 SOP 頁面異動日期；不是法律生效日或人工核對日期。",
+      "articles": {
+        "FL014924-20210428:3": {
+          "law_title_zh": "勞資爭議處理法（民國 110 年 04 月 28 日）",
+          "article_no": 3,
+          "text_zh": "本法於雇主或有法人資格之雇主團體（以下簡稱雇主團體）與勞工或工會\n發生勞資爭議時，適用之。但教師之勞資爭議屬依法提起行政救濟之事項\n者，不適用之。"
+        },
+        "FL014924-20210428:7": {
+          "law_title_zh": "勞資爭議處理法（民國 110 年 04 月 28 日）",
+          "article_no": 7,
+          "text_zh": "調整事項之勞資爭議，依本法所定之調解、仲裁程序處理之。\n前項勞資爭議之勞方當事人，應為工會。但有下列情形者，亦得為勞方當\n事人：\n一、未加入工會，而具有相同主張之勞工達十人以上。\n二、受僱於僱用勞工未滿十人之事業單位，其未加入工會之勞工具有相同\n    主張者達三分之二以上。"
+        },
+        "FL014924-20210428:9": {
+          "law_title_zh": "勞資爭議處理法（民國 110 年 04 月 28 日）",
+          "article_no": 9,
+          "text_zh": "勞資爭議當事人一方申請調解時，應向勞方當事人勞務提供地之直轄市或\n縣（市）主管機關提出調解申請書。\n前項爭議當事人一方為團體協約法第十條第二項規定之機關（構）、學校\n者，其出席調解時之代理人應檢附同條項所定有核可權機關之同意書。\n第一項直轄市、縣（市）主管機關對於勞資爭議認為必要時，得依職權交\n付調解，並通知勞資爭議雙方當事人。\n第一項及前項調解，其勞方當事人有二人以上者，各勞方當事人勞務提供\n地之主管機關，就該調解案件均有管轄權。"
+        },
+        "FL014924-20210428:10": {
+          "law_title_zh": "勞資爭議處理法（民國 110 年 04 月 28 日）",
+          "article_no": 10,
+          "text_zh": "調解之申請，應提出調解申請書，並載明下列事項：\n一、當事人姓名、性別、年齡、職業及住所或居所；如為法人、雇主團體\n    或工會時，其名稱、代表人及事務所或營業所；有代理人者，其姓名\n    、名稱及住居所或事務所。\n二、請求調解事項。\n三、依第十一條第一項選定之調解方式。"
+        },
+        "FL014924-20210428:11": {
+          "law_title_zh": "勞資爭議處理法（民國 110 年 04 月 28 日）",
+          "article_no": 11,
+          "text_zh": "直轄市或縣（市）主管機關受理調解之申請，應依申請人之請求，以下列\n方式之一進行調解：\n一、指派調解人。\n二、組成勞資爭議調解委員會（以下簡稱調解委員會）。\n直轄市或縣（市）主管機關依職權交付調解者，得依前項方式之一進行調\n解。\n第一項第一款之調解，直轄市、縣（市）主管機關得委託民間團體指派調\n解人進行調解。\n第一項調解之相關處理程序、充任調解人或調解委員之遴聘條件與前項受\n託民間團體之資格及其他應遵行事項之辦法，由中央主管機關定之。\n主管機關對第三項之民間團體，除委託費用外，並得予補助。"
+        },
+        "FL014924-20210428:12": {
+          "law_title_zh": "勞資爭議處理法（民國 110 年 04 月 28 日）",
+          "article_no": 12,
+          "text_zh": "直轄市或縣（市）主管機關指派調解人進行調解者，應於收到調解申請書\n三日內為之。\n調解人應調查事實，並於指派之日起七日內開始進行調解。\n直轄市或縣（市）主管機關於調解人調查時，得通知當事人、相關人員或\n事業單位，以言詞或書面提出說明；調解人為調查之必要，得經主管機關\n同意，進入相關事業單位訪查。\n前項受通知或受訪查人員，不得為虛偽說明、提供不實資料或無正當理由\n拒絕說明。\n調解人應於開始進行調解十日內作出調解方案，並準用第十九條、第二十\n條及第二十二條之規定。"
+        },
+        "FL014924-20210428:19": {
+          "law_title_zh": "勞資爭議處理法（民國 110 年 04 月 28 日）",
+          "article_no": 19,
+          "text_zh": "依前條規定作成之調解方案，經勞資爭議雙方當事人同意在調解紀錄簽名\n者，為調解成立。但當事人之一方為團體協約法第十條第二項規定之機關\n（構）、學校者，其代理人簽名前，應檢附同條項所定有核可權機關之同\n意書。"
+        }
+      }
+    },
+    {
+      "source_id": "P09000044_pdf",
+      "source_url": "https://laws.gov.taipei/Law/SOPSearch/DownloadFile?sop_no=P09000044.pdf",
+      "title_zh": "「臺北市政府勞資爭議調解案-調解人」作業流程圖",
+      "media_type": "application/pdf",
+      "local_path": "data/raw/government_sops/20261107T151556961684Z/P09000044.pdf",
+      "sha256": "128aa3af35228c74438543bf63871a9e956c3c9ec357c027b4b36583d6d6ce4d",
+      "retrieved_at": "2026-11-07T15:15:56.964197+00:00",
+      "verification_status": "candidate",
+      "last_verified_at": null,
+      "page_count": 1,
+      "page_text_zh": "勞動類：案件編號 25\n臺北市政府勞動局\n「臺北市政府勞資爭議調解案-調解人」作業流程圖\n權責單位 作業流程 處理時限\n1.收件\n1. 1 日\n符合\n2. 3 日\n不符合\n2.1通知 2.2 補正 3.\n2.審查\n補正 資料審查\n不符合\n符合\n2.3 駁回\n勞動基\n準科 3.指派調解人並定調解\n會議日期\n4. 一般案件\n4.召開勞資議調解會議並進\n36 日\n行事實調查\n特殊案件\n66 日\n5.調解人作成調解方案 5. 10 日\n6.\n6.調解結果\n7.將調解會議紀錄正本 8.檢送調解會議紀錄\n7. 10 日\n及相關資料送回本局 予勞資爭議當事人\n8.\n申請方式：郵寄申辦、臨櫃親自申辦、委託申辦、網路申辦（非全程式）\n總處理時限：一般案件 60 日（含假日/日曆日）\n特殊案件 90 日（含假日/日曆日）",
+      "pdf_version_date": null,
+      "visual_review": "以渲染圖輔助解析，仍需人工核對；不等於 verified。"
+    }
+  ]
+}

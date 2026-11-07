@@ -1,0 +1,12 @@
+{
+  "sqlite_units": {
+    "opendata": 1075,
+    "housing": 60
+  },
+  "fixtures_valid": 2,
+  "pii_token_checks_passed": true,
+  "schemas_valid": 6,
+  "forbidden_model_and_vector_files_absent": true,
+  "manifest_verified": true,
+  "ios_inference_tested": false
+}
