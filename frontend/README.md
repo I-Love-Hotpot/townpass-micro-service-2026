@@ -26,4 +26,20 @@ pnpm build
 
 `pnpm test` 驗證 Native 訊息、OCR 頁序、字數限制、摘要、取消、內容匹配、IndexedDB 保存與刪除，以及重新解釋的更新交易。
 
+## GitHub Releases
+
+`main` 分支的前端檔案有更新時，GitHub Actions 會執行 `pnpm build`，並建立包含 `dist/` 的 `townpass-baihua-frontend-dist.zip` Release asset。Release tag 使用 `frontend-<commit-sha>` 格式，client 可從 latest release 的 `tag_name` 取得建置 SHA，不需要額外的 `version.json`。
+
+若 repo 是公開的，外部可透過以下網址下載最新版本：
+
+- ZIP：`https://github.com/<owner>/<repo>/releases/latest/download/townpass-baihua-frontend-dist.zip`
+
+Client 首次下載 ZIP 後，應保存該 Release tag 中的 commit SHA。每次開啟服務時可用下列流程檢查及更新：
+
+1. 呼叫公開 API：`GET https://api.github.com/repos/I-Love-Hotpot/townpass-micro-service-2026/releases/latest`。
+2. 從回應的 `tag_name` 去除 `frontend-` 前綴，取得最新 Release 的 commit SHA。
+3. SHA 相同就不需更新；不同時，從同一份 Release 的 `assets` 取得 `townpass-baihua-frontend-dist.zip` 的 `browser_download_url` 並下載，成功後再保存新 SHA。先下載並確認成功再更新已保存的 SHA，避免下載失敗後 client 誤以為已更新。
+
+此流程適用於公開 repo，無須 GitHub token；GitHub API 對未驗證請求有頻率限制。
+
 拍照可連續累積多張後再開始辨識，支援相簿追加、排序與移除。OCR 文字可人工修正，摘要完成後自動產生六何，並可重新整理與複製。固定預覽：<https://townpass.fearnot.tw>。
