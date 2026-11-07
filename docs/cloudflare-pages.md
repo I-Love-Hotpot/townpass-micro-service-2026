@@ -16,7 +16,7 @@ Cloudflare Pages 的 Settings → Builds 設定：
 | Build command | `pnpm build` |
 | Build output directory | `dist` |
 | `NODE_VERSION` | `22` |
-| `PNPM_VERSION` | `9.15.9` |
+| `PNPM_VERSION` | `11.25.0` |
 
 環境變數同時設定於 Production 與 Preview。依賴由 Pages 依照
 `frontend/pnpm-lock.yaml` 安裝，不需要手動上傳 `dist`。
