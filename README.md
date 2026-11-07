@@ -1,3 +1,27 @@
+# GovClear｜城市通文件閱讀助手
+
+開發團隊：**拖把吃火鍋又不揪**。
+
+GovClear 將文件整理為白話摘要與六何資訊，並透過城市通 Flutter host 使用 iPhone 原生 OCR 與地端 Gemma E4B。這個 repository 負責前端介面、提示詞、微服務及準備工具；原生模型引擎位於 [TownPass](https://github.com/I-Love-Hotpot/TownPass)。
+
+## 目前版本
+
+目前 main 已整合文件輸入、多張拍照、OCR 校正、摘要、六何與根據原文追問。實際辨識與推論需要原生 host，單純瀏覽器預覽不提供手機模型。RAG 法規問答及逐步語意 Guard 尚未在此文件 PR 實作，也不保證單張完整流程 20 秒內完成。
+
+執行與驗證以 [main 整合說明](docs/integration-main-offline.md) 為準；其中包含前端預覽、手機準備指令及原生 host 配套要求。此文件 PR 不加入其他功能分支的 JSON 儲存 API 或推論變更。
+
+## 授權
+
+Copyright (C) 2026 拖把吃火鍋又不揪
+
+本團隊自行開發且有權授權的程式碼採用 **GNU Affero General Public License v3.0 only**（`AGPL-3.0-only`），正式全文見 [LICENSE](LICENSE)。允許商用，須遵守適用的原始碼提供與聲明保留等義務，不附加「商用需另行同意」限制。
+
+既有上游、其他貢獻者、第三方套件、模型權重、資料與素材保留各自條款與署名；本聲明不將它們重新授權。TownPass 原有 GPL v3 不變。發布者應提供對應實際部署版本的原始碼及必要建置資料；公開原始碼不包含密碼、金鑰或使用者私人文件。
+
+競賽要求的公開 repo 期間與標準授權分開處理，不代表授權於一年後到期。本次文件更新不表示已完成所有依賴與發行物的授權稽核。
+
+---
+
 # main 介面與離線處理整合
 
 本分支保留 main 的白話人前端，接入 `release/govclear-iphone-offline` 的 Native OCR 與摘要流程。
