@@ -3,6 +3,13 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --motion-fast: 150ms;
+    --motion-base: 200ms;
+    --motion-slow: 300ms;
+    --motion-ease: cubic-bezier(0.2, 0, 0, 1);
+  }
+
   html {
     color-scheme: light;
   }
@@ -12,11 +19,74 @@
   button,
   a,
   input,
-  textarea {
+  textarea,
+  select {
     @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-dark;
+    transition-property: color, background-color, border-color, box-shadow, opacity, filter,
+      transform;
+    transition-duration: var(--motion-fast);
+    transition-timing-function: var(--motion-ease);
+  }
+  button:not(:disabled):active,
+  a[href]:active {
+    transform: scale(0.98);
+    filter: brightness(0.96);
+  }
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply border-brand-dark;
   }
   button:disabled {
     cursor: not-allowed;
+  }
+  dialog {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    transition:
+      opacity var(--motion-base) var(--motion-ease),
+      transform var(--motion-base) var(--motion-ease),
+      display var(--motion-base) allow-discrete,
+      overlay var(--motion-base) allow-discrete;
+  }
+  dialog[open] {
+    opacity: 1;
+    transform: none;
+  }
+  dialog::backdrop {
+    opacity: 0;
+    transition:
+      opacity var(--motion-base) var(--motion-ease),
+      display var(--motion-base) allow-discrete,
+      overlay var(--motion-base) allow-discrete;
+  }
+  dialog[open]::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    dialog[open] {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+    dialog[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  @media (hover: hover) {
+    button:not(:disabled):hover,
+    a[href]:hover {
+      filter: brightness(0.97);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --motion-fast: 0ms;
+      --motion-base: 0ms;
+      --motion-slow: 0ms;
+    }
   }
 }
 
@@ -41,5 +111,82 @@
   }
   .feedback {
     @apply rounded-lg bg-red-50 p-3 text-sm text-red-800;
+  }
+}
+
+.page-enter-active,
+.page-leave-active,
+.content-enter-active,
+.content-leave-active,
+.list-enter-active,
+.list-leave-active,
+.list-move {
+  transition:
+    opacity var(--motion-base) var(--motion-ease),
+    transform var(--motion-base) var(--motion-ease);
+}
+
+.feedback-enter-active,
+.feedback-leave-active {
+  transition:
+    opacity var(--motion-fast) var(--motion-ease),
+    transform var(--motion-fast) var(--motion-ease);
+}
+
+.page-enter-from,
+.content-enter-from {
+  opacity: 0;
+  transform: translateX(calc(var(--page-direction, 1) * 24px));
+}
+
+.page-leave-to,
+.content-leave-to {
+  opacity: 0;
+  transform: translateX(calc(var(--page-direction, 1) * -24px));
+}
+
+.list-enter-from,
+.feedback-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.list-leave-to,
+.feedback-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.page-leave-active {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.content-leave-active {
+  position: absolute;
+  top: 1.5rem;
+  right: 1rem;
+  left: 1rem;
+  pointer-events: none;
+}
+
+.list-leave-active {
+  position: absolute;
+  width: 100%;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter-from,
+  .page-leave-to,
+  .content-enter-from,
+  .content-leave-to,
+  .list-enter-from,
+  .list-leave-to,
+  .feedback-enter-from,
+  .feedback-leave-to,
+  dialog {
+    transform: none;
   }
 }

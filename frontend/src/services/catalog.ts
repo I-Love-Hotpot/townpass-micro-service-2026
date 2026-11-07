@@ -42,10 +42,9 @@ function catalog() {
   return catalogPromise;
 }
 
-export async function initializeRecords(locale: Locale) {
-  if (await records.seeded()) return;
+export async function importExampleRecords(locale: Locale) {
   const entries = await catalog();
-  if (!entries.length) return;
+  if (!entries.length) throw new Error('Example files are unavailable');
   const signal = new AbortController().signal;
   const documents: DocumentRecord[] = [];
   for (const { fixture, blob } of entries) {
@@ -66,8 +65,9 @@ export async function initializeRecords(locale: Locale) {
       chat: []
     });
   }
-  await records.seed(documents);
+  const count = await records.seed(documents, true);
   catalogPromise = undefined;
+  return count;
 }
 
 export async function makeDocument(

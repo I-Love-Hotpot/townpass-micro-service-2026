@@ -131,121 +131,140 @@ async function applyAction(action: 'explain' | 'chat') {
 </script>
 
 <template>
-  <div class="px-4 pt-6 pb-[max(2rem,env(safe-area-inset-bottom))]">
-    <p v-if="loading" class="text-sm text-muted" role="status">{{ t('loadingDocument') }}</p>
-    <div v-else-if="loadError">
-      <p class="feedback" role="alert">{{ t('storageError') }}</p>
-      <button type="button" class="text-action mt-2" @click="load">{{ t('retry') }}</button>
-    </div>
-    <div v-else-if="isMissing || !entry">
-      <p>{{ t('notFound') }}</p>
-      <RouterLink :to="{ name: 'history' }" replace class="text-action mt-2">
-        {{ t('goHistory') }}
-      </RouterLink>
-    </div>
-    <section v-else-if="route.name === 'page'" class="space-y-4">
-      <h1 class="page-title">{{ t('page', { n: String(route.params.page) }) }}</h1>
-      <img
-        :src="currentPage"
-        :alt="t('page', { n: String(route.params.page) })"
-        class="w-full rounded border border-line"
-      />
-    </section>
-    <section v-else-if="route.name === 'destination' && destination" class="space-y-4">
-      <h1 class="page-title">{{ destination.label[workspace.context.locale] }}</h1>
-      <p class="section-title text-brand-dark">{{ t(destination.kind) }}</p>
-      <p v-if="destination.target" class="break-all text-sm text-muted">{{ destination.target }}</p>
-      <p class="rounded bg-brand-light p-4 text-sm text-muted">{{ t('destinationMessage') }}</p>
-    </section>
-    <section v-else-if="route.name === 'chat'" class="space-y-5">
-      <div class="space-y-2">
-        <h1 class="page-title">{{ t('chat') }}</h1>
-        <p class="break-words text-sm text-muted">{{ entry.summary.title }}</p>
+  <div class="relative px-4 pt-6 pb-[max(2rem,env(safe-area-inset-bottom))]">
+    <Transition name="content">
+      <p v-if="loading" class="text-sm text-muted" role="status">{{ t('loadingDocument') }}</p>
+      <div v-else-if="loadError">
+        <p class="feedback" role="alert">{{ t('storageError') }}</p>
+        <button type="button" class="text-action mt-2" @click="load">{{ t('retry') }}</button>
       </div>
-      <p v-if="!entry.chat.length" class="rounded bg-surface p-4 text-sm text-muted">
-        {{ t('chatEmpty') }}
-      </p>
-      <div v-for="(exchange, index) in entry.chat" :key="index" class="space-y-2">
-        <p class="ml-6 whitespace-pre-line break-words rounded-lg bg-brand-light p-3 text-right">
-          {{ exchange.question }}
-        </p>
-        <p class="mr-6 whitespace-pre-line break-words rounded-lg bg-surface p-3">
-          {{ exchange.answer }}
-        </p>
-      </div>
-      <form class="space-y-3" @submit.prevent="applyAction('chat')">
-        <label for="document-question" class="sr-only">{{ t('chatPlaceholder') }}</label>
-        <textarea
-          id="document-question"
-          v-model="question"
-          rows="2"
-          maxlength="500"
-          class="block w-full resize-y rounded-lg border border-line px-3 py-2"
-          :placeholder="t('chatPlaceholder')"
-          :disabled="pending"
-        ></textarea>
-        <button
-          type="submit"
-          class="action-button action-primary w-full"
-          :disabled="pending || !question.trim()"
-        >
-          {{ t('send') }}
-        </button>
-        <p v-if="feedback" class="feedback" role="alert">{{ t(feedback) }}</p>
-      </form>
-      <div ref="chatEnd"></div>
-    </section>
-    <article v-else class="space-y-7">
-      <h1 class="page-title">{{ entry.summary.title }}</h1>
-      <section class="rounded bg-surface p-4" aria-labelledby="summary-heading">
-        <h2 id="summary-heading" class="section-title">{{ t('summary') }}</h2>
-        <ul class="mt-3 list-disc space-y-2 pl-5">
-          <li v-for="fact in entry.summary.facts" :key="fact" class="break-words">{{ fact }}</li>
-        </ul>
-        <p class="mt-4 break-words border-t border-[#CAD1D5] pt-3 font-semibold text-[#22474E]">
-          {{ entry.summary.action }}
-        </p>
-        <div class="mt-3 flex flex-wrap gap-x-2">
-          <RouterLink :to="{ name: 'chat', params: { id: entry.id } }" class="text-action text-sm">
-            <AppIcon name="chat" class="h-5 w-5 shrink-0" />{{ t('chat') }}
-          </RouterLink>
-          <button
-            type="button"
-            class="text-action text-sm disabled:text-muted"
-            :disabled="pending"
-            @click="applyAction('explain')"
-          >
-            <AppIcon name="refresh" class="h-5 w-5 shrink-0" />{{
-              t(pending ? 'explaining' : 'reExplain')
-            }}
-          </button>
-        </div>
-        <p
-          v-if="feedback"
-          class="mt-2 text-sm"
-          :class="{ feedback: failed }"
-          :role="failed ? 'alert' : 'status'"
-        >
-          {{ t(feedback) }}
-        </p>
-      </section>
-      <DocumentGallery :id="entry.id" :urls="urls" :locale="workspace.context.locale" />
-      <section aria-labelledby="next-heading">
-        <h2 id="next-heading" class="section-title">{{ t('next') }}</h2>
-        <RouterLink
-          v-for="item in entry.destinations"
-          :key="item.id"
-          :to="{ name: 'destination', params: { id: entry.id, destination: item.id } }"
-          class="flex min-h-16 items-center gap-3 border-b border-line py-3 text-brand-dark"
-        >
-          <AppIcon :name="item.kind === 'official' ? 'external' : 'app'" class="shrink-0" />
-          <div class="min-w-0 flex-1 break-words">
-            <div class="font-semibold">{{ item.label[workspace.context.locale] }}</div>
-            <div class="mt-1 text-sm text-muted">{{ t(item.kind) }}</div>
-          </div>
-          <AppIcon name="next" class="h-5 w-5 shrink-0" />
+      <div v-else-if="isMissing || !entry">
+        <p>{{ t('notFound') }}</p>
+        <RouterLink :to="{ name: 'history' }" replace class="text-action mt-2">
+          {{ t('goHistory') }}
         </RouterLink>
+      </div>
+      <section v-else-if="route.name === 'page'" :key="route.path" class="space-y-4">
+        <h1 class="page-title">{{ t('page', { n: String(route.params.page) }) }}</h1>
+        <img
+          :src="currentPage"
+          :alt="t('page', { n: String(route.params.page) })"
+          class="w-full rounded border border-line"
+        />
       </section>
-    </article>
+      <section
+        v-else-if="route.name === 'destination' && destination"
+        :key="route.path"
+        class="space-y-4"
+      >
+        <h1 class="page-title">{{ destination.label[workspace.context.locale] }}</h1>
+        <p class="section-title text-brand-dark">{{ t(destination.kind) }}</p>
+        <p v-if="destination.target" class="break-all text-sm text-muted">
+          {{ destination.target }}
+        </p>
+        <p class="rounded bg-brand-light p-4 text-sm text-muted">{{ t('destinationMessage') }}</p>
+      </section>
+      <section v-else-if="route.name === 'chat'" class="relative space-y-5">
+        <div class="space-y-2">
+          <h1 class="page-title">{{ t('chat') }}</h1>
+          <p class="break-words text-sm text-muted">{{ entry.summary.title }}</p>
+        </div>
+        <p v-if="!entry.chat.length" class="rounded bg-surface p-4 text-sm text-muted">
+          {{ t('chatEmpty') }}
+        </p>
+        <TransitionGroup name="list">
+          <div v-for="(exchange, index) in entry.chat" :key="index" class="space-y-2">
+            <p
+              class="ml-6 whitespace-pre-line break-words rounded-lg bg-brand-light p-3 text-right"
+            >
+              {{ exchange.question }}
+            </p>
+            <p class="mr-6 whitespace-pre-line break-words rounded-lg bg-surface p-3">
+              {{ exchange.answer }}
+            </p>
+          </div>
+        </TransitionGroup>
+        <form class="space-y-3" @submit.prevent="applyAction('chat')">
+          <label for="document-question" class="sr-only">{{ t('chatPlaceholder') }}</label>
+          <textarea
+            id="document-question"
+            v-model="question"
+            rows="2"
+            maxlength="500"
+            class="block w-full resize-y rounded-lg border border-line px-3 py-2"
+            :placeholder="t('chatPlaceholder')"
+            :disabled="pending"
+          ></textarea>
+          <button
+            type="submit"
+            class="action-button action-primary w-full"
+            :disabled="pending || !question.trim()"
+          >
+            {{ t('send') }}
+          </button>
+          <Transition name="feedback">
+            <p v-if="feedback" class="feedback" role="alert">{{ t(feedback) }}</p>
+          </Transition>
+        </form>
+        <div ref="chatEnd"></div>
+      </section>
+      <article v-else class="space-y-7">
+        <h1 class="page-title">{{ entry.summary.title }}</h1>
+        <section class="rounded bg-surface p-4" aria-labelledby="summary-heading">
+          <h2 id="summary-heading" class="section-title">{{ t('summary') }}</h2>
+          <ul class="mt-3 list-disc space-y-2 pl-5">
+            <li v-for="fact in entry.summary.facts" :key="fact" class="break-words">{{ fact }}</li>
+          </ul>
+          <p class="mt-4 break-words border-t border-[#CAD1D5] pt-3 font-semibold text-[#22474E]">
+            {{ entry.summary.action }}
+          </p>
+          <div class="mt-3 flex flex-wrap gap-x-2">
+            <RouterLink
+              :to="{ name: 'chat', params: { id: entry.id } }"
+              class="text-action text-sm"
+            >
+              <AppIcon name="chat" class="h-5 w-5 shrink-0" />{{ t('chat') }}
+            </RouterLink>
+            <button
+              type="button"
+              class="text-action text-sm disabled:text-muted"
+              :disabled="pending"
+              @click="applyAction('explain')"
+            >
+              <AppIcon name="refresh" class="h-5 w-5 shrink-0" />{{
+                t(pending ? 'explaining' : 'reExplain')
+              }}
+            </button>
+          </div>
+          <Transition name="feedback">
+            <p
+              v-if="feedback"
+              class="mt-2 text-sm"
+              :class="{ feedback: failed }"
+              :role="failed ? 'alert' : 'status'"
+            >
+              {{ t(feedback) }}
+            </p>
+          </Transition>
+        </section>
+        <DocumentGallery :id="entry.id" :urls="urls" :locale="workspace.context.locale" />
+        <section aria-labelledby="next-heading">
+          <h2 id="next-heading" class="section-title">{{ t('next') }}</h2>
+          <RouterLink
+            v-for="item in entry.destinations"
+            :key="item.id"
+            :to="{ name: 'destination', params: { id: entry.id, destination: item.id } }"
+            class="flex min-h-16 items-center gap-3 border-b border-line py-3 text-brand-dark"
+          >
+            <AppIcon :name="item.kind === 'official' ? 'external' : 'app'" class="shrink-0" />
+            <div class="min-w-0 flex-1 break-words">
+              <div class="font-semibold">{{ item.label[workspace.context.locale] }}</div>
+              <div class="mt-1 text-sm text-muted">{{ t(item.kind) }}</div>
+            </div>
+            <AppIcon name="next" class="h-5 w-5 shrink-0" />
+          </RouterLink>
+        </section>
+      </article>
+    </Transition>
   </div>
 </template>
