@@ -45,6 +45,7 @@ import FeePaymentHistoryDetailView from '@/views/FeePaymentHistoryDetailView.vue
 import FeePaymentScanView from '@/views/FeePaymentScanView.vue';
 import FeePaymentStepView from '@/views/FeePaymentStepView.vue';
 import FeePaymentFinishedView from '@/views/FeePaymentFinishedView.vue';
+import PRReviewMenuView from '@/views/PRReviewMenuView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -402,6 +403,14 @@ const router = createRouter({
           }
         }
       ]
+    },
+    {
+      path: '/pr-review-menu',
+      name: 'pr-review-menu',
+      meta: {
+        title: 'PR 預覽選單 - 開發測試'
+      },
+      component: PRReviewMenuView
     }
   ]
 });
