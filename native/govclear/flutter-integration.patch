@@ -42,7 +42,7 @@ diff --git a/integration_test/govclear_speed_test.dart b/integration_test/govcle
 new file mode 100644
 --- /dev/null
 +++ b/integration_test/govclear_speed_test.dart
-@@ -0,0 +1,152 @@
+@@ -0,0 +1,188 @@
 +import 'dart:convert';
 +import 'dart:io';
 +import 'dart:ui' as ui;
@@ -125,6 +125,7 @@ new file mode 100644
 +                draft['w']['how'],
 +              ].whereType<String>().toList(),
 +            ),
++            source: source,
 +          ),
 +        );
 +        for (final row in (retrieval['evidence'] as List).take(3)) {
@@ -135,6 +136,8 @@ new file mode 100644
 +              (row) => {
 +                'unit_id': row['unit_id'],
 +                'unit_label': row['unit_label'],
++                'fullCharacters': (row['text'] as String).length,
++                'contextCharacters': (row['context_text'] as String).length,
 +              },
 +            )
 +            .toList();
@@ -146,10 +149,20 @@ new file mode 100644
 +            'language': '繁體中文',
 +            'source': source,
 +            'logicNotes': draft['d'] ?? [],
-+            'e': evidence.values.indexed.map((row) => {'i': row.$1, 'name': row.$2['title'], 'article': row.$2['unit_label'], 'text': row.$2['text']}).toList(),
++            'e': evidence.values.indexed.map((row) => {'i': row.$1, 'name': row.$2['title'], 'article': row.$2['unit_label'], 'text': row.$2['context_text'] ?? row.$2['text'], 'excerpt': row.$2['context_is_excerpt'] == true}).toList(),
 +          })}',
 +        );
 +        stages['answerRaw'] = answerRaw;
++        stages['firstBatchSeconds'] =
++            stages['ocrSeconds'] + stages['planSeconds'];
++        stages['answersSeconds'] =
++            (watch.elapsedMilliseconds - answerStarted) / 1000;
++        stages['answerMetrics'] = jsonDecode(
++          (await const MethodChannel('townpass/govclear_local')
++              .invokeMethod<String>('metrics'))!,
++        );
++        stages['totalSeconds'] = watch.elapsedMilliseconds / 1000;
++        stages['under20Seconds'] = watch.elapsedMilliseconds <= 20000;
 +        await file.writeAsString(jsonEncode(report));
 +        final answer = modelJson(answerRaw);
 +        expect((answer['a'] as List).length, lessThanOrEqualTo(3));
@@ -161,28 +174,51 @@ new file mode 100644
 +          expect(row['q'], isA<String>());
 +          expect(row['t'], isA<String>());
 +          expect(
-+            (row['c'] as List).every(
-+              (index) => index is int && index >= 0 && index < evidence.length,
-+            ),
++            (row['c'] as List).every((ref) {
++              final match = ref is String
++                  ? RegExp(r'^(?:e\[(\d+)\]|(\d+))$').firstMatch(ref)
++                  : null;
++              final index = ref is int
++                  ? ref
++                  : match != null
++                  ? int.parse(match[1] ?? match[2]!)
++                  : evidence.keys.toList().indexOf(ref);
++              return index >= 0 && index < evidence.length;
++            }),
 +            isTrue,
 +          );
 +        }
 +        stages['answers'] = answer['a'];
-+        stages['firstBatchSeconds'] =
-+            stages['ocrSeconds'] + stages['planSeconds'];
-+        stages['answersSeconds'] =
-+            (watch.elapsedMilliseconds - answerStarted) / 1000;
-+        stages['answerMetrics'] = jsonDecode(
-+          (await const MethodChannel('townpass/govclear_local')
-+              .invokeMethod<String>('metrics'))!,
-+        );
-+        stages['totalSeconds'] = watch.elapsedMilliseconds / 1000;
-+        stages['under20Seconds'] = watch.elapsedMilliseconds <= 20000;
 +        stages['sourceCharacters'] = source.length;
 +        stages['evidenceCount'] = evidence.length;
-+        expect(evidence, isNotEmpty);
++        expect(
++          evidence.length,
++          3,
++        ); // All three reference candidates stay available.
 +        (report['runs'] as List).add(stages);
 +        await file.writeAsString(jsonEncode(report));
++        expect(stages['totalSeconds'], lessThanOrEqualTo(20));
++      }
++      report['logicCases'] = <dynamic>[];
++      for (final input in [
++        ('交通通知記載：14歲駕駛超速。', true),
++        ('乘客14歲，駕駛人為45歲的父親。車輛因超速收到通知。', false),
++        ('45歲駕駛人在11月14日超速，收到交通通知。', false),
++      ]) {
++        final value = modelJson(
++          await engine.generate(
++            policies['planPolicy'] +
++                jsonEncode({'language': '繁體中文', 'source': input.$1}),
++          ),
++        );
++        (report['logicCases'] as List).add({
++          'source': input.$1,
++          'output': value,
++        });
++        await file.writeAsString(jsonEncode(report));
++        expect(value['s'], isA<String>());
++        expect((value['w'] as Map).length, 6);
++        expect((value['d'] as List).isNotEmpty, input.$2);
 +      }
 +      report['status'] = 'passed';
 +    } catch (error) {
@@ -260,7 +296,7 @@ index 478d28d..97dec56 100644
          engine.cancel();
          respond(value: 'stopped');
          return;
-@@ -208,6 +209,16 @@ class _GovClearWebViewState extends State<GovClearWebView> {
+@@ -208,6 +209,19 @@ class _GovClearWebViewState extends State<GovClearWebView> {
              result = SimulatorGemmaEngine.onDevice
                  ? 'iPhone 離線 · Gemma 4 E4B'
                  : '模擬器測試 · Mac 上的 Gemma 4 E4B';
@@ -273,11 +309,14 @@ index 478d28d..97dec56 100644
 +            if (payload is! Map || payload['terms'] is! String) {
 +              throw StateError('缺少檢索條件。');
 +            }
-+            result = await GovClearKnowledge.retrieve(payload['terms']);
++            result = await GovClearKnowledge.retrieve(
++              payload['terms'],
++              source: payload['source'] is String ? payload['source'] : '',
++            );
            case 'summarize':
              if (payload is! Map ||
                  payload['text'] is! String ||
-@@ -235,9 +246,7 @@ class _GovClearWebViewState extends State<GovClearWebView> {
+@@ -235,9 +249,7 @@ class _GovClearWebViewState extends State<GovClearWebView> {
                policy: payload['policy'],
              );
            case 'transcribe':
@@ -288,7 +327,7 @@ index 478d28d..97dec56 100644
                throw StateError('圖片格式或大小不正確。');
              }
              result = await engine.transcribe(base64Decode(payload['image']));
-@@ -246,7 +255,7 @@ class _GovClearWebViewState extends State<GovClearWebView> {
+@@ -246,7 +258,7 @@ class _GovClearWebViewState extends State<GovClearWebView> {
          }
          if (operation == generation) respond(value: result);
        } finally {
@@ -299,10 +338,9 @@ index 478d28d..97dec56 100644
        respond(error: e.message ?? '手機模型執行失敗。');
 diff --git a/lib/service/govclear_knowledge.dart b/lib/service/govclear_knowledge.dart
 new file mode 100644
-index 0000000..f0aea13
 --- /dev/null
 +++ b/lib/service/govclear_knowledge.dart
-@@ -0,0 +1,91 @@
+@@ -0,0 +1,160 @@
 +import 'dart:convert';
 +
 +import 'package:crypto/crypto.dart';
@@ -376,7 +414,69 @@ index 0000000..f0aea13
 +    return scored.take(3).map((row) => row.unit).toList();
 +  }
 +
-+  static Future<String> retrieve(String encodedTerms) async {
++  // Select whole legal paragraphs; the evidence text and source document stay intact.
++  static String contextText(String text, String source) {
++    final cues = <String>{};
++    for (final run in RegExp(r'[\u3400-\u9fff]+').allMatches(source)) {
++      final word = run[0]!;
++      for (var i = 0; i < word.length - 1; i++) {
++        cues.add(word.substring(i, i + 2));
++      }
++    }
++    final lines = text.trim().split(RegExp(r'\n+'));
++    if (cues.isEmpty || lines.length < 2) return text;
++    final mainItem = RegExp(r'^[一二三四五六七八九十百]+、');
++    final subItem = RegExp(r'^（[一二三四五六七八九十百]+）');
++    final mainItems = lines.skip(1).any(mainItem.hasMatch);
++    final subItems = lines.skip(1).any(subItem.hasMatch);
++    final blocks = <String>[lines.first];
++    for (final line in lines.skip(1)) {
++      if ((mainItems && subItem.hasMatch(line)) ||
++          (!mainItems && subItems && !subItem.hasMatch(line))) {
++        blocks[blocks.length - 1] += '\n$line';
++      } else {
++        blocks.add(line);
++      }
++    }
++    var best = -1, score = 0;
++    for (var i = 1; i < blocks.length; i++) {
++      final hits = cues.where(blocks[i].contains).length;
++      if (hits > score ||
++          (hits == score &&
++              hits > 0 &&
++              blocks[i].length < blocks[best].length)) {
++        best = i;
++        score = hits;
++      }
++    }
++    if (best < 0) return text;
++    final selected = <int>{0, best};
++    if (!mainItems && subItems) {
++      selected.add(1); // FAQ base answer qualifies later instructions.
++    }
++    final ordinal = mainItem
++        .firstMatch(blocks[best])
++        ?.group(0)
++        ?.replaceAll('、', '');
++    if (ordinal != null) {
++      for (var i = 1; i < blocks.length; i++) {
++        if (blocks[i].contains('第$ordinal款')) selected.add(i);
++      }
++    }
++    for (final match in RegExp(
++      r'前項第([一二三四五六七八九十]+)款',
++    ).allMatches(blocks[best])) {
++      for (var i = 1; i < blocks.length; i++) {
++        if (blocks[i].startsWith('${match[1]}、')) selected.add(i);
++      }
++    }
++    return (selected.toList()..sort()).map((i) => blocks[i]).join('\n');
++  }
++
++  static Future<String> retrieve(
++    String encodedTerms, {
++    String source = '',
++  }) async {
 +    final input = jsonDecode(encodedTerms);
 +    if (input is! List || input.any((x) => x is! String)) {
 +      throw StateError('無效檢索條件。');
@@ -390,7 +490,14 @@ index 0000000..f0aea13
 +      'datasetHash': checksum,
 +      'retrievedAt': DateTime.now().toUtc().toIso8601String(),
 +      'historicalApplicability': 'unverified',
-+      'evidence': search(units, input.cast<String>()),
++      'evidence': search(units, input.cast<String>()).map((unit) {
++        final context = contextText(unit['text'] as String, source);
++        return {
++          ...unit,
++          'context_text': context,
++          'context_is_excerpt': context != unit['text'],
++        };
++      }).toList(),
 +    });
 +  }
 +}
@@ -561,10 +668,9 @@ index 0267dd5..533f015 100644
      - assets/svg/
 diff --git a/test/govclear_knowledge_test.dart b/test/govclear_knowledge_test.dart
 new file mode 100644
-index 0000000..87bc7e0
 --- /dev/null
 +++ b/test/govclear_knowledge_test.dart
-@@ -0,0 +1,50 @@
+@@ -0,0 +1,108 @@
 +import 'dart:typed_data';
 +import 'dart:convert';
 +import 'dart:io';
@@ -614,6 +720,64 @@ index 0000000..87bc7e0
 +      isEmpty,
 +    );
 +  });
++  test('focused context keeps complete clauses, linked exceptions and original text', () {
++    const text =
++        '申請應符合下列規定：\n一、住宅用途應合法。\n（一）主要用途為住宅。\n（二）空白者按住家稅率。但另有證明者不在此限。\n二、租賃契約承租人應為申請人。\n未保存登記者，不受前項第一款規定之限制。';
++    final context = GovClearKnowledge.contextText(text, '住宅用途');
++    expect(context, contains('（一）主要用途為住宅。\n（二）空白者按住家稅率。但另有證明者不在此限。'));
++    expect(context, contains('不受前項第一款規定之限制'));
++    expect(context, isNot(contains('二、租賃契約')));
++    expect(text, contains('二、租賃契約'));
++  });
++  test('FAQ excerpts retain wrapped continuation lines and a complete selected answer', () {
++    const text =
++        '如何辦理？\n（一）租約到期請先確認資格。\n（二）線上補件方式如下：\n前往網站\nhttps://example.org\n點選補件並上傳。\n（三）其他申請方式。';
++    final context = GovClearKnowledge.contextText(text, '線上補件');
++    expect(
++      context,
++      '如何辦理？\n（一）租約到期請先確認資格。\n（二）線上補件方式如下：\n前往網站\nhttps://example.org\n點選補件並上傳。',
++    );
++    expect(GovClearKnowledge.contextText(text, '完全無關'), text);
++    expect(GovClearKnowledge.contextText(text, ''), text);
++  });
++  test('all three references retain full text alongside shorter per-reference context', () {
++    final units = GovClearKnowledge.decode(
++      File('assets/govclear_rag/knowledge.json').readAsBytesSync(),
++    );
++    final found = GovClearKnowledge.search(units, ['提出租金補貼申請', '附上身分證及租賃契約']);
++    expect(found.length, 3);
++    var original = 0, focused = 0;
++    for (final unit in found) {
++      final text = unit['text'] as String;
++      final context = GovClearKnowledge.contextText(
++        text,
++        '租金補貼通知，請在115年12月10日前提出申請，附上身分證及租賃契約，符合資格才可領取補貼。',
++      );
++      expect(context, isNotEmpty);
++      expect(unit['text'], text);
++      original += text.length;
++      focused += context.length;
++    }
++    expect(focused, lessThan(original));
++  });
++  test(
++    'FAQ base conditions are retained alongside later supplement instructions',
++    () {
++      final units = GovClearKnowledge.decode(
++        File('assets/govclear_rag/knowledge.json').readAsBytesSync(),
++      );
++      final unit = units.firstWhere(
++        (u) => u['unit_id'] == 'pip_b1020_faq_115:q35:bba4aa037cbb25507d05',
++      );
++      final context = GovClearKnowledge.contextText(
++        unit['text'] as String,
++        '租金補貼申請，附上身分證及租賃契約。',
++      );
++      expect(context, contains('仍可繼續辦理審核'));
++      expect(context, contains('無法撥款'));
++      expect(context, contains('補新租約'));
++    },
++  );
 +}
 diff --git a/test/govclear_native_engine_test.dart b/test/govclear_native_engine_test.dart
 index aefc81d..a2bd323 100644

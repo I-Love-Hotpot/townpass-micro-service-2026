@@ -312,7 +312,7 @@ test('each suggested answer selects its own references from multiple complete ca
   const result = await analyzeSource(bridge, source, '文件', 'zh-TW');
   const data = JSON.parse(bridge.calls.filter(c => c.action === 'generate')[1].payload.prompt.split('資料：')[1]);
   assert.deepEqual(data.e.map(e => e.text), [evidence.text, second.text, third.text]);
-  assert.match(bridge.calls.filter(c => c.action === 'generate')[1].payload.prompt, /直接依source即可回答的部分不需附法條/);
+  assert.match(bridge.calls.filter(c => c.action === 'generate')[1].payload.prompt, /直接依原文回答或未用e就/);
   assert.deepEqual(result.questions.map(q => q.citations), [[second.unit_id], [third.unit_id], []]);
   assert.deepEqual(result.questions.map(q => q.evidence.map(e => e.unit_id)), [[second.unit_id], [third.unit_id], []]);
   assert.equal(bridge.calls.filter(c => c.action === 'generate').length, 2);
@@ -327,4 +327,28 @@ test('follow-up references contain only the cited candidates, including no refer
     const result = await answerWithEvidence(bridge, source, '補件？', '', ['補件'], 'zh-TW', 'user', 'user');
     assert.deepEqual(result.evidence.map(e => e.unit_id), citations[0] === second.unit_id ? [second.unit_id] : []);
   }
+});
+
+test('all reference excerpts reach the model while cited references keep their full text', async () => {
+  const candidates = [0, 1, 2].map(i => ({ ...evidence, unit_id: `law:${i}:v1`, text: `完整條文${i}。\n與本題相關但有例外的完整段落${i}。\n其他規定${i}。`, context_text: `與本題相關但有例外的完整段落${i}。`, context_is_excerpt: true }));
+  const bridge = host((action, payload) => action === 'retrieve' ? { ...retrieval, evidence: candidates }
+    : payload?.prompt?.includes('"a":') ? { a: [{ q: '例外怎麼適用？', t: '請確認例外條件。', c: [0, 2] }] } : undefined);
+  const result = await analyzeSource(bridge, source, '文件', 'zh-TW');
+  const prompt = bridge.calls.filter(c => c.action === 'generate')[1].payload.prompt;
+  const data = JSON.parse(prompt.split('資料：')[1]);
+  assert.equal(bridge.calls.find(c => c.action === 'retrieve').payload.source, source);
+  assert.equal(data.source, source);
+  assert.deepEqual(data.e.map(e => e.text), candidates.map(e => e.context_text));
+  assert.ok(data.e.every(e => e.excerpt));
+  assert.deepEqual(result.questions[0].evidence.map(e => e.text), [candidates[0].text, candidates[2].text]);
+  assert.equal(bridge.calls.filter(c => c.action === 'generate').length, 2);
+});
+
+test('reference indices returned as e[index], numeric strings or known IDs retain multiple actual sources', async () => {
+  const second = { ...evidence, unit_id: 'law:2:v1' };
+  const bridge = host((action, payload) => action === 'retrieve' ? { ...retrieval, evidence: [evidence, second] }
+    : payload?.prompt?.includes('"a":') ? { a: [{ q: '要怎麼補件？', t: '請依通知補件。', c: ['e[1]', '0', second.unit_id, 'e[999]', 'unknown', {}, -1, 1.5] }] } : undefined);
+  const result = await analyzeSource(bridge, source, '文件', 'zh-TW');
+  assert.deepEqual(result.questions[0].citations, [second.unit_id, evidence.unit_id]);
+  assert.equal(result.questions[0].evidence.length, 2);
 });

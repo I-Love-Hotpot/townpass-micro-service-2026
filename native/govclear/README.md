@@ -40,3 +40,7 @@ flutter test --no-pub --dart-define=GOVCLEAR_ON_DEVICE=true test/govclear_knowle
 ## 情境合理性真機測試
 
 Flutter `integration_test/govclear_logic_test.dart` 以手機現有 Gemma 測試14歲駕駛、14歲乘客搭成人駕駛車輛，以及11月14日。執行前將 validation/logic-policy.json 複製到 App Documents/govclear-logic-policy.json，測試結果寫入 Documents/govclear-logic-test.json。此測試不使用OCR圖片，僅驗證辨識後的情境判讀。正常App仍由 lib/main.dart 啟動。
+
+## 多筆參考資料加速
+
+Dart retrieve可接收source，為每筆候選產生context_text/context_is_excerpt，模型使用相關完整段落；原text與引用全文保留。保留首段、FAQ基本說明、款內子目及可辨識的同條款次連結，並非跨條文法律適用性解析。網頁與Flutter需同步更新才會取得此加速。integration_test/govclear_speed_test.dart同時確認三筆候選完整保留、兩輪原生照片流程不超過20秒，並檢查縮短後提示詞的年齡／角色／日期案例。

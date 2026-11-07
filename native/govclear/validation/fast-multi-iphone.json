@@ -1,0 +1,241 @@
+{
+  "date": "2026-11-08",
+  "scope": "Two runs of the same synthetic 77-character photo on XC iPhone: native OCR + summary/six + local retrieval + natural-language suggested answers. Both <=20 seconds, all three reference candidates retained, full texts preserved and multiple sources cited. Excludes WebView, IndexedDB, render and user image preprocessing; not a P95 or arbitrary-document guarantee. Followed by three logic regression cases.",
+  "status": "passed",
+  "runs": [
+    {
+      "state": "cold",
+      "ocrSeconds": 0.254,
+      "planSeconds": 4.614000000000001,
+      "planMetrics": {
+        "decode_tokens_per_second": 38.48937771429092,
+        "first_token_seconds": 1.35463394425,
+        "backend": "gpu_mtp",
+        "total_seconds": 4.612001958332257,
+        "input_tokens": 357,
+        "output_tokens": 83,
+        "prefill_tokens_per_second": 268.6932307933732,
+        "session_seconds": 1.1253811249989667
+      },
+      "sixFieldsReturned": 6,
+      "sourceCharacters": 77,
+      "draft": {
+        "s": "115年度租金補貼開放申請，需在115年12月10日前提交申請文件。",
+        "w": {
+          "who": "符合資格者",
+          "what": "租金補貼",
+          "when": "115年12月10日前",
+          "where": null,
+          "why": null,
+          "how": "附上身分證及租賃契約"
+        },
+        "d": []
+      },
+      "retrievalMode": "document-facts",
+      "evidenceUnits": [
+        {
+          "unit_id": "d0070205:17:f04105553202db61d810",
+          "unit_label": "第 17 條",
+          "fullCharacters": 444,
+          "contextCharacters": 253
+        },
+        {
+          "unit_id": "pip_b1020_faq_115:q8:707ced0c99f2aad2ca81",
+          "unit_label": "問答第8題",
+          "fullCharacters": 1227,
+          "contextCharacters": 282
+        },
+        {
+          "unit_id": "pip_b1020_faq_115:q35:bba4aa037cbb25507d05",
+          "unit_label": "問答第35題",
+          "fullCharacters": 575,
+          "contextCharacters": 321
+        }
+      ],
+      "retrievalSeconds": 0.273,
+      "answerRaw": "{\"a\":[{\"q\":\"115年度租金補貼的申請截止日期是什麼時候？\",\"t\":\"請在115年12月10日前提出申請。\",\"c\":[0]},{\"q\":\"申請租金補貼時，除了身分證和租賃契約外，還需要準備哪些文件？\",\"t\":\"根據不同的申請情況，可能需要準備申請書，以及租賃契約影本或電子契約。\",\"c\":[0,1]},{\"q\":\"如果租賃契約在申請日後到期，是否會影響到領取補貼的資格？\",\"t\":\"如果審核時發現租約在申請日後到期，直轄市、縣（市）政府仍可繼續辦理審核，但核撥租金補貼時會檢核租約已到期，無法撥款，核定函上會敘明請申請人依限補新租約。\",\"c\":[2]}]}",
+      "firstBatchSeconds": 4.868,
+      "answersSeconds": 9.12,
+      "answerMetrics": {
+        "output_tokens": 203,
+        "backend": "gpu_mtp",
+        "session_seconds": 0.001461041669244878,
+        "total_seconds": 9.119071166664071,
+        "prefill_tokens_per_second": 302.9235440886042,
+        "input_tokens": 1232,
+        "first_token_seconds": 4.0918936245,
+        "decode_tokens_per_second": 40.2239821920703
+      },
+      "totalSeconds": 14.261,
+      "under20Seconds": true,
+      "answers": [
+        {
+          "q": "115年度租金補貼的申請截止日期是什麼時候？",
+          "t": "請在115年12月10日前提出申請。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "申請租金補貼時，除了身分證和租賃契約外，還需要準備哪些文件？",
+          "t": "根據不同的申請情況，可能需要準備申請書，以及租賃契約影本或電子契約。",
+          "c": [
+            0,
+            1
+          ]
+        },
+        {
+          "q": "如果租賃契約在申請日後到期，是否會影響到領取補貼的資格？",
+          "t": "如果審核時發現租約在申請日後到期，直轄市、縣（市）政府仍可繼續辦理審核，但核撥租金補貼時會檢核租約已到期，無法撥款，核定函上會敘明請申請人依限補新租約。",
+          "c": [
+            2
+          ]
+        }
+      ],
+      "evidenceCount": 3
+    },
+    {
+      "state": "warm",
+      "ocrSeconds": 0.168,
+      "planSeconds": 3.385,
+      "planMetrics": {
+        "decode_tokens_per_second": 39.626863730595296,
+        "first_token_seconds": 1.3134242809999999,
+        "backend": "gpu_mtp",
+        "total_seconds": 3.3853824166653794,
+        "input_tokens": 357,
+        "output_tokens": 83,
+        "prefill_tokens_per_second": 277.1332736435874,
+        "session_seconds": 0.0013545000037993304
+      },
+      "sixFieldsReturned": 6,
+      "sourceCharacters": 77,
+      "draft": {
+        "s": "115年度租金補貼開放申請，需在115年12月10日前提交申請文件。",
+        "w": {
+          "who": "符合資格者",
+          "what": "租金補貼",
+          "when": "115年12月10日前",
+          "where": null,
+          "why": null,
+          "how": "附上身分證及租賃契約"
+        },
+        "d": []
+      },
+      "retrievalMode": "document-facts",
+      "evidenceUnits": [
+        {
+          "unit_id": "d0070205:17:f04105553202db61d810",
+          "unit_label": "第 17 條",
+          "fullCharacters": 444,
+          "contextCharacters": 253
+        },
+        {
+          "unit_id": "pip_b1020_faq_115:q8:707ced0c99f2aad2ca81",
+          "unit_label": "問答第8題",
+          "fullCharacters": 1227,
+          "contextCharacters": 282
+        },
+        {
+          "unit_id": "pip_b1020_faq_115:q35:bba4aa037cbb25507d05",
+          "unit_label": "問答第35題",
+          "fullCharacters": 575,
+          "contextCharacters": 321
+        }
+      ],
+      "retrievalSeconds": 0.018,
+      "answerRaw": "{\"a\":[{\"q\":\"115年度租金補貼的申請截止日期是什麼時候？\",\"t\":\"請在115年12月10日前提出申請。\",\"c\":[0]},{\"q\":\"申請租金補貼時，除了身分證和租賃契約外，還需要準備哪些文件？\",\"t\":\"根據不同的申請情況，可能需要準備申請書，以及租賃契約影本或電子契約。\",\"c\":[0,1]},{\"q\":\"如果租賃契約在申請日後到期，是否會影響到領取補貼的資格？\",\"t\":\"如果審核時發現租約在申請日後到期，直轄市、縣（市）政府仍可繼續辦理審核，但核撥租金補貼時會檢核租約已到期，無法撥款，核定函上會敘明請申請人依限補新租約。\",\"c\":[2]}]}",
+      "firstBatchSeconds": 3.553,
+      "answersSeconds": 9.69,
+      "answerMetrics": {
+        "output_tokens": 203,
+        "backend": "gpu_mtp",
+        "session_seconds": 0.0012472499947762117,
+        "total_seconds": 9.689845749999222,
+        "prefill_tokens_per_second": 275.87830235892415,
+        "input_tokens": 1232,
+        "first_token_seconds": 4.49145806775,
+        "decode_tokens_per_second": 38.87895036410114
+      },
+      "totalSeconds": 13.262,
+      "under20Seconds": true,
+      "answers": [
+        {
+          "q": "115年度租金補貼的申請截止日期是什麼時候？",
+          "t": "請在115年12月10日前提出申請。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "申請租金補貼時，除了身分證和租賃契約外，還需要準備哪些文件？",
+          "t": "根據不同的申請情況，可能需要準備申請書，以及租賃契約影本或電子契約。",
+          "c": [
+            0,
+            1
+          ]
+        },
+        {
+          "q": "如果租賃契約在申請日後到期，是否會影響到領取補貼的資格？",
+          "t": "如果審核時發現租約在申請日後到期，直轄市、縣（市）政府仍可繼續辦理審核，但核撥租金補貼時會檢核租約已到期，無法撥款，核定函上會敘明請申請人依限補新租約。",
+          "c": [
+            2
+          ]
+        }
+      ],
+      "evidenceCount": 3
+    }
+  ],
+  "logicCases": [
+    {
+      "source": "交通通知記載：14歲駕駛超速。",
+      "output": {
+        "s": "文件記載14歲駕駛超速，需確認年齡、實際駕駛及OCR數字。",
+        "w": {
+          "who": "14歲駕駛",
+          "what": "超速",
+          "when": "無",
+          "where": "無",
+          "why": "無",
+          "how": "無"
+        },
+        "d": [
+          {
+            "quote": "14歲駕駛超速",
+            "text": "請核對年齡、實際駕駛及OCR數字"
+          }
+        ]
+      }
+    },
+    {
+      "source": "乘客14歲，駕駛人為45歲的父親。車輛因超速收到通知。",
+      "output": {
+        "s": "14歲乘客，45歲父親駕駛超速收到通知。",
+        "w": {
+          "who": "14歲乘客、45歲父親",
+          "what": "超速收到通知",
+          "when": "未提及",
+          "where": "未提及",
+          "why": "未提及",
+          "how": "未提及"
+        },
+        "d": []
+      }
+    },
+    {
+      "source": "45歲駕駛人在11月14日超速，收到交通通知。",
+      "output": {
+        "s": "45歲駕駛人於11月14日超速，收到交通通知。",
+        "w": {
+          "who": "45歲駕駛人",
+          "what": "超速",
+          "when": "11月14日",
+          "where": null,
+          "why": null,
+          "how": null
+        },
+        "d": []
+      }
+    }
+  ]
+}
