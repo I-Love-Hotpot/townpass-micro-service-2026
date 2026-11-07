@@ -105,3 +105,72 @@ test('both automatic answers and follow-up answers use plain language with separ
  assert.deepEqual(result.citations,[evidence.unit_id]);
  assert.equal(result.evidence[0].text,evidence.text);
 });
+
+test('an age/driver concern is shown early without blocking OCR text or generation', async () => {
+  const text = '罰單記載：14 歲駕駛超速。';
+  const note = {
+    quote: '14歲駕駛超速',
+    text: '請確認14是否為年齡、本人是否為駕駛人，或OCR將日期車號誤讀；這並不代表不可能發生。'
+  };
+  const bridge = host((action, payload) =>
+    payload?.prompt?.includes('"w":')
+      ? { s: '罰單記載駕駛超速，年齡及身分仍需確認。', w: draft.sixQuestions, d: [note] }
+      : undefined
+  );
+  const snapshots = [];
+  const result = await analyzeSource(bridge, text, '罰單', 'zh-TW', (value) =>
+    snapshots.push(value)
+  );
+  const plan = bridge.calls.find((c) => c.action === 'generate').payload.prompt;
+  assert.match(plan, /先分清人物角色與數字用途/);
+  assert.match(plan, /14歲乘客、45歲父親駕駛並無矛盾/);
+  assert.deepEqual(snapshots[0].logicNotes, [note]);
+  assert.equal(snapshots[0].publication, 'pending');
+  assert.equal(result.publication, 'generated');
+  assert.equal(bridge.calls.filter((c) => c.action === 'generate').length, 2);
+  const prompts = bridge.calls
+    .filter((c) => c.action === 'generate')
+    .map((c) => JSON.parse(c.payload.prompt.split('資料：')[1]));
+  assert.equal(prompts[0].source, text);
+  assert.deepEqual(prompts[1].logicNotes, [note]);
+});
+
+test('ordinary documents and unsupported model concerns never become false warnings', async () => {
+  const regular = await analyzeSource(host(), source, '文件', 'zh-TW');
+  assert.deepEqual(regular.logicNotes, []);
+  const bridge = host((action, payload) =>
+    payload?.prompt?.includes('"w":')
+      ? {
+          s: draft.summary,
+          w: draft.sixQuestions,
+          d: [
+            { quote: '原文不存在的14歲駕駛', text: '憑空疑點' },
+            { quote: '', text: '沒有引句' },
+            { quote: source, text: null }
+          ]
+        }
+      : undefined
+  );
+  const result = await analyzeSource(bridge, source, '文件', 'zh-TW');
+  assert.deepEqual(result.logicNotes, []);
+  assert.equal(result.publication, 'generated');
+});
+
+test('follow-up answers receive unresolved context concerns as data', async () => {
+  const notes = [{ quote: '14歲駕駛', text: '先確認年齡與駕駛身分，不可斷言不可能。' }];
+  const bridge = host();
+  await answerWithEvidence(
+    bridge,
+    '14歲駕駛超速',
+    '這張罰單適用於我嗎？',
+    '',
+    [],
+    'zh-TW',
+    'user',
+    'user',
+    notes
+  );
+  const prompt = bridge.calls.find((c) => c.action === 'generate').payload.prompt;
+  assert.match(prompt, /先釐清事實並用條件式說明/);
+  assert.deepEqual(JSON.parse(prompt.split('資料：')[1]).logicNotes, notes);
+});

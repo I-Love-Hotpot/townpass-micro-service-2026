@@ -140,3 +140,5 @@ PYTHONPATH=local-inference /usr/bin/python3 -m unittest discover -s local-infere
 新文件改走 services/govclearRag.ts：第一通只生成摘要／六何，立即預覽；由 what/how 檢索一段完整本機證據，第二通一起生成具體情境問題與回答。govclearJson.ts 僅處理 JSON／雜湊；依使用者最終指示，所有 AI Guard 已移除，不可將生成結果稱為已複核。文件頁已移除「下一步」及服務／申辦案件入口，重新解釋也可先顯示摘要。
 
 Flutter 的 generate／retrieve 沿用手機既有模型與資料，不需要 Python runtime。資料及可重套 patch 在 native/govclear/，實機測速與限制見 docs/govclear-rag-guard.md 最新章節。單張短通知的原生測試不能當作所有圖片端到端 20 秒保證；不要沿用本檔較早的保存／六何流程或護欄描述作為最新行為。
+
+情境合理性提醒由第一通模型一起產生 optional logicNotes，包含原文引句及需釐清事項；摘要／追問帶入不確定性，不能當作已確認錯誤。角色、年齡、日期先分清，14歲乘客與成人駕駛不應被當作14歲駕駛。提醒不阻擋OCR、生成或保存，舊紀錄缺欄位仍可讀取。

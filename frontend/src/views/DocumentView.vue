@@ -2,6 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import AppIcon from '@/components/atoms/AppIcon.vue';
+import LogicNotes from '@/components/molecules/LogicNotes.vue';
 import DocumentGallery from '@/components/organisms/DocumentGallery.vue';
 import type { DocumentRecord } from '@/interfaces/document';
 import { answerQuestion } from '@/services/answers';
@@ -334,6 +335,11 @@ async function copySix() {
           <h1 class="page-title">{{ t('chat') }}</h1>
           <p class="break-words text-sm text-muted">{{ entry.summary.title }}</p>
         </div>
+        <LogicNotes
+          v-if="!sourceDirty"
+          :notes="entry.analysis?.logicNotes"
+          :locale="workspace.context.locale"
+        />
         <p v-if="sourceDirty" class="feedback" role="status">{{ t('sourceChanged') }}</p>
         <p v-if="!entry.chat.length" class="rounded bg-surface p-4 text-sm text-muted">
           {{ t('chatEmpty') }}
@@ -404,6 +410,11 @@ async function copySix() {
       </section>
       <article v-else class="space-y-7">
         <h1 class="page-title">{{ entry.summary.title }}</h1>
+        <LogicNotes
+          v-if="!sourceDirty || explanationPreview"
+          :notes="explanationPreview?.logicNotes ?? entry.analysis?.logicNotes"
+          :locale="workspace.context.locale"
+        />
         <section
           v-if="visibleSummary && (!sourceDirty || explanationPreview)"
           class="rounded bg-surface p-4"

@@ -737,3 +737,79 @@ index aefc81d..a2bd323 100644
        );
        expect(chats, 1);
      });
+diff --git a/integration_test/govclear_logic_test.dart b/integration_test/govclear_logic_test.dart
+new file mode 100644
+--- /dev/null
++++ b/integration_test/govclear_logic_test.dart
+@@ -0,0 +1,71 @@
++import 'dart:convert';
++import 'dart:io';
++
++import 'package:flutter_test/flutter_test.dart';
++import 'package:integration_test/integration_test.dart';
++import 'package:path_provider/path_provider.dart';
++import 'package:town_pass/service/govclear_simulator_engine.dart';
++
++void main() {
++  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
++  testWidgets(
++    'age and driving concerns are uncertain notes, not document rejection',
++    (tester) async {
++      final docs = (await getApplicationDocumentsDirectory()).path;
++      final policy = jsonDecode(
++        await File('$docs/govclear-logic-policy.json').readAsString(),
++      )['planPolicy'];
++      final file = File('$docs/govclear-logic-test.json');
++      final report = <String, dynamic>{
++        'status': 'running',
++        'cases': <dynamic>[],
++      };
++      final engine = SimulatorGemmaEngine();
++      await file.writeAsString(jsonEncode(report));
++      try {
++        for (final input in [
++          ('交通通知記載：14歲駕駛超速。', true),
++          ('乘客14歲，駕駛人為45歲的父親。車輛因超速收到通知。', false),
++          ('45歲駕駛人在11月14日超速，收到交通通知。', false),
++        ]) {
++          final watch = Stopwatch()..start();
++          final raw = await engine.generate(
++            '$policy${jsonEncode({'language': '繁體中文', 'source': input.$1})}',
++          );
++          final value = jsonDecode(
++            raw.trim().replaceAll(
++              RegExp(r'^\x60\x60\x60(?:json)?\s*|\s*\x60\x60\x60$'),
++              '',
++            ),
++          );
++          (report['cases'] as List).add({
++            'source': input.$1,
++            'output': value,
++            'seconds': watch.elapsedMilliseconds / 1000,
++          });
++          await file.writeAsString(jsonEncode(report));
++          expect(value['s'], isA<String>());
++          expect((value['w'] as Map).length, 6);
++          expect(value['d'], isA<List>());
++          expect((value['d'] as List).isNotEmpty, input.$2);
++          for (final note in value['d']) {
++            final quote = note['quote'] as String;
++            expect(
++              input.$1.replaceAll(RegExp(r'\s'), ''),
++              contains(quote.replaceAll(RegExp(r'\s'), '')),
++            );
++          }
++        }
++        report['status'] = 'passed';
++      } catch (error) {
++        report['status'] = 'failed';
++        report['error'] = error.toString();
++        rethrow;
++      } finally {
++        engine.dispose();
++        await file.writeAsString(jsonEncode(report));
++      }
++    },
++    timeout: const Timeout(Duration(minutes: 5)),
++  );
++}

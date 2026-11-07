@@ -2,6 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, ref, shallowRef } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import AppIcon from '@/components/atoms/AppIcon.vue';
+import LogicNotes from '@/components/molecules/LogicNotes.vue';
 import FileAction from '@/components/molecules/FileAction.vue';
 import DocumentCrop from '@/components/molecules/DocumentCrop.vue';
 import type { FileKind, OriginalFile } from '@/interfaces/document';
@@ -345,6 +346,7 @@ async function run() {
         <p v-for="fact in preview.summary.facts" :key="fact" class="whitespace-pre-line">
           {{ fact }}
         </p>
+        <LogicNotes :notes="preview.logicNotes" :locale="workspace.context.locale" />
         <dl class="grid gap-3 sm:grid-cols-2">
           <div v-for="item in SIX_QUESTIONS" :key="item.key" class="rounded bg-surface p-3">
             <dt class="font-semibold">{{ item.title }}</dt>
