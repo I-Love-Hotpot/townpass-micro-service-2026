@@ -174,3 +174,54 @@ test('follow-up answers receive unresolved context concerns as data', async () =
   assert.match(prompt, /先釐清事實並用條件式說明/);
   assert.deepEqual(JSON.parse(prompt.split('資料：')[1]).logicNotes, notes);
 });
+
+test('summary field aliases and generic fenced JSON do not abort document processing', async () => {
+  const bridge = host((action, payload) => payload?.prompt?.includes('"w":')
+    ? '```\n' + JSON.stringify({ summary: draft.summary, sixQuestions: draft.sixQuestions }) + '\n```'
+    : undefined);
+  const result = await analyzeSource(bridge, source, '文件', 'zh-TW');
+  assert.equal(result.summary.facts[0], draft.summary);
+  assert.deepEqual(result.sixQuestions, draft.sixQuestions);
+  assert.equal(result.publication, 'generated');
+});
+
+test('missing or malformed six fields preserve the summary and continue answers without inventing missing facts', async () => {
+  for (const w of [undefined, null, [], { who: '申請人' }]) {
+    const bridge = host((action, payload) => payload?.prompt?.includes('"w":')
+      ? { s: draft.summary, w } : undefined);
+    const result = await analyzeSource(bridge, source, '文件', 'zh-TW');
+    assert.deepEqual(result.summary.facts, [draft.summary]);
+    assert.equal(result.sixQuestions, undefined);
+    assert.equal(result.publication, 'partial');
+    assert.equal(result.questions.length, 3);
+    assert.equal(bridge.calls.filter(c => c.action === 'generate').length, 2);
+  }
+});
+
+test('missing summary or broken JSON preserves source processing and marks the result partial', async () => {
+  for (const reply of [{ d: [] }, { s: '', w: draft.sixQuestions }, '{"d":[', '']) {
+    const bridge = host((action, payload) => payload?.prompt?.includes('"w":') ? reply : undefined);
+    const result = await analyzeSource(bridge, source, '文件', 'zh-TW');
+    assert.deepEqual(result.summary.facts, []);
+    assert.match(result.summary.action, /摘要暫未完成/);
+    assert.equal(result.publication, 'partial');
+    assert.equal(result.questions.length, 3);
+    const batch = bridge.calls.filter(c => c.action === 'generate')[1].payload.prompt;
+    assert.equal(JSON.parse(batch.split('資料：')[1]).source, source);
+  }
+});
+
+test('native generation failures still propagate instead of being saved as successful output', async () => {
+  const bridge = { async request() { throw new Error('模型尚未就緒'); } };
+  await assert.rejects(analyzeSource(bridge, source, '文件', 'zh-TW'), /模型尚未就緒/);
+});
+
+test('JSON envelopes accept prose and case-insensitive fences but never repair broken data', async () => {
+  const { objectJson } = await import(compile('govclearJson'));
+  for (const raw of ['```JSON\n{"text":"回答"}\n```', '整理如下：\n{"text":"回答"}']) {
+    assert.deepEqual(objectJson(raw), { text: '回答' });
+  }
+  for (const raw of ['[]', 'null', '{"text":"未完成', '{"text":"回答"} garbage', '[{"text":"回答"}]']) {
+    assert.throws(() => objectJson(raw));
+  }
+});

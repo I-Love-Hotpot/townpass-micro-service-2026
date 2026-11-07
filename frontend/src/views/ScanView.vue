@@ -230,7 +230,7 @@ async function run() {
               stage.value =
                 workspace.context.locale === 'id'
                   ? 'Menyiapkan jawaban'
-                  : '摘要已完成，正在整理具體問題與回答';
+                  : '已取得可用內容，正在整理具體問題與回答';
             }
           }
         ),
@@ -346,8 +346,9 @@ async function run() {
         <p v-for="fact in preview.summary.facts" :key="fact" class="whitespace-pre-line">
           {{ fact }}
         </p>
+        <p v-if="!preview.summary.facts.length" role="status">{{ preview.summary.action }}</p>
         <LogicNotes :notes="preview.logicNotes" :locale="workspace.context.locale" />
-        <dl class="grid gap-3 sm:grid-cols-2">
+        <dl v-if="preview.sixQuestions" class="grid gap-3 sm:grid-cols-2">
           <div v-for="item in SIX_QUESTIONS" :key="item.key" class="rounded bg-surface p-3">
             <dt class="font-semibold">{{ item.title }}</dt>
             <dd class="whitespace-pre-line">

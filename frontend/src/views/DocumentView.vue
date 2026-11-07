@@ -125,7 +125,8 @@ async function load() {
     request === requestId &&
     route.name === 'document' &&
     entry.value?.source &&
-    !entry.value.sixQuestions
+    !entry.value.sixQuestions &&
+    !entry.value.analysis
   )
     void generateSix();
 }
@@ -166,6 +167,13 @@ async function applyAction(action: 'explain' | 'chat') {
             }
           )
         : undefined;
+    if (analysis && draftSource.value === record.source) {
+      if (!analysis.summary.facts.length) {
+        if (record.summary.facts.length) analysis.summary = record.summary;
+        analysis.logicNotes = record.analysis?.logicNotes;
+      }
+      analysis.sixQuestions ??= record.sixQuestions;
+    }
     const summary =
       action === 'explain'
         ? record.source
@@ -192,7 +200,10 @@ async function applyAction(action: 'explain' | 'chat') {
           analysis,
           sixQuestionsSeconds: undefined,
           processingSeconds: (performance.now() - started) / 1000,
-          chat: []
+          chat:
+            analysis?.publication === 'partial' && draftSource.value === stored.source
+              ? stored.chat
+              : []
         };
       const exchange = {
         question: prompt,
@@ -209,7 +220,7 @@ async function applyAction(action: 'explain' | 'chat') {
       draftSource.value = updated.source ?? '';
       sixError.value = '';
       sixCopied.value = false;
-      refreshSix = Boolean(updated.source && !updated.sixQuestions);
+      refreshSix = Boolean(updated.source && !updated.sixQuestions && !updated.analysis);
     } else {
       question.value = '';
       await nextTick();
@@ -583,8 +594,8 @@ async function copySix() {
           <p v-if="entry.analysis.publication === 'partial'" role="status" class="feedback">
             {{
               workspace.context.locale === 'id'
-                ? 'Sebagian pertanyaan atau jawaban belum tersedia.'
-                : '部分問題或回答未生成；已保留可用結果。'
+                ? 'Sebagian konten belum tersedia; dokumen asli dan hasil yang tersedia disimpan.'
+                : '部分內容未生成；原文與可用結果已保留，可繼續提問或重新解釋。'
             }}
           </p>
           <article

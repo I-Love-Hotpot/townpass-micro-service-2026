@@ -142,3 +142,5 @@ PYTHONPATH=local-inference /usr/bin/python3 -m unittest discover -s local-infere
 Flutter 的 generate／retrieve 沿用手機既有模型與資料，不需要 Python runtime。資料及可重套 patch 在 native/govclear/，實機測速與限制見 docs/govclear-rag-guard.md 最新章節。單張短通知的原生測試不能當作所有圖片端到端 20 秒保證；不要沿用本檔較早的保存／六何流程或護欄描述作為最新行為。
 
 情境合理性提醒由第一通模型一起產生 optional logicNotes，包含原文引句及需釐清事項；摘要／追問帶入不確定性，不能當作已確認錯誤。角色、年齡、日期先分清，14歲乘客與成人駕駛不應被當作14歲駕駛。提醒不阻擋OCR、生成或保存，舊紀錄缺欄位仍可讀取。
+
+摘要格式相容更新：generate的s/w也接受summary/sixQuestions，JSON可有程式碼框或前置說明；解析缺漏只標記partial，不丟掉OCR或中止後續問答。sixQuestions可不存在，此時不是六欄null／「未提及」；不要在進詳情時自動重跑已有analysis的缺漏結果。同原文重新解釋未回傳的摘要與六何保留舊值。
