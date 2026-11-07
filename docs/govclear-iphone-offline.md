@@ -142,3 +142,53 @@ Flutter 分析無問題，4 項原生路由／單輪／取消測試通過，正�
 前端 9 項測試與建置、Flutter 測試檔分析通過。
 正常 iPhone App 已安裝；本輪自動啟動仍遇到 iOS 憑證／信任拒絕，
 實體相機拍攝尚待使用者完成裝置信任驗證後手動確認。
+
+## 自動六何整理
+
+每次圖片或文字摘要完成，先顯示白話摘要，再自動從同一份完整原文產生六何資訊：
+何人（對象）、何事（事項）、何時（日期期限）、何地（地點）、為何（明載原因）、如何（方式與條件）。
+摘要與六何是兩次獨立推論；原有約 14 秒摘要實測不涵蓋新增加的六何產生時間。
+六何提示詞在微服務 `frontend/src/assets/govclear/six-questions-policy.txt`，
+透過 `sixQuestions` 原生橋接交給現有離線模型，沒有新增網路 API。
+
+模型必須回傳六個固定 JSON 欄位，未知值為 null，前端顯示「原文未提及」。
+格式錯誤、欄位缺漏與空字串會顯示重試錯誤，不將不完整輸出當成原文缺漏。
+卡片可獨立複製、重新產生；取消或六何失敗保留已完成摘要。
+更新原文、修正 OCR、移除或排序圖片時，摘要與六何一起清除，避免顯示舊文件資訊。
+前端採文字插值顯示，不執行模型回傳的 HTML。
+
+測試：`frontend/tests/govclearSixQuestions.test.mjs` 驗證解析與缺漏；
+TownPass `integration_test/govclear_six_questions_test.dart` 驗證自動接續產生六欄、
+日期與例外、原文未寫原因、取消保留與更新後清除。使用合成通知，不使用私人罰單原文。
+
+六何真機回歸（iPhone 15 Pro Max）通過：合成短通知約 7.124 秒先顯示摘要、
+13.226 秒完成摘要與六何（不含預載），驗證六卡、原文沒寫原因的 null 顯示、
+完整日期、200 元、65 歲免收、兩項材料、郵寄實際收件與確認後免重交條件。
+重新整理中取消會保留原摘要與已有六何，修改原文後兩者清除。
+這是合成短通知結果，不是罰單、多頁文件或所有原文的時間／正確率保證。
+第一輪測試發現免重交與收件條件遺漏，已加強 how 抽取規則並重測通過。
+前端 11 項測試、Flutter 5 項原生測試及分析檢查通過。
+手機報告 `Documents/govclear-six-test.json`；本機副本 `.runtime/iphone/six-questions-test-result.json`，不納入 Git。
+
+## 六何「回應不完整」格式修正
+
+原實作只有提示詞要求 JSON，模型仍可能產生自由格式，造成前端解析失敗。
+手機六何現在使用 LiteRT-LM `ResponseFormat.json`，六欄必填、值為非空字串或 null，
+不允許額外欄位。六何使用獨立、啟用格式約束的會話，不重用普通摘要預載會話；
+該會話停用 MTP，摘要仍維持 GPU + MTP。模擬器 Ollama 也傳入相同 JSON schema。
+參考：[SDK 格式約束介面](https://github.com/google-ai-edge/LiteRT-LM/blob/v0.19.1/swift/ResponseFormat.swift)。
+
+前端相容舊版模型的中文欄名、非空文字陣列（逐條保留）及 JSON 外說明；
+不會將缺少欄位、空白答案、錯誤型別、衝突欄名或截斷 JSON 補成 null。
+格式修正不代表所有文件的資訊完整性保證，仍需核對原文。
+
+iPhone 15 Pro Max 完整介面回歸通過，短合成通知摘要 6.604 秒、兩份輸出共 19.315 秒，
+不含模型預載。六何格式約束較原先自由輸出耗時，單次數字不代表其他文件與裝置。
+前端 13 項測試與 Flutter 5 項原生測試通過。
+新增 `integration_test/govclear_six_format_test.dart` 檢查長文件、多頁及引號內容的原生回應
+可直接 JSON 解碼，不依賴前端清理；不在報告記錄原文或生成內容。
+
+長文件／多頁引號回歸已在 iPhone 15 Pro Max 通過，兩份原生六何輸出皆能直接 JSON 解碼，
+各有六個正確型別欄位。此回歸只測格式，不宣稱逐項語意完整性。
+報告副本 `.runtime/iphone/six-format-stress-result.json`；完整介面報告為
+`.runtime/iphone/six-format-ui-test-result.json`，兩者均不含私人原文。

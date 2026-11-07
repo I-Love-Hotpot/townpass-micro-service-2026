@@ -1,4 +1,4 @@
-type Action = 'check' | 'transcribe' | 'summarize' | 'cancel';
+type Action = 'check' | 'transcribe' | 'summarize' | 'sixQuestions' | 'cancel';
 type Bridge = {
   postMessage(message: string): void;
   addEventListener(name: 'message', callback: (event: MessageEvent) => void): void;

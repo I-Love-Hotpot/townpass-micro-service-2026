@@ -16,6 +16,8 @@ import summaryMobilePolicy from '@/assets/govclear/summary-mobile-policy.txt?raw
 import summaryPolicy from '@/assets/govclear/summary-policy.txt?raw';
 import summaryReviewPolicy from '@/assets/govclear/summary-review-policy.txt?raw';
 import { parseSummary, summaryStats } from '@/services/govclearSummary';
+import sixQuestionsPolicy from '@/assets/govclear/six-questions-policy.txt?raw';
+import { SIX_QUESTIONS, parseSixQuestions, type SixQuestionAnswers } from '@/services/govclearSixQuestions';
 import sampleImage from '@/assets/govclear/notice.png';
 import sampleSecondImage from '@/assets/govclear/notice-page2.png';
 
@@ -30,6 +32,10 @@ const busy = ref(false);
 const error = ref('');
 const summary = ref('');
 const source = ref('');
+const sixAnswers = ref<SixQuestionAnswers | null>(null);
+const sixError = ref('');
+const sixSeconds = ref(0);
+const sixCopied = ref(false);
 const elapsed = ref(0);
 const stage = ref('');
 const completedSeconds = ref(0);
@@ -68,6 +74,10 @@ const readingStats = computed(() =>
 );
 
 function clearResult() {
+  sixAnswers.value = null;
+  sixError.value = '';
+  sixCopied.value = false;
+  sixSeconds.value = 0;
   summary.value = '';
   source.value = '';
   error.value = '';
@@ -239,6 +249,44 @@ async function run(action: 'transcribe' | 'summarize') {
       clearInterval(timer);
       busy.value = false;
     }
+  }
+  if (id === generation && summary.value && source.value) await runSixQuestions();
+}
+async function runSixQuestions() {
+  if (busy.value || !ready.value || !source.value || !summary.value) return;
+  const id = ++generation;
+  const document = source.value;
+  busy.value = true;
+  sixError.value = '';
+  sixCopied.value = false;
+  stage.value = '正在整理六何資訊';
+  elapsed.value = 0;
+  const started = performance.now();
+  timer = setInterval(() => {
+    elapsed.value = Math.floor((performance.now() - started) / 1000);
+  }, 1000);
+  try {
+    const value = await bridge.request('sixQuestions', { text: document, policy: sixQuestionsPolicy });
+    if (id !== generation) return;
+    sixAnswers.value = parseSixQuestions(value);
+    sixSeconds.value = (performance.now() - started) / 1000;
+  } catch (e) {
+    if (id === generation) sixError.value = message(e);
+  } finally {
+    if (id === generation) {
+      clearInterval(timer);
+      busy.value = false;
+    }
+  }
+}
+async function copySixQuestions() {
+  if (!sixAnswers.value) return;
+  try {
+    await navigator.clipboard.writeText(SIX_QUESTIONS.map(({ key, title }) =>
+      `${title}：${sixAnswers.value![key] ?? '原文未提及'}`).join('\n\n'));
+    sixCopied.value = true;
+  } catch {
+    sixError.value = '無法使用剪貼簿，請長按六何文字複製。';
   }
 }
 function cancel() {
@@ -504,6 +552,27 @@ onBeforeUnmount(() => {
             <p>{{ section.text }}</p>
           </div>
         </article>
+        <section class="six-section" aria-labelledby="six-title">
+          <div class="results-heading">
+            <h2 id="six-title">六何整理</h2>
+            <span v-if="sixAnswers">{{ sixSeconds.toFixed(1) }} 秒</span>
+          </div>
+          <p class="help">摘要完成後自動從原文整理六何資訊。原文未提及的資訊不推測。</p>
+          <button class="secondary full" :disabled="busy || !ready" data-testid="sixQuestions" @click="runSixQuestions">
+            <Icon name="spark" :size="17" />{{ sixAnswers ? '重新整理六何' : '產生六何整理' }}
+          </button>
+          <p v-if="busy && stage === '正在整理六何資訊'" role="status">正在整理六何資訊 · {{ elapsed }} 秒</p>
+          <p v-if="sixError" class="error" role="alert" data-testid="sixError">{{ sixError }}</p>
+          <dl v-if="sixAnswers" class="six-grid" data-testid="sixResult">
+            <div v-for="item in SIX_QUESTIONS" :key="item.key" class="panel six-card" data-testid="sixCard">
+              <dt>{{ item.title }}<small>{{ item.hint }}</small></dt>
+              <dd :class="{ missing: sixAnswers[item.key] === null }" :data-six-field="item.key">{{ sixAnswers[item.key] ?? '原文未提及' }}</dd>
+            </div>
+          </dl>
+          <button v-if="sixAnswers" class="secondary full" @click="copySixQuestions">
+            <Icon name="copy" :size="17" />{{ sixCopied ? '已複製六何整理' : '複製六何整理' }}
+          </button>
+        </section>
         <details class="panel evidence">
           <summary>查看本次摘要依據的原文<Icon name="chevron" :size="17" /></summary>
           <p>{{ source }}</p>
@@ -521,6 +590,15 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.six-section { margin-top: 28px; }
+.six-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 16px 0; }
+.six-card { margin: 0; min-width: 0; }
+.six-card dt { color: var(--green); font-weight: 700; font-size: 19px; }
+.six-card small { display: block; margin-top: 4px; font-size: 13px; font-weight: 400; color: var(--muted); }
+.six-card dd { margin: 12px 0 0; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; }
+.six-card dd.missing { color: var(--muted); }
+@media (max-width: 560px) { .six-grid { grid-template-columns: 1fr; } }
+
 .govclear {
   --green: #176354;
   --ink: #203c35;
