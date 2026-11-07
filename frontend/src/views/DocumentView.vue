@@ -176,18 +176,7 @@ async function applyAction(action: 'explain' | 'chat') {
         ? await askDocument(record, prompt, locale, current.signal)
         : undefined;
     const answer =
-      action === 'chat'
-        ? rag
-          ? rag.answer +
-            (rag.citations.length
-              ? '\n\n' +
-                rag.evidence
-                  .filter((e) => rag.citations.includes(e.unit_id))
-                  .map((e) => `${e.title} ${e.unit_label} (${e.version_id})\n${e.source_url}`)
-                  .join('\n')
-              : '')
-          : answerQuestion(prompt, sample, locale)
-        : '';
+      action === 'chat' ? (rag ? rag.answer : answerQuestion(prompt, sample, locale)) : '';
     current.signal.throwIfAborted();
     const updated = await records.update(record.id, (stored) => {
       current.signal.throwIfAborted();
@@ -363,6 +352,31 @@ async function copySix() {
             <p class="mr-6 whitespace-pre-line break-words rounded-lg bg-surface p-3">
               {{ exchange.answer }}
             </p>
+            <details v-if="exchange.rag?.evidence.length" class="mr-6 rounded bg-surface p-3">
+              <summary>
+                {{
+                  workspace.context.locale === 'id'
+                    ? 'Referensi dokumen dan peraturan'
+                    : '參考資料（文件與法條）'
+                }}
+              </summary>
+              <div
+                v-for="evidence in exchange.rag.evidence"
+                :key="evidence.unit_id"
+                class="mt-3 space-y-2"
+              >
+                <a
+                  :href="evidence.source_url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-action"
+                >
+                  {{ evidence.title }} · {{ evidence.unit_label }}
+                </a>
+                <p class="text-xs text-muted">{{ evidence.version_id }}</p>
+                <p class="whitespace-pre-line">{{ evidence.text }}</p>
+              </div>
+            </details>
           </div>
         </TransitionGroup>
         <form class="space-y-3" @submit.prevent="applyAction('chat')">
@@ -573,8 +587,8 @@ async function copySix() {
               <summary>
                 {{
                   workspace.context.locale === 'id'
-                    ? 'Dokumen dan sumber'
-                    : '查看原文依據與檢索來源'
+                    ? 'Referensi dokumen dan peraturan'
+                    : '參考資料（文件與法條）'
                 }}
               </summary>
               <blockquote class="my-2 whitespace-pre-line">{{ item.sourceQuote }}</blockquote>

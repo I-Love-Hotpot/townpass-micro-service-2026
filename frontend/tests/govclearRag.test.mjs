@@ -89,3 +89,19 @@ test('early summary generation excludes questions and retrieval reuses the extra
  assert.match(calls[1].payload.prompt,/原文材料或期限的具體困難/);
  assert.match(result.questions[0].text,/未滿40歲但已婚/);
 });
+
+test('both automatic answers and follow-up answers use plain language with separate references', async()=>{
+ const {answerStyle}=await import(compile('govclearRag'));
+ const automatic=host();await analyzeSource(automatic,source,'文件','zh-TW');
+ const automaticPrompt=automatic.calls.filter(c=>c.action==='generate')[1].payload.prompt;
+ assert.ok(automaticPrompt.startsWith(answerStyle));
+ assert.match(automaticPrompt,/法條只當參考/);
+ assert.match(automaticPrompt,/來源另放引用欄位/);
+ const text='如果還沒備齊租約，可以先確認是否能補件；目前資料沒有寫清楚你的適用條件。';
+ const followup=host((action,payload)=>action==='generate'?{text,citations:[evidence.unit_id]}:undefined);
+ const result=await answerWithEvidence(followup,source,'租約沒備齊怎麼辦？','',['租約'],'zh-TW','user','user');
+ assert.ok(followup.calls.find(c=>c.action==='generate').payload.prompt.startsWith(answerStyle));
+ assert.equal(result.answer,text);
+ assert.deepEqual(result.citations,[evidence.unit_id]);
+ assert.equal(result.evidence[0].text,evidence.text);
+});
