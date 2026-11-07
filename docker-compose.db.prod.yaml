@@ -30,6 +30,13 @@ services:
     networks:
       # - coolify
       - townpass-db
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-nv", "http://127.0.0.1:8080/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
 volumes:
   database_prod_data:
 
