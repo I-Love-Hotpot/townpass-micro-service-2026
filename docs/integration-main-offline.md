@@ -104,3 +104,11 @@ node frontend/tests/browser-harness.cjs
 iOS 使用持久 WebView 資料及 App-Bound Domains。`Info.plist` 目前允許 `townpass.fearnot.tw`、既有服務的 `taipei-pass-service.vercel.app`、`tp.dstw.dev`。自訂 `GOVCLEAR_URL` 時需同步調整白名單。其他外部網頁不提供原生橋接。
 清除網站資料、移除 App 或系統回收網站快取後，需要重新連網下載；Service Worker 快取不是不可刪除的 App 文件。原本 localhost 來源的 IndexedDB 不會自動搬到 HTTPS 來源。
 模型仍需先安裝到裝置，這次下載的是完整網站版本，不包含 Gemma 權重。開發 Vite 模式不註冊離線快取。
+
+### 離線版本識別與自動同步
+
+每版以完整檔案內容與 Service Worker 產生器內容的 SHA-256 前 20 碼識別；任一發布檔案或快取邏輯改變就產生新版本，內容相同則維持原版本。畫面顯示目前版本與已下載待啟用版本。
+
+首次開啟、網路恢復、頁面回到前景及前景每 5 分鐘，會檢查線上的 `sw.js`；未變更時不重新下載資源。發現新版後下載並驗證整版，成功後等待現有頁面關閉才切換，避免中斷文件處理或混用新舊資源。新版啟用時清理舊版快取。下載失敗顯示更新未完成並保留目前版，下次檢查自動重試；斷網期間不會同步尚未取得的版本。
+
+`frontend/tests/offlineUpdate.browser.mjs` 以正式 build 驗證版本顯示、未變更不重抓資源、更新失敗保留舊版、定時自動重試，以及關閉後離線重開套用新版。這是 Chromium 串接驗證，並非 iPhone 實機驗收。

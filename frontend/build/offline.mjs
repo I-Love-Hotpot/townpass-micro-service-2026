@@ -11,13 +11,18 @@ export function buildOfflineBundle(directory) {
   }
   const entries = files().sort();
   const hash = createHash('sha256');
+  hash.update(readFileSync(new URL(import.meta.url)));
   for (const name of entries) hash.update(name).update(readFileSync(join(directory, name)));
   const version = hash.digest('hex').slice(0, 20);
   const integrity = Object.fromEntries(entries.map(name => ['/' + name, 'sha256-' + createHash('sha256').update(readFileSync(join(directory, name))).digest('base64')]));
   writeFileSync(join(directory, 'sw.js'), `
-const CACHE = 'govclear-shell-${version}';
+const VERSION = '${version}';
+const CACHE = 'govclear-shell-' + VERSION;
 const FILES = ${JSON.stringify(entries.map(name => '/' + name))};
 const INTEGRITY = ${JSON.stringify(integrity)};
+self.addEventListener('message', event => {
+  if (event.data === 'GET_VERSION') event.ports[0]?.postMessage(VERSION);
+});
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     try {

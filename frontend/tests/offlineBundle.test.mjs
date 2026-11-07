@@ -25,6 +25,7 @@ test('complete release installs atomically; offline routes ignore language queri
         return {
           async addAll(requests) {
             for (const request of requests) {
+              assert.match(request.integrity, /^sha256-/);
               if (fail && request.url.endsWith('.wasm')) throw Error('network disconnected');
               entries.set(new URL(request.url).pathname, new Response(request.url));
             }
@@ -44,15 +45,18 @@ test('complete release installs atomically; offline routes ignore language queri
         fetch() { throw Error('offline'); }
       };
       vm.runInNewContext(readFileSync(join(directory, 'sw.js'), 'utf8'), context);
-      return async (name, request) => {
+      return async (name, request, extra = {}) => {
         let result;
-        events[name]({ request, waitUntil(promise) { result = promise; }, respondWith(promise) { result = promise; } });
+        events[name]({ ...extra, request, waitUntil(promise) { result = promise; }, respondWith(promise) { result = promise; } });
         return result;
       };
     }
     const active = worker();
     await active('install');
     await active('activate');
+    let reportedVersion;
+    await active('message', undefined, { data: 'GET_VERSION', ports: [{ postMessage(value) { reportedVersion = value; } }] });
+    assert.equal(reportedVersion, first.version);
     const cached = await active('fetch', { method: 'GET', mode: 'navigate', url: 'https://example.test/?embedded=1&lang=en' });
     assert.match(await cached.text(), /index.html/);
     for (const name of first.entries.filter(name => name !== 'index.html')) {
