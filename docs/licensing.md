@@ -12,7 +12,7 @@
 ## 適用範圍
 
 - 自有微服務、Vue 及 GovClear 程式碼依上述授權；既有來源與檔案聲明有不同授權時，需保留並逐項核對，不宣稱全部來源均為自行開發。
-- TownPass Flutter 原有 GPL v3 LICENSE 不變。AGPL 第 13 條處理與 GPL v3 程式碼結合的情況，不代表可刪除上游授權或將其全部改授權。
+- TownPass Flutter 原有 GPL v3 LICENSE 不變；配套專案以 LICENSE-GOVCLEAR 及 docs/licensing.md 標示團隊有權授權的 GovClear 原創貢獻採 AGPL-3.0-only。AGPL 第 13 條處理與 GPL v3 程式碼結合的情況，不代表可刪除上游授權或將其全部改授權。
 - LiteRT-LM 等第三方元件保留原授權、著作權與必要聲明。
 - 模型權重、RAG 資料、使用者上傳文件、照片、圖示與商標不因本程式碼 LICENSE 自動變成 AGPL；應依各自來源條款處理。
 - 團隊署名不表示取得既有上游或其他貢獻者的著作權；既有署名及權利聲明應保留。

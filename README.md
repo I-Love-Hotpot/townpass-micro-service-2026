@@ -227,4 +227,4 @@ Copyright (C) 2026 拖把吃火鍋不揪
 
 本專案自行開發且有權授權的程式碼採用 **GNU Affero General Public License v3.0 only**（`AGPL-3.0-only`），正式條文見 [LICENSE](LICENSE)。允許商用，使用者須遵守適用的原始碼提供、聲明保留等義務；不附加「商用另行同意」限制。
 
-既有上游與其他貢獻者署名保留。TownPass Flutter 原有 GPL v3、第三方套件、模型、資料與素材的授權不因本聲明而被替換。團隊署名僅適用於本團隊自行開發且有權授權的內容。競賽要求與尚待補齊的發布事項見[授權說明](docs/licensing.md)。
+既有上游與其他貢獻者署名保留。配套 TownPass Flutter 保留上游 GPL v3，並以 LICENSE-GOVCLEAR 說明團隊有權授權的 GovClear 原創貢獻採 AGPL-3.0-only。第三方套件、模型、資料與素材的授權不因本聲明而被替換。團隊署名僅適用於本團隊自行開發且有權授權的內容。競賽要求與尚待補齊的發布事項見[授權說明](docs/licensing.md)。
