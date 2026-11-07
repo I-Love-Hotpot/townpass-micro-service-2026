@@ -298,3 +298,33 @@ test('zero, one or two useful questions are complete results and the list never 
     assert.match(bridge.calls.filter(c => c.action === 'generate')[1].payload.prompt, /有1題或2題就足夠時不要湊滿/);
   }
 });
+
+test('each suggested answer selects its own references from multiple complete candidates', async () => {
+  const second = { ...evidence, unit_id: 'law:2:v1', unit_label: '第二條', text: '租約缺漏時可依通知期限補正。' };
+  const third = { ...evidence, unit_id: 'law:3:v1', unit_label: '第三條', text: '申請日以郵戳為憑。' };
+  const bridge = host((action, payload) => action === 'retrieve'
+    ? { ...retrieval, evidence: [evidence, second, third] }
+    : payload?.prompt?.includes('"a":') ? { a: [
+      { q: '租約未備齊怎麼辦？', t: '依通知補正。', c: [1, 1] },
+      { q: '郵寄日怎麼算？', t: '以郵戳為憑。', c: [2] },
+      { q: '這份通知何時到期？', t: '請查看原文日期。', c: [] }
+    ] } : undefined);
+  const result = await analyzeSource(bridge, source, '文件', 'zh-TW');
+  const data = JSON.parse(bridge.calls.filter(c => c.action === 'generate')[1].payload.prompt.split('資料：')[1]);
+  assert.deepEqual(data.e.map(e => e.text), [evidence.text, second.text, third.text]);
+  assert.match(bridge.calls.filter(c => c.action === 'generate')[1].payload.prompt, /直接依source即可回答的部分不需附法條/);
+  assert.deepEqual(result.questions.map(q => q.citations), [[second.unit_id], [third.unit_id], []]);
+  assert.deepEqual(result.questions.map(q => q.evidence.map(e => e.unit_id)), [[second.unit_id], [third.unit_id], []]);
+  assert.equal(bridge.calls.filter(c => c.action === 'generate').length, 2);
+});
+
+test('follow-up references contain only the cited candidates, including no references for source-only answers', async () => {
+  const second = { ...evidence, unit_id: 'law:2:v1', unit_label: '第二條', text: '補件規定。' };
+  for (const citations of [[second.unit_id], [], ['unknown']]) {
+    const bridge = host((action) => action === 'retrieve'
+      ? { ...retrieval, evidence: [evidence, second] }
+      : { text: '白話回答。', citations });
+    const result = await answerWithEvidence(bridge, source, '補件？', '', ['補件'], 'zh-TW', 'user', 'user');
+    assert.deepEqual(result.evidence.map(e => e.unit_id), citations[0] === second.unit_id ? [second.unit_id] : []);
+  }
+});

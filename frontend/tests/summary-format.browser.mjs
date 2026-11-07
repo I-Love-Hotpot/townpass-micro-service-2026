@@ -156,6 +156,49 @@ try {
   await page.goto(baseUrl + '#/documents/legacy-format-test');
   await page.getByRole('heading', { name: '你可能想問', exact: true }).waitFor();
   await page.getByRole('button', { name: '重新解釋並產生問答', exact: true }).waitFor();
+  await page.evaluate(async () => {
+    const { records } = await import('/src/services/records.ts');
+    const record = await records.get('format-test');
+    const candidates = [1, 2].map((n) => ({
+      unit_id: 'law:' + n,
+      unit_label: '第' + n + '條',
+      title: '合成法規',
+      text: '條文' + n,
+      version_id: 'v1',
+      source_url: 'https://example.org/law'
+    }));
+    const question = (id, citations) => ({
+      id,
+      text: id,
+      answer: '合成回答',
+      status: 'generated',
+      origin: 'model_suggested',
+      sourceQuote: '',
+      citations,
+      evidence: candidates
+    });
+    await records.put({
+      ...record,
+      id: 'references-test',
+      analysis: {
+        ...record.analysis,
+        questions: [question('引用第二條', ['law:2']), question('只依原文回答', [])]
+      }
+    });
+  });
+  await page.goto(baseUrl + '#/documents/references-test');
+  const cited = page
+    .locator('article')
+    .filter({ has: page.getByRole('heading', { name: '引用第二條', exact: true }) })
+    .last();
+  await cited.getByRole('heading', { name: '引用第二條', exact: true }).waitFor();
+  assert.equal(await cited.locator('a').filter({ hasText: '第2條' }).count(), 1);
+  assert.equal(await cited.locator('a').filter({ hasText: '第1條' }).count(), 0);
+  const uncited = page
+    .locator('article')
+    .filter({ has: page.getByRole('heading', { name: '只依原文回答', exact: true }) })
+    .last();
+  assert.equal(await uncited.locator('details').count(), 0);
   assert.deepEqual(errors, []);
   console.log(
     'PASS: same-source results preserved, corrected source does not reuse stale facts, partial records do not auto-retry, suggested questions recover and legacy records retain their section'

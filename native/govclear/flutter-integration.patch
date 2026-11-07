@@ -42,7 +42,7 @@ diff --git a/integration_test/govclear_speed_test.dart b/integration_test/govcle
 new file mode 100644
 --- /dev/null
 +++ b/integration_test/govclear_speed_test.dart
-@@ -0,0 +1,138 @@
+@@ -0,0 +1,152 @@
 +import 'dart:convert';
 +import 'dart:io';
 +import 'dart:ui' as ui;
@@ -127,9 +127,17 @@ new file mode 100644
 +            ),
 +          ),
 +        );
-+        for (final row in (retrieval['evidence'] as List).take(1)) {
++        for (final row in (retrieval['evidence'] as List).take(3)) {
 +          evidence[row['unit_id']] = Map<String, dynamic>.from(row);
 +        }
++        stages['evidenceUnits'] = evidence.values
++            .map(
++              (row) => {
++                'unit_id': row['unit_id'],
++                'unit_label': row['unit_label'],
++              },
++            )
++            .toList();
 +        stages['retrievalSeconds'] =
 +            (watch.elapsedMilliseconds - retrievalStarted) / 1000;
 +        final answerStarted = watch.elapsedMilliseconds;
@@ -152,6 +160,12 @@ new file mode 100644
 +        for (final row in answer['a']) {
 +          expect(row['q'], isA<String>());
 +          expect(row['t'], isA<String>());
++          expect(
++            (row['c'] as List).every(
++              (index) => index is int && index >= 0 && index < evidence.length,
++            ),
++            isTrue,
++          );
 +        }
 +        stages['answers'] = answer['a'];
 +        stages['firstBatchSeconds'] =

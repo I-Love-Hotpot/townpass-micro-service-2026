@@ -137,7 +137,7 @@ PYTHONPATH=local-inference /usr/bin/python3 -m unittest discover -s local-infere
 
 ## 2026-11-08 本機 RAG 與分段結果更新
 
-新文件改走 services/govclearRag.ts：第一通只生成摘要／六何，立即預覽；由 what/how 檢索一段完整本機證據，第二通一起生成具體情境問題與回答。govclearJson.ts 僅處理 JSON／雜湊；依使用者最終指示，所有 AI Guard 已移除，不可將生成結果稱為已複核。文件頁已移除「下一步」及服務／申辦案件入口，重新解釋也可先顯示摘要。
+新文件改走 services/govclearRag.ts：第一通只生成摘要／六何，立即預覽；由 what/how 檢索最多三筆完整本機證據，第二通一起生成具體情境問題與回答。govclearJson.ts 僅處理 JSON／雜湊；依使用者最終指示，所有 AI Guard 已移除，不可將生成結果稱為已複核。文件頁已移除「下一步」及服務／申辦案件入口，重新解釋也可先顯示摘要。
 
 Flutter 的 generate／retrieve 沿用手機既有模型與資料，不需要 Python runtime。資料及可重套 patch 在 native/govclear/，實機測速與限制見 docs/govclear-rag-guard.md 最新章節。單張短通知的原生測試不能當作所有圖片端到端 20 秒保證；不要沿用本檔較早的保存／六何流程或護欄描述作為最新行為。
 
@@ -150,3 +150,5 @@ Flutter 的 generate／retrieve 沿用手機既有模型與資料，不需要 Py
 建議問答依實際需要最多三題：0～3題皆可為完整結果；不湊滿、不因不足三題標記partial。有效a:[]表示無合適問題，與生成錯誤分開；同原文僅在questionError且沒有新題時保留舊題，不覆蓋模型明確的空陣列。
 
 「你可能想問」現在依文件自然生成最多三題，白話回答、法條輔助。已移除固定若句型、20字、1～2句、材料／期限困難及禁止問文件清單／日期等出題規則；不要重新加回。
+
+法條引用修正：自動問答改將檢索前三筆完整候選資料送模型，各題c選自己的索引，沒有引用就不附任何條文；不可將全部候選當作該題引用。手動追問與舊紀錄的畫面亦只顯示citations實際對應的證據。同一條確實適用仍可共用，不要為了不同而輪流配條文。

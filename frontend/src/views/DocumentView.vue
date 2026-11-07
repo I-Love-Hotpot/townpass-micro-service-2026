@@ -10,11 +10,15 @@ import { fixtures } from '@/services/fixtures';
 import { translate, type Label } from '@/services/i18n';
 import { explainAgain } from '@/services/processing';
 import { analyzeDocument, analyzeSixQuestions, askDocument } from '@/services/offline';
-import type { DocumentAnalysis } from '@/services/govclearRag';
+import type { DocumentAnalysis, RagQuestion } from '@/services/govclearRag';
 import { hashText } from '@/services/govclearJson';
 import { SIX_QUESTIONS } from '@/services/govclearSixQuestions';
 import { records } from '@/services/records';
 import { useWorkspace } from '@/stores/workspace';
+
+function citedEvidence(question: RagQuestion) {
+  return question.evidence.filter((e) => question.citations.includes(e.unit_id));
+}
 
 const route = useRoute();
 const workspace = useWorkspace();
@@ -375,7 +379,10 @@ async function copySix() {
             <p class="mr-6 whitespace-pre-line break-words rounded-lg bg-surface p-3">
               {{ exchange.answer }}
             </p>
-            <details v-if="exchange.rag?.evidence.length" class="mr-6 rounded bg-surface p-3">
+            <details
+              v-if="exchange.rag && citedEvidence(exchange.rag).length"
+              class="mr-6 rounded bg-surface p-3"
+            >
               <summary>
                 {{
                   workspace.context.locale === 'id'
@@ -384,7 +391,7 @@ async function copySix() {
                 }}
               </summary>
               <div
-                v-for="evidence in exchange.rag.evidence"
+                v-for="evidence in citedEvidence(exchange.rag)"
                 :key="evidence.unit_id"
                 class="mt-3 space-y-2"
               >
@@ -638,7 +645,7 @@ async function copySix() {
           >
             <h3 class="font-semibold">{{ item.text }}</h3>
             <p class="whitespace-pre-line">{{ item.answer }}</p>
-            <details>
+            <details v-if="citedEvidence(item).length || item.sourceQuote">
               <summary>
                 {{
                   workspace.context.locale === 'id'
@@ -647,7 +654,7 @@ async function copySix() {
                 }}
               </summary>
               <blockquote class="my-2 whitespace-pre-line">{{ item.sourceQuote }}</blockquote>
-              <div v-for="evidence in item.evidence" :key="evidence.unit_id" class="my-3">
+              <div v-for="evidence in citedEvidence(item)" :key="evidence.unit_id" class="my-3">
                 <a
                   :href="evidence.source_url"
                   target="_blank"
