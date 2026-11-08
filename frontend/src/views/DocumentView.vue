@@ -678,20 +678,31 @@ async function copySix() {
         <fieldset class="rounded bg-surface p-4">
           <legend class="section-title">{{ t('helpfulnessQuestion') }}</legend>
           <div class="flex flex-wrap gap-3">
-            <label
-              v-for="option in (['yes', 'no', 'incorrect'] as const)"
+            <button
+              v-for="option in ['yes', 'no', 'incorrect'] as const"
               :key="option"
-              class="flex min-h-11 cursor-pointer items-center gap-2 rounded border border-line px-4 py-2"
+              type="button"
+              :aria-pressed="helpfulness === option"
+              class="flex min-h-11 min-w-20 items-center justify-center gap-2 rounded-lg border px-4 py-2 font-semibold"
+              :class="{
+                'border-emerald-700 bg-emerald-700 text-white':
+                  option === 'yes' && helpfulness === option,
+                'border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100':
+                  option === 'yes' && helpfulness !== option,
+                'border-slate-700 bg-slate-700 text-white':
+                  option === 'no' && helpfulness === option,
+                'border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100':
+                  option === 'no' && helpfulness !== option,
+                'border-red-700 bg-red-700 text-white':
+                  option === 'incorrect' && helpfulness === option,
+                'border-red-200 bg-red-50 text-red-800 hover:bg-red-100':
+                  option === 'incorrect' && helpfulness !== option
+              }"
+              @click="helpfulness = option"
             >
-              <input
-                v-model="helpfulness"
-                type="radio"
-                name="document-helpfulness"
-                :value="option"
-                class="accent-brand-dark"
-              />
+              <span v-if="helpfulness === option" aria-hidden="true">✓</span>
               {{ t(option) }}
-            </label>
+            </button>
           </div>
         </fieldset>
       </article>
