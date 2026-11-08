@@ -92,7 +92,7 @@ docker-compose*.yaml       開發環境、正式服務、正式資料庫
 - 網站快取與 IndexedDB 文件紀錄用途不同；清除網站資料會影響離線使用與本機紀錄。網站快取不包含模型權重。
 - PDF 資產平放於 `dist/assets/`，worker 使用 `.js` 副檔名，維持原生 host 資產與 MIME 相容性。
 - 開發範例來自 repository 外的 `../docs/idea/papers/`，僅限本機存取，不包入正式 build；獨立 clone 缺少範例仍應正常運作。
-- 目前整合文件記載網站透過 Cloudflare Pages 手動部署。實際部署指令與 App 設定見 `docs/integration-main-offline.md`；此文件不驗證線上狀態。
+- 正式站只由 GitHub `main` 觸發 Cloudflare Pages 自動建置／部署；其他分支使用 Git 自動 Preview。依使用者指示，不得再以 Wrangler 或其他 Direct Upload 手動發布。部署失敗應修正 Git 提交，不以本機工作目錄覆蓋正式站。設定見 `docs/cloudflare-pages.md`，發布後核對部署 commit 與 `main`，並確認資產版本。
 
 ## 後端與 Docker
 
