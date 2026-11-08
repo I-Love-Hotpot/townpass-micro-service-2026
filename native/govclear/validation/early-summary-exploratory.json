@@ -1,0 +1,142 @@
+{
+  "status": "passed",
+  "runs": [
+    {
+      "state": "cold",
+      "ocrSeconds": 0.291,
+      "planSeconds": 6.566,
+      "planMetrics": {
+        "session_seconds": 1.0001416666673322,
+        "total_seconds": 6.5647231666662265,
+        "first_token_seconds": 0.91380240025,
+        "decode_tokens_per_second": 29.681568023854584,
+        "prefill_tokens_per_second": 246.55968062626903,
+        "input_tokens": 217,
+        "backend": "gpu_mtp",
+        "output_tokens": 139
+      },
+      "sixFieldsReturned": 6,
+      "sourceCharacters": 77,
+      "draft": {
+        "s": "115年度租金補貼開放申請，申請人需在115年12月10日前提出，並附上身分證及租賃契約，符合資格者方可領取補貼。",
+        "w": {
+          "who": "符合資格者",
+          "what": "租金補貼",
+          "when": "115年12月10日前",
+          "where": null,
+          "why": null,
+          "how": "附上身分證及租賃契約"
+        }
+      },
+      "retrievalMode": "document-facts",
+      "retrievalSeconds": 0.433,
+      "answers": [
+        {
+          "q": "如果我申請租金補貼，但尚未租賃住宅，我該如何處理租賃契約影本及相關文件？",
+          "t": "申請時尚未租賃住宅者，免檢附前項第二款及第三款書件，並應於核發租金補貼核定函之次日起三個月內補件。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "我如果申請租金補貼，但申請書件是透過掛號郵件寄送，申請日如何認定？",
+          "t": "申請書件以掛號郵件寄送者，其申請日之認定以郵戳為憑。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "我如果申請租金補貼，但申請人承租之建築物屬實施建築管理前已建造完成者，是否需要檢附所有權狀影本？",
+          "t": "申請人承租之建築物屬實施建築管理前已建造完成者，免檢附第一項第三款文件，由直轄市、縣（市）主管機關協助認定之。",
+          "c": [
+            0
+          ]
+        }
+      ],
+      "firstBatchSeconds": 6.857,
+      "answersSeconds": 20.741,
+      "answerMetrics": {
+        "session_seconds": 0.001644624997425126,
+        "total_seconds": 20.74054295833048,
+        "first_token_seconds": 7.300118017,
+        "decode_tokens_per_second": 22.922867723998625,
+        "prefill_tokens_per_second": 106.66308796112747,
+        "input_tokens": 774,
+        "backend": "gpu_mtp",
+        "output_tokens": 309
+      },
+      "totalSeconds": 28.031,
+      "under20Seconds": false,
+      "evidenceCount": 1
+    },
+    {
+      "state": "warm",
+      "ocrSeconds": 0.27,
+      "planSeconds": 7.462,
+      "planMetrics": {
+        "prefill_tokens_per_second": 113.15080205733709,
+        "session_seconds": 0.0021212499996181577,
+        "backend": "gpu_mtp",
+        "decode_tokens_per_second": 25.087303590891054,
+        "total_seconds": 7.46213916666602,
+        "output_tokens": 139,
+        "first_token_seconds": 1.95765542525,
+        "input_tokens": 217
+      },
+      "sixFieldsReturned": 6,
+      "sourceCharacters": 77,
+      "draft": {
+        "s": "115年度租金補貼開放申請，申請人需在115年12月10日前提出，並附上身分證及租賃契約，符合資格者方可領取補貼。",
+        "w": {
+          "who": "符合資格者",
+          "what": "租金補貼",
+          "when": "115年12月10日前",
+          "where": null,
+          "why": null,
+          "how": "附上身分證及租賃契約"
+        }
+      },
+      "retrievalMode": "document-facts",
+      "retrievalSeconds": 0.024,
+      "answers": [
+        {
+          "q": "如果我申請租金補貼，但尚未租賃住宅，我該如何處理租賃契約影本及相關文件？",
+          "t": "申請時尚未租賃住宅者，免檢附前項第二款及第三款書件，並應於核發租金補貼核定函之次日起三個月內補件。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "我如果申請租金補貼，但申請書件是透過掛號郵件寄送，申請日如何認定？",
+          "t": "申請書件以掛號郵件寄送者，其申請日之認定以郵戳為憑。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "我如果申請租金補貼，但申請人承租之建築物屬實施建築管理前已建造完成者，是否需要檢附所有權狀影本？",
+          "t": "申請人承租之建築物屬實施建築管理前已建造完成者，免檢附第一項第三款文件，由直轄市、縣（市）主管機關協助認定之。",
+          "c": [
+            0
+          ]
+        }
+      ],
+      "firstBatchSeconds": 7.731999999999999,
+      "answersSeconds": 20.521,
+      "answerMetrics": {
+        "prefill_tokens_per_second": 105.1500128200689,
+        "session_seconds": 0.001538708333100658,
+        "backend": "gpu_mtp",
+        "decode_tokens_per_second": 23.485701668257224,
+        "total_seconds": 20.520957000000635,
+        "output_tokens": 309,
+        "first_token_seconds": 7.40349118225,
+        "input_tokens": 774
+      },
+      "totalSeconds": 28.278,
+      "under20Seconds": false,
+      "evidenceCount": 1
+    }
+  ],
+  "scope": "Exploratory run before removing repeated question/answer background. Native OCR/inference/retrieval only; excludes WebView/storage/rendering."
+}

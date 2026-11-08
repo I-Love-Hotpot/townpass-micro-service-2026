@@ -92,7 +92,7 @@ docker-compose*.yaml       開發環境、正式服務、正式資料庫
 - 網站快取與 IndexedDB 文件紀錄用途不同；清除網站資料會影響離線使用與本機紀錄。網站快取不包含模型權重。
 - PDF 資產平放於 `dist/assets/`，worker 使用 `.js` 副檔名，維持原生 host 資產與 MIME 相容性。
 - 開發範例來自 repository 外的 `../docs/idea/papers/`，僅限本機存取，不包入正式 build；獨立 clone 缺少範例仍應正常運作。
-- 目前整合文件記載網站透過 Cloudflare Pages 手動部署。實際部署指令與 App 設定見 `docs/integration-main-offline.md`；此文件不驗證線上狀態。
+- 正式站只由 GitHub `main` 觸發 Cloudflare Pages 自動建置／部署；其他分支使用 Git 自動 Preview。依使用者指示，不得再以 Wrangler 或其他 Direct Upload 手動發布。部署失敗應修正 Git 提交，不以本機工作目錄覆蓋正式站。設定見 `docs/cloudflare-pages.md`，發布後核對部署 commit 與 `main`，並確認資產版本。
 
 ## 後端與 Docker
 
@@ -135,6 +135,24 @@ PYTHONPATH=local-inference /usr/bin/python3 -m unittest discover -s local-infere
 
 延伸閱讀：`docs/integration-main-offline.md`、`docs/govclear-webview.md`、`docs/govclear-iphone-offline.md`、`docs/govclear-summary.md`、`docs/document-corners.md`、`local-inference/VALIDATION.md`。
 
-## 2026-11-08 RAG／Guard 更新
+## 2026-11-08 本機 RAG 與分段結果更新
 
-新文件建立改走 `services/govclearRag.ts` 的摘要／六何／推測問題／RAG／逐階段檢查；`govclearGuard.ts` 產生來源綁定的複核報告。Flutter 新增 `generate` 與 `retrieve` 動作，正式模型仍在手機本機執行，沒有 Python runtime。資料及可重套 Flutter patch 位於 `native/govclear/`；目前已同步修改相鄰 TownPass-merge。詳細現況與上下文／效能限制見 `docs/govclear-rag-guard.md`，不要把本檔較早的「先保存摘要再產生六何」流程當作新紀錄流程。
+新文件改走 services/govclearRag.ts：第一通只生成摘要／六何，立即預覽；由 what/how 檢索最多三筆完整本機證據，第二通一起生成具體情境問題與回答。govclearJson.ts 僅處理 JSON／雜湊；依使用者最終指示，所有 AI Guard 已移除，不可將生成結果稱為已複核。文件頁已移除「下一步」及服務／申辦案件入口，重新解釋也可先顯示摘要。
+
+Flutter 的 generate／retrieve 沿用手機既有模型與資料，不需要 Python runtime。資料及可重套 patch 在 native/govclear/，實機測速與限制見 docs/govclear-rag-guard.md 最新章節。單張短通知的原生測試不能當作所有圖片端到端 20 秒保證；不要沿用本檔較早的保存／六何流程或護欄描述作為最新行為。
+
+情境合理性提醒由第一通模型一起產生 optional logicNotes，包含原文引句及需釐清事項；摘要／追問帶入不確定性，不能當作已確認錯誤。角色、年齡、日期先分清，14歲乘客與成人駕駛不應被當作14歲駕駛。提醒不阻擋OCR、生成或保存，舊紀錄缺欄位仍可讀取。
+
+摘要格式相容更新：generate的s/w也接受summary/sixQuestions，JSON可有程式碼框或前置說明；解析缺漏只標記partial，不丟掉OCR或中止後續問答。sixQuestions可不存在，此時不是六欄null／「未提及」；不要在進詳情時自動重跑已有analysis的缺漏結果。同原文重新解釋未回傳的摘要與六何保留舊值。
+
+建議問答接受a/questions/answers及q/question、t/answer；截斷批次僅保留完整JSON列，不補寫答案。questionError保留未完成原因，缺答案的問題仍可顯示；同原文重新解釋若生成失敗且沒有新問題則保留既有問答。詳情即使舊紀錄無analysis也顯示問答區與手動重試入口；重試沿用原文，不做OCR，會重新執行兩通生成，不能宣稱只重跑問答。
+
+建議問答依實際需要最多三題：0～3題皆可為完整結果；不湊滿、不因不足三題標記partial。有效a:[]表示無合適問題，與生成錯誤分開；同原文僅在questionError且沒有新題時保留舊題，不覆蓋模型明確的空陣列。
+
+「你可能想問」現在依文件自然生成最多三題，白話回答、法條輔助。已移除固定若句型、20字、1～2句、材料／期限困難及禁止問文件清單／日期等出題規則；不要重新加回。
+
+法條引用修正：自動問答保留檢索前三筆完整候選，模型使用每筆相關完整段落，各題c選自己的索引，沒有引用就不附任何條文；不可將全部候選當作該題引用。手動追問與舊紀錄的畫面亦只顯示citations實際對應的證據。同一條確實適用仍可共用，不要為了不同而輪流配條文。
+
+效能更新：Flutter GovClearKnowledge.retrieve新增optional source，回傳context_text/context_is_excerpt；原text、metadata、hash不變。按文件詞彙選完整段落，保留首段、FAQ基本說明、款內子目與可辨識的同條款次連結；不作跨條文適用性驗證。網頁只在推論用節錄，引用仍存／顯示全文。舊host缺context欄位時回用全文，不阻擋處理。提示詞／JSON縮排精簡；沒有新字數門檻或Guard。
+
+橋接生命週期：成功完成請求後dispose僅停止接收並移除listener，不送native cancel，以免非同步取消干擾緊接的摘要／六何。仍有pending請求或使用者按停止／逾時時才取消。掃描失敗會捲動並聚焦scan-error，保留照片與OCR供重試。

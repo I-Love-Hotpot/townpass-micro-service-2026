@@ -2,22 +2,30 @@
 import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import AppIcon from '@/components/atoms/AppIcon.vue';
+import LogicNotes from '@/components/molecules/LogicNotes.vue';
 import DocumentGallery from '@/components/organisms/DocumentGallery.vue';
 import type { DocumentRecord } from '@/interfaces/document';
 import { answerQuestion } from '@/services/answers';
 import { fixtures } from '@/services/fixtures';
 import { translate, type Label } from '@/services/i18n';
-import { delay, explainAgain } from '@/services/processing';
+import { explainAgain } from '@/services/processing';
 import { analyzeDocument, analyzeSixQuestions, askDocument } from '@/services/offline';
+import type { DocumentAnalysis, RagQuestion } from '@/services/govclearRag';
 import { hashText } from '@/services/govclearJson';
 import { SIX_QUESTIONS } from '@/services/govclearSixQuestions';
 import { records } from '@/services/records';
 import { useWorkspace } from '@/stores/workspace';
 
+function citedEvidence(question: RagQuestion) {
+  return question.evidence.filter((e) => question.citations.includes(e.unit_id));
+}
+
 const route = useRoute();
 const workspace = useWorkspace();
 const t = computed(() => translate.bind(null, workspace.context.locale));
 const entry = shallowRef<DocumentRecord>();
+const explanationPreview = shallowRef<DocumentAnalysis>();
+const visibleSummary = computed(() => explanationPreview.value?.summary ?? entry.value?.summary);
 const urls = shallowRef<string[]>([]);
 const loadError = ref(false);
 const loading = ref(true);
@@ -83,6 +91,7 @@ function cancelAction() {
   pending.value = false;
   feedback.value = undefined;
   actionError.value = '';
+  explanationPreview.value = undefined;
   phase.value = undefined;
 }
 
@@ -120,7 +129,8 @@ async function load() {
     request === requestId &&
     route.name === 'document' &&
     entry.value?.source &&
-    !entry.value.sixQuestions
+    !entry.value.sixQuestions &&
+    !entry.value.analysis
   )
     void generateSix();
 }
@@ -148,15 +158,35 @@ async function applyAction(action: 'explain' | 'chat') {
   let refreshSix = false;
   const started = startTimer();
   try {
-    await delay(450, current.signal);
     const sample = fixtures.find((item) => item.id === record.fixtureId)?.summaries[locale];
     const analysis =
-      action === 'explain' && record.source
-        ? await analyzeDocument(draftSource.value, record.summary.title, locale, current.signal)
+      action === 'explain' && record.source !== undefined
+        ? await analyzeDocument(
+            draftSource.value,
+            record.summary.title,
+            locale,
+            current.signal,
+            (analysis) => {
+              if (task === current && !current.signal.aborted) explanationPreview.value = analysis;
+            }
+          )
         : undefined;
+    if (analysis && draftSource.value === record.source) {
+      if (!analysis.summary.facts.length) {
+        if (record.summary.facts.length) analysis.summary = record.summary;
+        analysis.logicNotes = record.analysis?.logicNotes;
+      }
+      analysis.sixQuestions ??= record.sixQuestions;
+      if (
+        analysis.questionError &&
+        !analysis.questions.length &&
+        record.analysis?.questions?.length
+      )
+        analysis.questions = record.analysis.questions;
+    }
     const summary =
       action === 'explain'
-        ? record.source
+        ? record.source !== undefined
           ? analysis!.summary
           : explainAgain(sample)
         : record.summary;
@@ -165,18 +195,7 @@ async function applyAction(action: 'explain' | 'chat') {
         ? await askDocument(record, prompt, locale, current.signal)
         : undefined;
     const answer =
-      action === 'chat'
-        ? rag
-          ? rag.answer +
-            (rag.citations.length
-              ? '\n\n' +
-                rag.evidence
-                  .filter((e) => rag.citations.includes(e.unit_id))
-                  .map((e) => `${e.title} ${e.unit_label} (${e.version_id})\n${e.source_url}`)
-                  .join('\n')
-              : '')
-          : answerQuestion(prompt, sample, locale)
-        : '';
+      action === 'chat' ? (rag ? rag.answer : answerQuestion(prompt, sample, locale)) : '';
     current.signal.throwIfAborted();
     const updated = await records.update(record.id, (stored) => {
       current.signal.throwIfAborted();
@@ -191,7 +210,10 @@ async function applyAction(action: 'explain' | 'chat') {
           analysis,
           sixQuestionsSeconds: undefined,
           processingSeconds: (performance.now() - started) / 1000,
-          chat: []
+          chat:
+            analysis?.publication === 'partial' && draftSource.value === stored.source
+              ? stored.chat
+              : []
         };
       const exchange = {
         question: prompt,
@@ -208,7 +230,7 @@ async function applyAction(action: 'explain' | 'chat') {
       draftSource.value = updated.source ?? '';
       sixError.value = '';
       sixCopied.value = false;
-      refreshSix = Boolean(updated.source && !updated.sixQuestions);
+      refreshSix = Boolean(updated.source && !updated.sixQuestions && !updated.analysis);
     } else {
       question.value = '';
       await nextTick();
@@ -223,6 +245,7 @@ async function applyAction(action: 'explain' | 'chat') {
     if (task === current) {
       clearInterval(timer);
       pending.value = false;
+      explanationPreview.value = undefined;
       task = undefined;
       phase.value = undefined;
     }
@@ -333,6 +356,11 @@ async function copySix() {
           <h1 class="page-title">{{ t('chat') }}</h1>
           <p class="break-words text-sm text-muted">{{ entry.summary.title }}</p>
         </div>
+        <LogicNotes
+          v-if="!sourceDirty"
+          :notes="entry.analysis?.logicNotes"
+          :locale="workspace.context.locale"
+        />
         <p v-if="sourceDirty" class="feedback" role="status">{{ t('sourceChanged') }}</p>
         <p v-if="!entry.chat.length" class="rounded bg-surface p-4 text-sm text-muted">
           {{ t('chatEmpty') }}
@@ -351,6 +379,34 @@ async function copySix() {
             <p class="mr-6 whitespace-pre-line break-words rounded-lg bg-surface p-3">
               {{ exchange.answer }}
             </p>
+            <details
+              v-if="exchange.rag && citedEvidence(exchange.rag).length"
+              class="mr-6 rounded bg-surface p-3"
+            >
+              <summary>
+                {{
+                  workspace.context.locale === 'id'
+                    ? 'Referensi dokumen dan peraturan'
+                    : '參考資料（文件與法條）'
+                }}
+              </summary>
+              <div
+                v-for="evidence in citedEvidence(exchange.rag)"
+                :key="evidence.unit_id"
+                class="mt-3 space-y-2"
+              >
+                <a
+                  :href="evidence.source_url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-action"
+                >
+                  {{ evidence.title }} · {{ evidence.unit_label }}
+                </a>
+                <p class="text-xs text-muted">{{ evidence.version_id }}</p>
+                <p class="whitespace-pre-line">{{ evidence.text }}</p>
+              </div>
+            </details>
           </div>
         </TransitionGroup>
         <form class="space-y-3" @submit.prevent="applyAction('chat')">
@@ -378,8 +434,13 @@ async function copySix() {
       </section>
       <article v-else class="space-y-7">
         <h1 class="page-title">{{ entry.summary.title }}</h1>
+        <LogicNotes
+          v-if="!sourceDirty || explanationPreview"
+          :notes="explanationPreview?.logicNotes ?? entry.analysis?.logicNotes"
+          :locale="workspace.context.locale"
+        />
         <section
-          v-if="!sourceDirty"
+          v-if="visibleSummary && (!sourceDirty || explanationPreview)"
           class="rounded bg-surface p-4"
           aria-labelledby="summary-heading"
         >
@@ -392,7 +453,7 @@ async function copySix() {
           </p>
           <ul class="mt-3 list-disc space-y-2 pl-5">
             <li
-              v-for="fact in entry.summary.facts"
+              v-for="fact in visibleSummary.facts"
               :key="fact"
               class="whitespace-pre-line break-words"
             >
@@ -400,7 +461,7 @@ async function copySix() {
             </li>
           </ul>
           <p class="mt-4 break-words border-t border-[#CAD1D5] pt-3 font-semibold text-[#22474E]">
-            {{ entry.summary.action }}
+            {{ visibleSummary.action }}
           </p>
           <div class="mt-3 flex flex-wrap gap-x-2">
             <RouterLink
@@ -525,7 +586,7 @@ async function copySix() {
           <p v-if="sixCopied" role="status" class="text-sm text-brand-dark">{{ t('copied') }}</p>
         </section>
         <section
-          v-if="entry.analysis && !sourceDirty"
+          v-if="entry.source !== undefined && !sourceDirty"
           class="space-y-3"
           aria-labelledby="rag-heading"
         >
@@ -543,30 +604,57 @@ async function copySix() {
                 : 'AI 直接生成，未經額外複核，請核對原文與引用來源。'
             }}
           </p>
-          <p v-if="entry.analysis.publication === 'partial'" role="status" class="feedback">
+          <p v-if="entry.analysis?.publication === 'partial'" role="status" class="feedback">
             {{
               workspace.context.locale === 'id'
-                ? 'Sebagian pertanyaan atau jawaban belum tersedia.'
-                : '部分問題或回答未生成；已保留可用結果。'
+                ? 'Sebagian konten belum tersedia; dokumen asli dan hasil yang tersedia disimpan.'
+                : '部分內容未生成；原文與可用結果已保留，可繼續提問或重新解釋。'
             }}
           </p>
+          <p
+            v-if="entry.analysis?.questionError || !entry.analysis?.questions?.length"
+            role="status"
+            class="feedback"
+          >
+            {{
+              entry.analysis?.questionError ||
+              (workspace.context.locale === 'id'
+                ? 'Pertanyaan belum tersedia. Anda dapat membuatnya tanpa memindai ulang.'
+                : entry.analysis
+                  ? '目前沒有適合的建議問題，你仍可自行提問。'
+                  : '問題尚未生成，可重新解釋並產生問答，不必重新辨識圖片。')
+            }}
+          </p>
+          <button
+            v-if="entry.analysis?.questionError || !entry.analysis?.questions?.length"
+            type="button"
+            class="text-action"
+            :disabled="pending"
+            @click="applyAction('explain')"
+          >
+            {{
+              workspace.context.locale === 'id'
+                ? 'Jelaskan dan buat pertanyaan ulang'
+                : '重新解釋並產生問答'
+            }}
+          </button>
           <article
-            v-for="item in entry.analysis.questions"
+            v-for="item in entry.analysis?.questions ?? []"
             :key="item.id"
             class="rounded bg-surface p-4 space-y-2"
           >
             <h3 class="font-semibold">{{ item.text }}</h3>
             <p class="whitespace-pre-line">{{ item.answer }}</p>
-            <details>
+            <details v-if="citedEvidence(item).length || item.sourceQuote">
               <summary>
                 {{
                   workspace.context.locale === 'id'
-                    ? 'Dokumen dan sumber'
-                    : '查看原文依據與檢索來源'
+                    ? 'Referensi dokumen dan peraturan'
+                    : '參考資料（文件與法條）'
                 }}
               </summary>
               <blockquote class="my-2 whitespace-pre-line">{{ item.sourceQuote }}</blockquote>
-              <div v-for="evidence in item.evidence" :key="evidence.unit_id" class="my-3">
+              <div v-for="evidence in citedEvidence(item)" :key="evidence.unit_id" class="my-3">
                 <a
                   :href="evidence.source_url"
                   target="_blank"
@@ -585,22 +673,6 @@ async function copySix() {
           {{ t('stop') }}
         </button>
         <DocumentGallery :id="entry.id" :urls="urls" :locale="workspace.context.locale" />
-        <section aria-labelledby="next-heading">
-          <h2 id="next-heading" class="section-title">{{ t('next') }}</h2>
-          <RouterLink
-            v-for="item in entry.destinations"
-            :key="item.id"
-            :to="{ name: 'destination', params: { id: entry.id, destination: item.id } }"
-            class="flex min-h-16 items-center gap-3 border-b border-line py-3 text-brand-dark"
-          >
-            <AppIcon :name="item.kind === 'official' ? 'external' : 'app'" class="shrink-0" />
-            <div class="min-w-0 flex-1 break-words">
-              <div class="font-semibold">{{ item.label[workspace.context.locale] }}</div>
-              <div class="mt-1 text-sm text-muted">{{ t(item.kind) }}</div>
-            </div>
-            <AppIcon name="next" class="h-5 w-5 shrink-0" />
-          </RouterLink>
-        </section>
       </article>
     </Transition>
   </div>

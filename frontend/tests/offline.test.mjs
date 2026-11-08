@@ -111,3 +111,22 @@ test('sixQuestions rejects incomplete output; cancelling pending analysis cleans
   assert.equal(pages[0].text, '辨識出的原文');
   assert.deepEqual(mock.calls.filter(c => c.action !== 'cancel').map(c => c.action), ['transcribe']);
 });
+
+test('completed OCR cleanup does not cancel the following summary request', async () => {
+  let lateCancel = false;
+  const mock = host(request => {
+    if (request.action === 'transcribe') return '完成的原文';
+    if (request.action === 'summarize') return lateCancel ? new Error('已停止處理。') : '先看重點\n文件摘要';
+    return 'ready';
+  });
+  const original = window.govclearNative.postMessage.bind(window.govclearNative);
+  window.govclearNative.postMessage = raw => {
+    if (JSON.parse(raw).data.action === 'cancel') lateCancel = true;
+    original(raw);
+  };
+  assert.equal(await recognizeDocument([page('photo')], signal(), () => {}), 0);
+  const summary = await summarizeDocument('完成的原文', '文件', 'zh-TW', signal());
+  assert.match(summary.facts.join(''), /文件摘要/);
+  assert.equal(mock.calls.some(call => call.action === 'cancel'), false);
+  assert.equal(mock.listeners.size, 0);
+});

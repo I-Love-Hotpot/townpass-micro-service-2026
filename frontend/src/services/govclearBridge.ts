@@ -117,7 +117,9 @@ export class GovClearBridge {
   }
 
   dispose() {
-    this.cancel();
+    // Completed work must not send a late cancel into the next inference phase.
+    if (this.pending.size) this.cancel();
+    this.stopped = true;
     this.object?.removeEventListener('message', this.receive);
   }
 }

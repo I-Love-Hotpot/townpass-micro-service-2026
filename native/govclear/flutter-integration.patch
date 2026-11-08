@@ -40,10 +40,9 @@ index 0000000..b77b56f
 +}
 diff --git a/integration_test/govclear_speed_test.dart b/integration_test/govclear_speed_test.dart
 new file mode 100644
-index 0000000..a70229d
 --- /dev/null
 +++ b/integration_test/govclear_speed_test.dart
-@@ -0,0 +1,127 @@
+@@ -0,0 +1,188 @@
 +import 'dart:convert';
 +import 'dart:io';
 +import 'dart:ui' as ui;
@@ -115,37 +114,47 @@ index 0000000..a70229d
 +        expect(source, contains('租金'));
 +        expect((draft['w'] as Map).length, 6);
 +        stages['draft'] = draft;
-+        expect((draft['q'] as List).length, 3);
++        stages['retrievalMode'] = 'document-facts';
 +        final retrievalStarted = watch.elapsedMilliseconds;
 +        final evidence = <String, Map<String, dynamic>>{};
-+        for (final q in draft['q']) {
-+          final retrieval = jsonDecode(
-+            await GovClearKnowledge.retrieve(jsonEncode([q['k']])),
-+          );
-+          final rows = retrieval['evidence'] as List;
-+          if (rows.isNotEmpty) {
-+            evidence[rows.first['unit_id']] = Map<String, dynamic>.from(
-+              rows.first,
-+            );
-+          }
++        final retrieval = jsonDecode(
++          await GovClearKnowledge.retrieve(
++            jsonEncode(
++              [
++                draft['w']['what'],
++                draft['w']['how'],
++              ].whereType<String>().toList(),
++            ),
++            source: source,
++          ),
++        );
++        for (final row in (retrieval['evidence'] as List).take(3)) {
++          evidence[row['unit_id']] = Map<String, dynamic>.from(row);
 +        }
++        stages['evidenceUnits'] = evidence.values
++            .map(
++              (row) => {
++                'unit_id': row['unit_id'],
++                'unit_label': row['unit_label'],
++                'fullCharacters': (row['text'] as String).length,
++                'contextCharacters': (row['context_text'] as String).length,
++              },
++            )
++            .toList();
 +        stages['retrievalSeconds'] =
 +            (watch.elapsedMilliseconds - retrievalStarted) / 1000;
 +        final answerStarted = watch.elapsedMilliseconds;
-+        final answer = modelJson(
-+          await engine.generate(
-+            '${policies['answersPolicy']}${jsonEncode({
-+              'language': '繁體中文',
-+              'source': source,
-+              'q': (draft['q'] as List).map((q) => q['t']).toList(),
-+              'e': evidence.values.map((e) => {'name': e['title'], 'article': e['unit_label'], 'text': e['text'], 'version': e['version_id']}).toList(),
-+            })}',
-+          ),
++        final answerRaw = await engine.generate(
++          '${policies['answersPolicy']}${jsonEncode({
++            'language': '繁體中文',
++            'source': source,
++            'logicNotes': draft['d'] ?? [],
++            'e': evidence.values.indexed.map((row) => {'i': row.$1, 'name': row.$2['title'], 'article': row.$2['unit_label'], 'text': row.$2['context_text'] ?? row.$2['text'], 'excerpt': row.$2['context_is_excerpt'] == true}).toList(),
++          })}',
 +        );
-+        expect((answer['a'] as List).length, 3);
-+        for (final row in answer['a']) {
-+          expect(row[0], isA<String>());
-+        }
++        stages['answerRaw'] = answerRaw;
++        stages['firstBatchSeconds'] =
++            stages['ocrSeconds'] + stages['planSeconds'];
 +        stages['answersSeconds'] =
 +            (watch.elapsedMilliseconds - answerStarted) / 1000;
 +        stages['answerMetrics'] = jsonDecode(
@@ -154,11 +163,62 @@ index 0000000..a70229d
 +        );
 +        stages['totalSeconds'] = watch.elapsedMilliseconds / 1000;
 +        stages['under20Seconds'] = watch.elapsedMilliseconds <= 20000;
++        await file.writeAsString(jsonEncode(report));
++        final answer = modelJson(answerRaw);
++        expect((answer['a'] as List).length, lessThanOrEqualTo(3));
++        expect(
++          answer['a'],
++          isNotEmpty,
++        ); // This synthetic notice has actionable questions.
++        for (final row in answer['a']) {
++          expect(row['q'], isA<String>());
++          expect(row['t'], isA<String>());
++          expect(
++            (row['c'] as List).every((ref) {
++              final match = ref is String
++                  ? RegExp(r'^(?:e\[(\d+)\]|(\d+))$').firstMatch(ref)
++                  : null;
++              final index = ref is int
++                  ? ref
++                  : match != null
++                  ? int.parse(match[1] ?? match[2]!)
++                  : evidence.keys.toList().indexOf(ref);
++              return index >= 0 && index < evidence.length;
++            }),
++            isTrue,
++          );
++        }
++        stages['answers'] = answer['a'];
 +        stages['sourceCharacters'] = source.length;
 +        stages['evidenceCount'] = evidence.length;
-+        expect(evidence, isNotEmpty);
++        expect(
++          evidence.length,
++          3,
++        ); // All three reference candidates stay available.
 +        (report['runs'] as List).add(stages);
 +        await file.writeAsString(jsonEncode(report));
++        expect(stages['totalSeconds'], lessThanOrEqualTo(20));
++      }
++      report['logicCases'] = <dynamic>[];
++      for (final input in [
++        ('交通通知記載：14歲駕駛超速。', true),
++        ('乘客14歲，駕駛人為45歲的父親。車輛因超速收到通知。', false),
++        ('45歲駕駛人在11月14日超速，收到交通通知。', false),
++      ]) {
++        final value = modelJson(
++          await engine.generate(
++            policies['planPolicy'] +
++                jsonEncode({'language': '繁體中文', 'source': input.$1}),
++          ),
++        );
++        (report['logicCases'] as List).add({
++          'source': input.$1,
++          'output': value,
++        });
++        await file.writeAsString(jsonEncode(report));
++        expect(value['s'], isA<String>());
++        expect((value['w'] as Map).length, 6);
++        expect((value['d'] as List).isNotEmpty, input.$2);
 +      }
 +      report['status'] = 'passed';
 +    } catch (error) {
@@ -236,7 +296,7 @@ index 478d28d..97dec56 100644
          engine.cancel();
          respond(value: 'stopped');
          return;
-@@ -208,6 +209,16 @@ class _GovClearWebViewState extends State<GovClearWebView> {
+@@ -208,6 +209,19 @@ class _GovClearWebViewState extends State<GovClearWebView> {
              result = SimulatorGemmaEngine.onDevice
                  ? 'iPhone 離線 · Gemma 4 E4B'
                  : '模擬器測試 · Mac 上的 Gemma 4 E4B';
@@ -249,11 +309,14 @@ index 478d28d..97dec56 100644
 +            if (payload is! Map || payload['terms'] is! String) {
 +              throw StateError('缺少檢索條件。');
 +            }
-+            result = await GovClearKnowledge.retrieve(payload['terms']);
++            result = await GovClearKnowledge.retrieve(
++              payload['terms'],
++              source: payload['source'] is String ? payload['source'] : '',
++            );
            case 'summarize':
              if (payload is! Map ||
                  payload['text'] is! String ||
-@@ -235,9 +246,7 @@ class _GovClearWebViewState extends State<GovClearWebView> {
+@@ -235,9 +249,7 @@ class _GovClearWebViewState extends State<GovClearWebView> {
                policy: payload['policy'],
              );
            case 'transcribe':
@@ -264,7 +327,7 @@ index 478d28d..97dec56 100644
                throw StateError('圖片格式或大小不正確。');
              }
              result = await engine.transcribe(base64Decode(payload['image']));
-@@ -246,7 +255,7 @@ class _GovClearWebViewState extends State<GovClearWebView> {
+@@ -246,7 +258,7 @@ class _GovClearWebViewState extends State<GovClearWebView> {
          }
          if (operation == generation) respond(value: result);
        } finally {
@@ -275,10 +338,9 @@ index 478d28d..97dec56 100644
        respond(error: e.message ?? '手機模型執行失敗。');
 diff --git a/lib/service/govclear_knowledge.dart b/lib/service/govclear_knowledge.dart
 new file mode 100644
-index 0000000..f0aea13
 --- /dev/null
 +++ b/lib/service/govclear_knowledge.dart
-@@ -0,0 +1,91 @@
+@@ -0,0 +1,160 @@
 +import 'dart:convert';
 +
 +import 'package:crypto/crypto.dart';
@@ -352,7 +414,69 @@ index 0000000..f0aea13
 +    return scored.take(3).map((row) => row.unit).toList();
 +  }
 +
-+  static Future<String> retrieve(String encodedTerms) async {
++  // Select whole legal paragraphs; the evidence text and source document stay intact.
++  static String contextText(String text, String source) {
++    final cues = <String>{};
++    for (final run in RegExp(r'[\u3400-\u9fff]+').allMatches(source)) {
++      final word = run[0]!;
++      for (var i = 0; i < word.length - 1; i++) {
++        cues.add(word.substring(i, i + 2));
++      }
++    }
++    final lines = text.trim().split(RegExp(r'\n+'));
++    if (cues.isEmpty || lines.length < 2) return text;
++    final mainItem = RegExp(r'^[一二三四五六七八九十百]+、');
++    final subItem = RegExp(r'^（[一二三四五六七八九十百]+）');
++    final mainItems = lines.skip(1).any(mainItem.hasMatch);
++    final subItems = lines.skip(1).any(subItem.hasMatch);
++    final blocks = <String>[lines.first];
++    for (final line in lines.skip(1)) {
++      if ((mainItems && subItem.hasMatch(line)) ||
++          (!mainItems && subItems && !subItem.hasMatch(line))) {
++        blocks[blocks.length - 1] += '\n$line';
++      } else {
++        blocks.add(line);
++      }
++    }
++    var best = -1, score = 0;
++    for (var i = 1; i < blocks.length; i++) {
++      final hits = cues.where(blocks[i].contains).length;
++      if (hits > score ||
++          (hits == score &&
++              hits > 0 &&
++              blocks[i].length < blocks[best].length)) {
++        best = i;
++        score = hits;
++      }
++    }
++    if (best < 0) return text;
++    final selected = <int>{0, best};
++    if (!mainItems && subItems) {
++      selected.add(1); // FAQ base answer qualifies later instructions.
++    }
++    final ordinal = mainItem
++        .firstMatch(blocks[best])
++        ?.group(0)
++        ?.replaceAll('、', '');
++    if (ordinal != null) {
++      for (var i = 1; i < blocks.length; i++) {
++        if (blocks[i].contains('第$ordinal款')) selected.add(i);
++      }
++    }
++    for (final match in RegExp(
++      r'前項第([一二三四五六七八九十]+)款',
++    ).allMatches(blocks[best])) {
++      for (var i = 1; i < blocks.length; i++) {
++        if (blocks[i].startsWith('${match[1]}、')) selected.add(i);
++      }
++    }
++    return (selected.toList()..sort()).map((i) => blocks[i]).join('\n');
++  }
++
++  static Future<String> retrieve(
++    String encodedTerms, {
++    String source = '',
++  }) async {
 +    final input = jsonDecode(encodedTerms);
 +    if (input is! List || input.any((x) => x is! String)) {
 +      throw StateError('無效檢索條件。');
@@ -366,7 +490,14 @@ index 0000000..f0aea13
 +      'datasetHash': checksum,
 +      'retrievedAt': DateTime.now().toUtc().toIso8601String(),
 +      'historicalApplicability': 'unverified',
-+      'evidence': search(units, input.cast<String>()),
++      'evidence': search(units, input.cast<String>()).map((unit) {
++        final context = contextText(unit['text'] as String, source);
++        return {
++          ...unit,
++          'context_text': context,
++          'context_is_excerpt': context != unit['text'],
++        };
++      }).toList(),
 +    });
 +  }
 +}
@@ -537,10 +668,9 @@ index 0267dd5..533f015 100644
      - assets/svg/
 diff --git a/test/govclear_knowledge_test.dart b/test/govclear_knowledge_test.dart
 new file mode 100644
-index 0000000..87bc7e0
 --- /dev/null
 +++ b/test/govclear_knowledge_test.dart
-@@ -0,0 +1,50 @@
+@@ -0,0 +1,108 @@
 +import 'dart:typed_data';
 +import 'dart:convert';
 +import 'dart:io';
@@ -590,6 +720,64 @@ index 0000000..87bc7e0
 +      isEmpty,
 +    );
 +  });
++  test('focused context keeps complete clauses, linked exceptions and original text', () {
++    const text =
++        '申請應符合下列規定：\n一、住宅用途應合法。\n（一）主要用途為住宅。\n（二）空白者按住家稅率。但另有證明者不在此限。\n二、租賃契約承租人應為申請人。\n未保存登記者，不受前項第一款規定之限制。';
++    final context = GovClearKnowledge.contextText(text, '住宅用途');
++    expect(context, contains('（一）主要用途為住宅。\n（二）空白者按住家稅率。但另有證明者不在此限。'));
++    expect(context, contains('不受前項第一款規定之限制'));
++    expect(context, isNot(contains('二、租賃契約')));
++    expect(text, contains('二、租賃契約'));
++  });
++  test('FAQ excerpts retain wrapped continuation lines and a complete selected answer', () {
++    const text =
++        '如何辦理？\n（一）租約到期請先確認資格。\n（二）線上補件方式如下：\n前往網站\nhttps://example.org\n點選補件並上傳。\n（三）其他申請方式。';
++    final context = GovClearKnowledge.contextText(text, '線上補件');
++    expect(
++      context,
++      '如何辦理？\n（一）租約到期請先確認資格。\n（二）線上補件方式如下：\n前往網站\nhttps://example.org\n點選補件並上傳。',
++    );
++    expect(GovClearKnowledge.contextText(text, '完全無關'), text);
++    expect(GovClearKnowledge.contextText(text, ''), text);
++  });
++  test('all three references retain full text alongside shorter per-reference context', () {
++    final units = GovClearKnowledge.decode(
++      File('assets/govclear_rag/knowledge.json').readAsBytesSync(),
++    );
++    final found = GovClearKnowledge.search(units, ['提出租金補貼申請', '附上身分證及租賃契約']);
++    expect(found.length, 3);
++    var original = 0, focused = 0;
++    for (final unit in found) {
++      final text = unit['text'] as String;
++      final context = GovClearKnowledge.contextText(
++        text,
++        '租金補貼通知，請在115年12月10日前提出申請，附上身分證及租賃契約，符合資格才可領取補貼。',
++      );
++      expect(context, isNotEmpty);
++      expect(unit['text'], text);
++      original += text.length;
++      focused += context.length;
++    }
++    expect(focused, lessThan(original));
++  });
++  test(
++    'FAQ base conditions are retained alongside later supplement instructions',
++    () {
++      final units = GovClearKnowledge.decode(
++        File('assets/govclear_rag/knowledge.json').readAsBytesSync(),
++      );
++      final unit = units.firstWhere(
++        (u) => u['unit_id'] == 'pip_b1020_faq_115:q35:bba4aa037cbb25507d05',
++      );
++      final context = GovClearKnowledge.contextText(
++        unit['text'] as String,
++        '租金補貼申請，附上身分證及租賃契約。',
++      );
++      expect(context, contains('仍可繼續辦理審核'));
++      expect(context, contains('無法撥款'));
++      expect(context, contains('補新租約'));
++    },
++  );
 +}
 diff --git a/test/govclear_native_engine_test.dart b/test/govclear_native_engine_test.dart
 index aefc81d..a2bd323 100644
@@ -732,3 +920,290 @@ index aefc81d..a2bd323 100644
        );
        expect(chats, 1);
      });
+diff --git a/integration_test/govclear_logic_test.dart b/integration_test/govclear_logic_test.dart
+new file mode 100644
+--- /dev/null
++++ b/integration_test/govclear_logic_test.dart
+@@ -0,0 +1,71 @@
++import 'dart:convert';
++import 'dart:io';
++
++import 'package:flutter_test/flutter_test.dart';
++import 'package:integration_test/integration_test.dart';
++import 'package:path_provider/path_provider.dart';
++import 'package:town_pass/service/govclear_simulator_engine.dart';
++
++void main() {
++  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
++  testWidgets(
++    'age and driving concerns are uncertain notes, not document rejection',
++    (tester) async {
++      final docs = (await getApplicationDocumentsDirectory()).path;
++      final policy = jsonDecode(
++        await File('$docs/govclear-logic-policy.json').readAsString(),
++      )['planPolicy'];
++      final file = File('$docs/govclear-logic-test.json');
++      final report = <String, dynamic>{
++        'status': 'running',
++        'cases': <dynamic>[],
++      };
++      final engine = SimulatorGemmaEngine();
++      await file.writeAsString(jsonEncode(report));
++      try {
++        for (final input in [
++          ('交通通知記載：14歲駕駛超速。', true),
++          ('乘客14歲，駕駛人為45歲的父親。車輛因超速收到通知。', false),
++          ('45歲駕駛人在11月14日超速，收到交通通知。', false),
++        ]) {
++          final watch = Stopwatch()..start();
++          final raw = await engine.generate(
++            '$policy${jsonEncode({'language': '繁體中文', 'source': input.$1})}',
++          );
++          final value = jsonDecode(
++            raw.trim().replaceAll(
++              RegExp(r'^\x60\x60\x60(?:json)?\s*|\s*\x60\x60\x60$'),
++              '',
++            ),
++          );
++          (report['cases'] as List).add({
++            'source': input.$1,
++            'output': value,
++            'seconds': watch.elapsedMilliseconds / 1000,
++          });
++          await file.writeAsString(jsonEncode(report));
++          expect(value['s'], isA<String>());
++          expect((value['w'] as Map).length, 6);
++          expect(value['d'], isA<List>());
++          expect((value['d'] as List).isNotEmpty, input.$2);
++          for (final note in value['d']) {
++            final quote = note['quote'] as String;
++            expect(
++              input.$1.replaceAll(RegExp(r'\s'), ''),
++              contains(quote.replaceAll(RegExp(r'\s'), '')),
++            );
++          }
++        }
++        report['status'] = 'passed';
++      } catch (error) {
++        report['status'] = 'failed';
++        report['error'] = error.toString();
++        rethrow;
++      } finally {
++        engine.dispose();
++        await file.writeAsString(jsonEncode(report));
++      }
++    },
++    timeout: const Timeout(Duration(minutes: 5)),
++  );
++}
+diff --git a/integration_test/govclear_webview_e2e_test.dart b/integration_test/govclear_webview_e2e_test.dart
+new file mode 100644
+--- /dev/null
++++ b/integration_test/govclear_webview_e2e_test.dart
+@@ -0,0 +1,206 @@
++import 'dart:convert';
++import 'dart:io';
++
++import 'package:flutter/material.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:flutter_inappwebview/flutter_inappwebview.dart';
++import 'package:integration_test/integration_test.dart';
++import 'package:path_provider/path_provider.dart';
++import 'package:town_pass/page/govclear/govclear_webview.dart';
++
++void main() {
++  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
++  testWidgets(
++    'production WebView start button through persisted visible answers',
++    (tester) async {
++      final docs = (await getApplicationDocumentsDirectory()).path;
++      final config = jsonDecode(
++        await File('$docs/govclear-e2e-config.json').readAsString(),
++      );
++      final output = File('$docs/govclear-webview-e2e.json');
++      final report = <String, dynamic>{
++        'status': 'starting',
++        'scope': 'Real production WebView and native bridge; synthetic photo, no mocked OCR or model. Timing starts immediately before clicking the production start button and ends after stored results are laid out and page transitions finish.',
++      };
++      await output.writeAsString(jsonEncode(report));
++      try {
++        await tester.pumpWidget(const MaterialApp(home: GovClearWebView()));
++        InAppWebViewController? controller;
++        Future<bool> ready() async {
++          final dynamic state = tester.state(find.byType(GovClearWebView));
++          controller = state.controller as InAppWebViewController?;
++          if (controller == null) return false;
++          return await controller!.evaluateJavascript(
++                source: "!!document.querySelector('input[data-kind=\"photos\"]') && !!window.govclearNative",
++              ) ==
++              true;
++        }
++
++        final deadline = DateTime.now().add(const Duration(seconds: 45));
++        while (!await ready()) {
++          if (DateTime.now().isAfter(deadline)) {
++            throw StateError('WebView did not load in time');
++          }
++          await tester.pump(const Duration(milliseconds: 100));
++        }
++        var script = await controller!.evaluateJavascript(
++          source: "document.querySelector('script[type=\"module\"]').src",
++        );
++        if (!script.toString().endsWith(config['script'] as String)) {
++          await controller!
++              .callAsyncJavaScript(
++                functionBody: r'''
++const r=await navigator.serviceWorker.getRegistration();
++if(r){await r.update();const worker=r.installing;if(worker && worker.state!=='installed'){await new Promise(resolve=>worker.addEventListener('statechange',()=>{if(worker.state==='installed'||worker.state==='redundant')resolve()}));}}
++return true;
++''',
++              )
++              .timeout(const Duration(seconds: 20));
++          await tester.pumpWidget(const SizedBox.shrink());
++          await tester.pump(const Duration(milliseconds: 500));
++          await tester.pumpWidget(const MaterialApp(home: GovClearWebView()));
++          while (!await ready()) {
++            if (DateTime.now().isAfter(deadline)) {
++              throw StateError('Updated WebView did not load');
++            }
++            await tester.pump(const Duration(milliseconds: 100));
++          }
++          script = await controller!.evaluateJavascript(
++            source: "document.querySelector('script[type=\"module\"]').src",
++          );
++        }
++        report['script'] = script;
++        expect(
++          script.toString().endsWith(config['script'] as String),
++          isTrue,
++          reason: 'Must measure the deployed optimized version',
++        );
++        final preparation = await controller!.callAsyncJavaScript(
++          functionBody: r'''
++const c = document.createElement('canvas'); c.width=1000; c.height=700;
++const x=c.getContext('2d'); x.fillStyle='white'; x.fillRect(0,0,1000,700);
++x.fillStyle='black'; x.font='36px sans-serif'; x.textBaseline='top';
++['租金補貼通知','115年度租金補貼開放申請。','請在115年12月10日前提出申請。','申請時請附上身分證及租賃契約。','符合資格者才可領取補貼。'].forEach((line,i)=>x.fillText(line,40,50+i*48));
++const blob=await new Promise(resolve=>c.toBlob(resolve,'image/png'));
++const dt=new DataTransfer(); dt.items.add(new File([blob],'govclear-e2e-synthetic.png',{type:'image/png'}));
++const input=document.querySelector('input[data-kind="photos"]');
++input.files=dt.files; input.dispatchEvent(new Event('change',{bubbles:true}));
++return true;
++''',
++        );
++        expect(preparation?.error, isNull);
++        expect(preparation?.value, true);
++        await tester.pump(const Duration(milliseconds: 150));
++        final started = await controller!.evaluateJavascript(
++          source: r'''
++(() => {
++ const button=[...document.querySelectorAll('button')].find(b=>b.textContent.trim()==='辨識並產生摘要');
++ if(!button || button.disabled) return false;
++ const result={status:'running', firstSummaryMs:null};
++ window.govclearE2E=result;
++ const start=performance.now(); let checking=false;
++ const observer=new MutationObserver(check);
++ async function check(){
++   if(checking || result.status!=='running') return;
++   const error=document.querySelector('#scan-error');
++   if(error && error.textContent.trim()){result.status='failed';result.error=error.textContent.trim();observer.disconnect();clearInterval(poll);return}
++   const preview=document.querySelector('#preview-heading');
++   if(result.firstSummaryMs===null && preview && preview.parentElement.querySelector('p')) result.firstSummaryMs=performance.now()-start;
++   const heading=document.querySelector('#rag-heading');
++   if(!heading || !location.hash.startsWith('#/documents/')) return;
++   const rows=[...heading.parentElement.querySelectorAll('article')];
++   if(!rows.length || document.querySelector('[class*="-enter-active"]')) return;
++   checking=true;
++   try {
++     const id=decodeURIComponent(location.hash.split('/')[2].split('?')[0]);
++     const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('baihua');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
++     const record=await new Promise((resolve,reject)=>{const r=db.transaction('documents').objectStore('documents').get(id);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)}); db.close();
++     if(record?.analysis?.publication==='partial'){result.status='failed';result.error='UI saved an incomplete result';observer.disconnect();clearInterval(poll);checking=false;return}
++     if(!record || !record.analysis || record.analysis.publication!=='generated' || rows.length!==record.analysis.questions.length) {checking=false;return}
++     if(rows.some(row=>!row.getBoundingClientRect().height || !row.querySelector('h3'))) {checking=false;return}
++     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
++     result.totalMs=performance.now()-start; result.recordId=id;
++     result.summary=record.summary.facts; result.source=record.source; result.sixQuestions=record.sixQuestions;
++     result.sixRenderedCount=document.querySelector('#six-heading')?.parentElement.querySelectorAll('dl > div').length;
++     result.renderedSections=['summary-heading','six-heading','rag-heading'].filter(id=>document.getElementById(id));
++     result.questions=record.analysis.questions.map(q=>({question:q.text,answer:q.answer,citations:q.citations,references:q.evidence.map(e=>({id:e.unit_id,article:e.unit_label,fullCharacters:e.text.length,contextCharacters:e.context_text?.length}))}));
++     result.renderedQuestions=rows.map(row=>({question:row.querySelector('h3').textContent.trim(),answer:row.querySelector('p').textContent.trim(),references:row.querySelectorAll('details a').length}));
++     result.status='passed'; observer.disconnect(); clearInterval(poll);
++   } catch(error){result.status='failed';result.error=String(error);observer.disconnect();clearInterval(poll)}
++ }
++ observer.observe(document.body,{childList:true,subtree:true,attributes:true});
++ const poll=setInterval(check,50);
++ button.click(); return true;
++})()
++''',
++        );
++        expect(
++          started,
++          isTrue,
++          reason: 'Actual production start button must be clicked',
++        );
++        final finishDeadline = DateTime.now().add(const Duration(seconds: 35));
++        while (true) {
++          final value = await controller!.evaluateJavascript(
++            source: 'JSON.stringify(window.govclearE2E)',
++          );
++          final result = jsonDecode(value as String) as Map<String, dynamic>;
++          if (result['status'] != 'running') {
++            report.addAll(result);
++            break;
++          }
++          if (DateTime.now().isAfter(finishDeadline)) {
++            throw StateError('Full UI flow timed out');
++          }
++          await tester.pump(const Duration(milliseconds: 100));
++        }
++        await output.writeAsString(jsonEncode(report));
++        expect(report['status'], 'passed');
++        expect((report['summary'] as List), isNotEmpty);
++        expect((report['sixQuestions'] as Map).length, 6);
++        expect(report['sixRenderedCount'], 6);
++        expect((report['renderedSections'] as List).length, 3);
++        final questions = report['questions'] as List;
++        expect(questions, isNotEmpty);
++        expect(questions.length, lessThanOrEqualTo(3));
++        final cited = questions.expand((q) => q['citations'] as List).toSet();
++        expect(
++          cited.length,
++          greaterThanOrEqualTo(2),
++          reason: 'This fixture must retain multiple actually cited sources',
++        );
++        expect(report['totalMs'], lessThanOrEqualTo(20000));
++        // Capture the real rendered result, then remove only this synthetic record.
++        final summaryShot = await controller!.takeScreenshot();
++        if (summaryShot != null) {
++          await File('$docs/govclear-e2e-summary.png')
++              .writeAsBytes(summaryShot);
++        }
++        await controller!.evaluateJavascript(
++          source: "document.querySelector('#rag-heading').scrollIntoView();",
++        );
++        await tester.pump(const Duration(milliseconds: 150));
++        final questionsShot = await controller!.takeScreenshot();
++        if (questionsShot != null) {
++          await File('$docs/govclear-e2e-questions.png')
++              .writeAsBytes(questionsShot);
++        }
++        await controller!.callAsyncJavaScript(
++          functionBody: r'''
++const id=window.govclearE2E.recordId;
++const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('baihua');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
++await new Promise((resolve,reject)=>{const tx=db.transaction(['documents','cards'],'readwrite');tx.objectStore('documents').delete(id);tx.objectStore('cards').delete(id);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});db.close();
++return true;
++''',
++        );
++      } catch (error) {
++        report['status'] = 'failed';
++        report['error'] = error.toString();
++        rethrow;
++      } finally {
++        await output.writeAsString(jsonEncode(report));
++      }
++    },
++    timeout: const Timeout(Duration(minutes: 3)),
++  );
++}

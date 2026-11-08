@@ -25,4 +25,4 @@ Cloudflare Pages 的 Settings → Builds 設定：
 失敗時查看該次部署的 Build log；修正後推送下一個 commit 即可重新觸發。
 
 這個流程只更新遠端網頁。手機 App 內打包的離線介面及原生程式仍須另行打包安裝。
-舊整合文件中的 Direct Upload 指令只適用於手動部署，不代表目前的正式更新流程。
+正式發布僅使用 GitHub `main` 自動部署；其他分支由 Git 產生 Preview。依使用者指示，不再執行 Wrangler 或其他 Direct Upload 手動發布。建置失敗時修正 Git 提交，再由 GitHub 重新觸發；不可用本機 `dist` 覆蓋正式站。

@@ -1,0 +1,60 @@
+{
+  "date": "2026-11-08",
+  "scope": "Existing on-device Gemma with reordered s/w/d prompt on three synthetic text cases. No original user image, OCR or end-to-end UI timing.",
+  "status": "passed",
+  "cases": [
+    {
+      "source": "交通通知記載：14歲駕駛超速。",
+      "output": {
+        "s": "文件記載有14歲駕駛超速的交通通知，需確認此事實。",
+        "w": {
+          "who": "14歲駕駛",
+          "what": "超速",
+          "when": null,
+          "where": null,
+          "why": null,
+          "how": null
+        },
+        "d": [
+          {
+            "quote": "14歲駕駛超速",
+            "text": "年齡與駕駛身分有疑點，請核對年齡、實際駕駛及OCR數字。"
+          }
+        ]
+      },
+      "seconds": 5.477
+    },
+    {
+      "source": "乘客14歲，駕駛人為45歲的父親。車輛因超速收到通知。",
+      "output": {
+        "s": "文件記載乘客14歲，駕駛人為45歲的父親，車輛因超速收到通知，需確認此事件的完整細節。",
+        "w": {
+          "who": "14歲乘客、45歲父親（駕駛人）",
+          "what": "收到超速通知",
+          "when": null,
+          "where": null,
+          "why": "超速",
+          "how": "車輛"
+        },
+        "d": []
+      },
+      "seconds": 4.574
+    },
+    {
+      "source": "45歲駕駛人在11月14日超速，收到交通通知。",
+      "output": {
+        "s": "45歲駕駛人於11月14日超速，並因此收到交通通知。",
+        "w": {
+          "who": "45歲駕駛人",
+          "what": "超速並收到交通通知",
+          "when": "11月14日",
+          "where": null,
+          "why": null,
+          "how": null
+        },
+        "d": []
+      },
+      "seconds": 3.872
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, ref, shallowRef } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import AppIcon from '@/components/atoms/AppIcon.vue';
+import LogicNotes from '@/components/molecules/LogicNotes.vue';
 import FileAction from '@/components/molecules/FileAction.vue';
 import DocumentCrop from '@/components/molecules/DocumentCrop.vue';
 import type { FileKind, OriginalFile } from '@/interfaces/document';
@@ -229,7 +230,7 @@ async function run() {
               stage.value =
                 workspace.context.locale === 'id'
                   ? 'Menyiapkan jawaban'
-                  : '重點已完成，正在補上問題回答';
+                  : '已取得可用內容，正在整理具體問題與回答';
             }
           }
         ),
@@ -252,6 +253,12 @@ async function run() {
         : cause instanceof Error
           ? cause.message
           : t.value('processingError');
+    if (!signal.aborted) {
+      await nextTick();
+      const message = document.getElementById('scan-error');
+      message?.scrollIntoView({ block: 'center' });
+      message?.focus({ preventScroll: true });
+    }
   } finally {
     if (controller === current) cancel();
   }
@@ -328,7 +335,7 @@ async function run() {
         <p v-if="stage" role="status" class="text-sm text-brand-dark">
           {{ stage }} · {{ t('elapsedSeconds', { n: elapsed }) }}
         </p>
-        <p v-if="error" id="scan-error" class="feedback" role="alert">{{ error }}</p>
+        <p v-if="error" id="scan-error" class="feedback" role="alert" tabindex="-1">{{ error }}</p>
         <button v-if="busy" type="button" class="text-action" @click="cancel">
           {{ t('stop') }}
         </button>
@@ -345,7 +352,9 @@ async function run() {
         <p v-for="fact in preview.summary.facts" :key="fact" class="whitespace-pre-line">
           {{ fact }}
         </p>
-        <dl class="grid gap-3 sm:grid-cols-2">
+        <p v-if="!preview.summary.facts.length" role="status">{{ preview.summary.action }}</p>
+        <LogicNotes :notes="preview.logicNotes" :locale="workspace.context.locale" />
+        <dl v-if="preview.sixQuestions" class="grid gap-3 sm:grid-cols-2">
           <div v-for="item in SIX_QUESTIONS" :key="item.key" class="rounded bg-surface p-3">
             <dt class="font-semibold">{{ item.title }}</dt>
             <dd class="whitespace-pre-line">

@@ -108,3 +108,7 @@ Vue 正式建置、TypeScript 檢查、2 項 JavaScript 橋接回歸測試、2 �
 ## 摘要力度與白話呈現
 
 摘要預設改用「先看重點、別漏掉」兩層，移除背景套話、重複資訊與空白確認卡；不再要求在摘要內重複引用原文短句。原文仍可展開回查。超過 300 字的文件會額外以原文核對候選摘要，補回必要條件。Python 與 App 共用微服務資產中的兩份規則，詳見 [摘要規則與實測](govclear-summary.md)。
+
+## 檢索上下文更新（2026-11-08）
+
+retrieve的payload維持terms JSON字串，新增選填source字串。Flutter仍回傳最多三筆完整evidence，在各筆另附context_text及context_is_excerpt，供模型閱讀與文件相關的完整段落。text及原有版本／雜湊metadata保持完整；引用顯示使用text。沒有新欄位的舊host仍可運作，但會以全文推論，未必有相同速度改善。所有處理仍在裝置端。

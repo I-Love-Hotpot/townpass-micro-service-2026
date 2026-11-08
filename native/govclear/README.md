@@ -35,4 +35,16 @@ flutter test --no-pub --dart-define=GOVCLEAR_ON_DEVICE=true test/govclear_knowle
 
 ## 分段顯示與測速更新
 
-最新微服務已從 5 次生成合併為 2 次，先顯示摘要／六何，再補三題回答。Dart 檢索加入中文雙字詞匹配；沒有重新加入輸入限制或 AI Guard。測速 policies 及原生結果在 validation/speed-prompts.json、validation/speed-iphone.json。原生短通知基準約 12.8～13.7 秒，並非所有圖片的端到端保證；細節見 docs/govclear-rag-guard.md 最新章節。
+最新微服務已從 5 次生成合併為 2 次，先顯示摘要／六何，再依內容需要補最多三題問答，不湊滿。Dart 檢索加入中文雙字詞匹配；沒有重新加入輸入限制或 AI Guard。測速 policies 及原生結果在 validation/speed-prompts.json、validation/speed-iphone.json。原生短通知基準約 12.8～13.7 秒，並非所有圖片的端到端保證；細節見 docs/govclear-rag-guard.md 最新章節。
+
+## 情境合理性真機測試
+
+Flutter `integration_test/govclear_logic_test.dart` 以手機現有 Gemma 測試14歲駕駛、14歲乘客搭成人駕駛車輛，以及11月14日。執行前將 validation/logic-policy.json 複製到 App Documents/govclear-logic-policy.json，測試結果寫入 Documents/govclear-logic-test.json。此測試不使用OCR圖片，僅驗證辨識後的情境判讀。正常App仍由 lib/main.dart 啟動。
+
+## 多筆參考資料加速
+
+Dart retrieve可接收source，為每筆候選產生context_text/context_is_excerpt，模型使用相關完整段落；原text與引用全文保留。保留首段、FAQ基本說明、款內子目及可辨識的同條款次連結，並非跨條文法律適用性解析。網頁與Flutter需同步更新才會取得此加速。integration_test/govclear_speed_test.dart同時確認三筆候選完整保留、兩輪原生照片流程不超過20秒，並檢查縮短後提示詞的年齡／角色／日期案例。
+
+## 正式WebView完整流程驗收
+
+govclear_webview_e2e_test.dart直接測正式GovClearWebView與線上微服務。先將{"script":"/assets/index-當次版本.js"}存到App Documents/govclear-e2e-config.json；測試確認實際載入該版本，合成照片經真實選圖input及開始按鈕，計時到保存／導覽／畫面完成。結果在Documents/govclear-webview-e2e.json及兩張govclear-e2e-*.png。僅清理本次合成紀錄，測後需恢復lib/main.dart。最新版17.315秒、三區塊與6欄／全部問答已顯示，詳見微服務validation/webview-e2e-*。

@@ -1,0 +1,175 @@
+{
+  "date": "2026-11-08",
+  "scope": "Two synthetic 77-character photo OCR, summary, retrieval of up to three complete references and suggested-answer runs on existing on-device Gemma. Excludes WebView, IndexedDB and rendering. Citation indices verified, legal applicability NOT verified; this does NOT meet the 20-second goal.",
+  "status": "passed",
+  "runs": [
+    {
+      "state": "cold",
+      "ocrSeconds": 0.289,
+      "planSeconds": 12.471,
+      "planMetrics": {
+        "prefill_tokens_per_second": 89.52760608764558,
+        "input_tokens": 534,
+        "decode_tokens_per_second": 26.364915666650088,
+        "first_token_seconds": 6.00256985975,
+        "total_seconds": 12.469013958332653,
+        "backend": "gpu_mtp",
+        "session_seconds": 1.1166202916647308,
+        "output_tokens": 142
+      },
+      "sixFieldsReturned": 6,
+      "sourceCharacters": 77,
+      "draft": {
+        "s": "符合資格者需在115年12月10日前，提交身分證及租賃契約，以申請115年度租金補貼。",
+        "w": {
+          "who": "符合資格者",
+          "what": "提出租金補貼申請",
+          "when": "115年12月10日前",
+          "where": null,
+          "why": "領取租金補貼",
+          "how": "附上身分證及租賃契約"
+        },
+        "d": []
+      },
+      "retrievalMode": "document-facts",
+      "evidenceUnits": [
+        {
+          "unit_id": "d0070205:17:f04105553202db61d810",
+          "unit_label": "第 17 條"
+        },
+        {
+          "unit_id": "d0070205:18:11c8950f1cbc2bf10514",
+          "unit_label": "第 18 條"
+        },
+        {
+          "unit_id": "pip_b1020_faq_115:q35:bba4aa037cbb25507d05",
+          "unit_label": "問答第35題"
+        }
+      ],
+      "retrievalSeconds": 0.328,
+      "answerRaw": "```json\n{\n  \"a\": [\n    {\n      \"q\": \"申請租金補貼的截止日期是什麼時候？\",\n      \"t\": \"請在115年12月10日前提出申請。\",\n      \"c\": [\n        0\n      ]\n    },\n    {\n      \"q\": \"申請租金補貼需要準備哪些基本文件？\",\n      \"t\": \"申請時需要附上身分證及租賃契約。\",\n      \"c\": [\n        0\n      ]\n    },\n    {\n      \"q\": \"如果租賃契約在審核期間到期了，我還能領到補貼嗎？\",\n      \"t\": \"如果審核時發現租約在申請日後到期，直轄市、縣（市）政府仍可繼續審核核定，核發「租金補貼核定函」後會核撥補貼，但核撥款時會檢核約已到期，核定函上會註明請申請人依限補新約。申請人收到核定函後，需在地方主辦機關通知期限內補新約及變更申請書，確認完竣之當月或次月才會繼續核撥補貼。\",\n      \"c\": [\n        2\n      ]\n    }\n  ]\n}\n```",
+      "answers": [
+        {
+          "q": "申請租金補貼的截止日期是什麼時候？",
+          "t": "請在115年12月10日前提出申請。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "申請租金補貼需要準備哪些基本文件？",
+          "t": "申請時需要附上身分證及租賃契約。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "如果租賃契約在審核期間到期了，我還能領到補貼嗎？",
+          "t": "如果審核時發現租約在申請日後到期，直轄市、縣（市）政府仍可繼續審核核定，核發「租金補貼核定函」後會核撥補貼，但核撥款時會檢核約已到期，核定函上會註明請申請人依限補新約。申請人收到核定函後，需在地方主辦機關通知期限內補新約及變更申請書，確認完竣之當月或次月才會繼續核撥補貼。",
+          "c": [
+            2
+          ]
+        }
+      ],
+      "firstBatchSeconds": 12.76,
+      "answersSeconds": 30.428,
+      "answerMetrics": {
+        "prefill_tokens_per_second": 125.92013723451218,
+        "input_tokens": 1903,
+        "decode_tokens_per_second": 19.729413059760848,
+        "first_token_seconds": 15.163439287,
+        "total_seconds": 30.42599229166808,
+        "backend": "gpu_mtp",
+        "session_seconds": 0.001737999999022577,
+        "output_tokens": 302
+      },
+      "totalSeconds": 43.517,
+      "under20Seconds": false,
+      "evidenceCount": 3
+    },
+    {
+      "state": "warm",
+      "ocrSeconds": 0.202,
+      "planSeconds": 13.149000000000001,
+      "planMetrics": {
+        "prefill_tokens_per_second": 70.8495431316567,
+        "input_tokens": 534,
+        "decode_tokens_per_second": 25.32291716199422,
+        "first_token_seconds": 7.576588629000001,
+        "total_seconds": 13.14811704166641,
+        "backend": "gpu_mtp",
+        "session_seconds": 0.0015613333380315453,
+        "output_tokens": 142
+      },
+      "sixFieldsReturned": 6,
+      "sourceCharacters": 77,
+      "draft": {
+        "s": "符合資格者需在115年12月10日前，提交身分證及租賃契約，以申請115年度租金補貼。",
+        "w": {
+          "who": "符合資格者",
+          "what": "提出租金補貼申請",
+          "when": "115年12月10日前",
+          "where": null,
+          "why": "領取租金補貼",
+          "how": "附上身分證及租賃契約"
+        },
+        "d": []
+      },
+      "retrievalMode": "document-facts",
+      "evidenceUnits": [
+        {
+          "unit_id": "d0070205:17:f04105553202db61d810",
+          "unit_label": "第 17 條"
+        },
+        {
+          "unit_id": "d0070205:18:11c8950f1cbc2bf10514",
+          "unit_label": "第 18 條"
+        },
+        {
+          "unit_id": "pip_b1020_faq_115:q35:bba4aa037cbb25507d05",
+          "unit_label": "問答第35題"
+        }
+      ],
+      "retrievalSeconds": 0.033,
+      "answerRaw": "```json\n{\n  \"a\": [\n    {\n      \"q\": \"申請租金補貼的截止日期是什麼時候？\",\n      \"t\": \"請在115年12月10日前提出申請。\",\n      \"c\": [\n        0\n      ]\n    },\n    {\n      \"q\": \"申請租金補貼需要準備哪些基本文件？\",\n      \"t\": \"申請時需要附上身分證及租賃契約。\",\n      \"c\": [\n        0\n      ]\n    },\n    {\n      \"q\": \"如果租賃契約在審核期間到期了，我還能領到補貼嗎？\",\n      \"t\": \"如果審核時發現租約在申請日後到期，直轄市、縣（市）政府仍可繼續審核核定，核發「租金補貼核定函」後會核撥補貼，但核撥款時會檢核約已到期，核定函上會註明請申請人依限補新約。申請人收到核定函後，需在地方主辦機關通知期限內補新約及變更申請書，確認完竣之當月或次月才會繼續核撥補貼。\",\n      \"c\": [\n        2\n      ]\n    }\n  ]\n}\n```",
+      "answers": [
+        {
+          "q": "申請租金補貼的截止日期是什麼時候？",
+          "t": "請在115年12月10日前提出申請。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "申請租金補貼需要準備哪些基本文件？",
+          "t": "申請時需要附上身分證及租賃契約。",
+          "c": [
+            0
+          ]
+        },
+        {
+          "q": "如果租賃契約在審核期間到期了，我還能領到補貼嗎？",
+          "t": "如果審核時發現租約在申請日後到期，直轄市、縣（市）政府仍可繼續審核核定，核發「租金補貼核定函」後會核撥補貼，但核撥款時會檢核約已到期，核定函上會註明請申請人依限補新約。申請人收到核定函後，需在地方主辦機關通知期限內補新約及變更申請書，確認完竣之當月或次月才會繼續核撥補貼。",
+          "c": [
+            2
+          ]
+        }
+      ],
+      "firstBatchSeconds": 13.351,
+      "answersSeconds": 31.159,
+      "answerMetrics": {
+        "prefill_tokens_per_second": 120.24252595237151,
+        "input_tokens": 1903,
+        "decode_tokens_per_second": 19.70390961125067,
+        "first_token_seconds": 15.87709884925,
+        "total_seconds": 31.157438166665088,
+        "backend": "gpu_mtp",
+        "session_seconds": 0.001526083331555128,
+        "output_tokens": 302
+      },
+      "totalSeconds": 44.543,
+      "under20Seconds": false,
+      "evidenceCount": 3
+    }
+  ]
+}

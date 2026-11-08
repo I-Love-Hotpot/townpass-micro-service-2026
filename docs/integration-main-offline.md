@@ -72,13 +72,9 @@ Node 測試涵蓋 Native Bridge、原文／多頁順序、字數上限、摘要�
 網址：<https://townpass.fearnot.tw>，由 Cloudflare Pages 專案 `townpass` 提供服務，備用網址為 <https://townpass.pages.dev>。
 公開內容是 `frontend/dist`；本機 Native 測試替身不會進入正式打包或公開網址。
 
-```sh
-cd frontend
-pnpm build
-CLOUDFLARE_ACCOUNT_ID=786dcef12567e51b3a85a4e9a32860d9 npx wrangler@4.158.0 pages deploy dist --project-name townpass --branch main
-```
+正式發布流程：將修改推至 GitHub 分支，確認 Preview 建置與功能後合併到 `main`。Cloudflare Pages 自動在 `frontend` 執行 `pnpm build` 並發布 `dist`；部署完成後確認正式部署的 commit 等於 GitHub `main`。
 
-部署使用已登入的 Wrangler，憑證不加入 Git。這是手動 Direct Upload，修改程式後需重新 build 與部署，沒有 Git 自動部署。
+依使用者指示，後續不再透過 Wrangler 或其他 Direct Upload 手動發布，不以本機工作目錄覆蓋正式站。詳細設定與故障處理見 [Cloudflare Pages 自動部署](cloudflare-pages.md)。
 2026-11-08 起，網域 CNAME 指向 `townpass.pages.dev`，不再依賴 Mac、preview 或 `townpass-demo` Tunnel。原 Tunnel 目標為 `fefbfcb4-fe68-4dff-8889-55acc1ccd51c.cfargotunnel.com`，僅供回復設定參考。
 公開瀏覽器可以累積選圖與查看操作；實際 Apple Vision OCR／E4B 摘要與六何仍需 Native host。
 

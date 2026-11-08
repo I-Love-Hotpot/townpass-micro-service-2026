@@ -58,6 +58,8 @@ const zh = {
   processingError: '文件辨識或摘要失敗，請重試。',
   saveError: '無法保存文件。請確認瀏覽器允許儲存且空間足夠，再重新選檔。',
   summary: '摘要',
+  logicNotice: '有些資訊需要確認',
+  logicHint: '以下是可能疑點，不代表原文一定錯誤，請核對原圖或向承辦單位確認。',
   original: '原始文件',
   next: '下一步',
   page: '第 {n} 頁',
@@ -167,6 +169,9 @@ const id: Partial<Record<Label, string>> = {
   processingError: 'Pengenalan atau ringkasan gagal. Coba lagi.',
   saveError: 'Dokumen tidak dapat disimpan. Periksa izin dan ruang penyimpanan, lalu pilih ulang.',
   summary: 'Ringkasan',
+  logicNotice: 'Ada informasi yang perlu dikonfirmasi',
+  logicHint:
+    'Ini kemungkinan kejanggalan, bukan bukti bahwa dokumen salah. Periksa gambar asli atau konfirmasikan kepada petugas.',
   original: 'Dokumen asli',
   next: 'Langkah berikutnya',
   page: 'Halaman {n}',

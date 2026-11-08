@@ -108,7 +108,8 @@ export function askDocument(
       plan.terms as string[],
       locale,
       'user',
-      'user'
+      'user',
+      record.analysis?.logicNotes
     );
     return answer;
   });
