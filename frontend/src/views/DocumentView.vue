@@ -675,7 +675,11 @@ async function copySix() {
           {{ t('stop') }}
         </button>
         <DocumentGallery :id="entry.id" :urls="urls" :locale="workspace.context.locale" />
-        <fieldset class="rounded bg-surface p-4">
+        <fieldset
+          class="helpfulness-feedback rounded bg-surface p-4"
+          :class="{ 'is-answered': helpfulness }"
+          :disabled="helpfulness !== undefined"
+        >
           <legend class="section-title">{{ t('helpfulnessQuestion') }}</legend>
           <div class="flex flex-wrap gap-3">
             <button
@@ -700,7 +704,6 @@ async function copySix() {
               }"
               @click="helpfulness = option"
             >
-              <span v-if="helpfulness === option" aria-hidden="true">✓</span>
               {{ t(option) }}
             </button>
           </div>
@@ -709,3 +712,21 @@ async function copySix() {
     </Transition>
   </div>
 </template>
+
+<style scoped>
+.helpfulness-feedback.is-answered {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--motion-base) var(--motion-ease) var(--motion-fast),
+    visibility 0s linear calc(var(--motion-fast) + var(--motion-base));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .helpfulness-feedback.is-answered {
+    transition:
+      opacity var(--motion-fast) var(--motion-ease),
+      visibility 0s linear var(--motion-fast);
+  }
+}
+</style>
