@@ -30,6 +30,7 @@ const urls = shallowRef<string[]>([]);
 const loadError = ref(false);
 const loading = ref(true);
 const feedback = ref<Label>();
+const helpfulness = ref<'yes' | 'no' | 'incorrect'>();
 const failed = ref(false);
 const pending = ref(false);
 const question = ref('');
@@ -100,6 +101,7 @@ async function load() {
   const id = documentId.value;
   releaseUrls();
   entry.value = undefined;
+  helpfulness.value = undefined;
   question.value = '';
   loading.value = true;
   loadError.value = false;
@@ -673,6 +675,25 @@ async function copySix() {
           {{ t('stop') }}
         </button>
         <DocumentGallery :id="entry.id" :urls="urls" :locale="workspace.context.locale" />
+        <fieldset class="rounded bg-surface p-4">
+          <legend class="section-title">{{ t('helpfulnessQuestion') }}</legend>
+          <div class="flex flex-wrap gap-3">
+            <label
+              v-for="option in (['yes', 'no', 'incorrect'] as const)"
+              :key="option"
+              class="flex min-h-11 cursor-pointer items-center gap-2 rounded border border-line px-4 py-2"
+            >
+              <input
+                v-model="helpfulness"
+                type="radio"
+                name="document-helpfulness"
+                :value="option"
+                class="accent-brand-dark"
+              />
+              {{ t(option) }}
+            </label>
+          </div>
+        </fieldset>
       </article>
     </Transition>
   </div>
